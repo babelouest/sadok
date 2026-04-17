@@ -1,0 +1,42 @@
+{
+  "name": "sadok",
+  "version": "2.0.0",
+  "description": "e-book reader",
+  "main": "src/index.js",
+  "scripts": {
+		"dev": "webpack serve --config ./webpack.config.js --mode development",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/babelouest/sadok.git"
+  },
+  "keywords": [
+    "e-book",
+    "epub",
+    "speed-reader"
+  ],
+  "author": "Nicolas Mora",
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/babelouest/sadok/issues"
+  },
+  "homepage": "https://github.com/babelouest/sadok#readme",
+	"devDependencies": {
+		"@babel/core": "^7.20.15",
+		"@babel/preset-env": "^7.20.15",
+		"@babel/preset-react": "^7.22.5",
+		"babel-loader": "^9.1.0",
+		"webpack": "^5.94.0",
+		"webpack-cli": "^5.1.4",
+		"webpack-dev-server": "^5.1.0"
+	},
+	"dependencies": {
+		"foliate-js": "^1.0.1",
+		"i18next": "^25.4.2",
+		"i18next-browser-languagedetector": "^8.2.0",
+		"i18next-http-backend": "^3.0.2",
+		"react": "^19.1.1",
+		"react-dom": "^19.1.1"
+	}
+}
