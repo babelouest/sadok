@@ -14,7 +14,7 @@ module.exports = {
     ],
   },
   resolve: {
-    extensions: ['*', '.js', '.jsx'],
+    extensions: ['.*', '.js', '.jsx'],
   },
   output: {
     path: path.resolve(__dirname, './dist'),

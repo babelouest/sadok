@@ -22,6 +22,7 @@ try {
   .use(Backend)
   .use(LanguageDetector)
   .init({
+    showSupportNotice: false,
     fallbackLng: 'en',
     backend: {
       loadPath: 'locales/{{lng}}/translations.json'

@@ -1,1 +1,21 @@
-{}
+{
+  "title": "Sadok",
+  "dark-mode": "Dark mode",
+  "dark-mode-system": "System",
+  "dark-mode-enabled": "Enabled",
+  "dark-mode-disabled": "Disabled",
+  "cover-background": "Show cover",
+  "cover-background-enabled": "Enabled",
+  "cover-background-disabled": "Disabled",
+  "text-background-opacity": "Background text opacity",
+  "text-background-opacity-0": "0%",
+  "text-background-opacity-25": "25%",
+  "text-background-opacity-50": "50%",
+  "text-background-opacity-75": "75%",
+  "profile-name": "Profile",
+  "profile-name-edit": "Edit",
+  "profile-name-save": "Save",
+  "lang": "Lang",
+  "lang-fr": "French",
+  "lang-en": "English"
+}
