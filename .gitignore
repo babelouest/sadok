@@ -3,3 +3,4 @@ sadok
 *.o
 sadok.conf
 sadok.json
+valgrind.txt
