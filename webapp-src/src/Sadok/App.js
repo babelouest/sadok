@@ -164,9 +164,10 @@ export default function App({}) {
     .then(() => {
       profile.getGlobalConfig()
       .then(cfg => {
-        setConfig({...config, ...cfg});
-        if (cfg.currentBook) {
-          cbOpenBook(cfg.currentBook);
+        let startConfig = {...config, ...cfg};
+        setConfig(startConfig);
+        if (startConfig.currentBook) {
+          cbOpenBook(startConfig.currentBook);
         }
       });
     });
@@ -262,9 +263,6 @@ export default function App({}) {
       profile.getGlobalConfig()
       .then(cfg => {
         setConfig({...config, ...cfg});
-        if (cfg.currentBook) {
-          cbOpenBook(cfg.currentBook);
-        }
       });
     });
   };
@@ -357,10 +355,9 @@ export default function App({}) {
   };
 
   const cbOpenBook = (newBook) => {
-    bookParser.parseEpub(newBook)
+    return bookParser.parseEpub(newBook)
     .then(bookParsed => {
       setBook(bookParsed);
-      updateConfig({ currentBook: newBook });
       profile.getBookProfile(newBook)
       .then(curBookProfile => {
         let extendedBookProfile = {...BOOK_PROFILE_DEFAULT, ...curBookProfile};
@@ -379,7 +376,6 @@ export default function App({}) {
     .catch(err => {
       console.error("error open book", newBook, err);
     });
-    setOpenBrowse(false);
   };
 
   const updateOffset = (newOffset) => {
@@ -411,6 +407,14 @@ export default function App({}) {
       }
       newOffset += chap.tokens;
     });
+  };
+
+  const openBrowsedBook = (newBook) => {
+    cbOpenBook(newBook)
+    .then(() => {
+      updateConfig({ currentBook: newBook });
+    });
+    setOpenBrowse(false);
   };
 
   if (openBrowse) {
