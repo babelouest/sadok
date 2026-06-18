@@ -44,6 +44,7 @@ src/lib/Build.js: $(SOURCES)
 build-webapp: src/lib/Build.js
 	@echo Clean old bundle
 	@rm -f dist/index.js*
+	@rm -f dist/*.index.js*
 	@echo Build webapp
 	@$(JSC) run build
 
