@@ -14,7 +14,6 @@ import i18next from 'i18next';
 
 import bookParser from '../lib/BookParser';
 import profile from '../lib/Profile';
-import { parseTxtToCoord } from '../lib/BookParser';
 import { getTextSize, TEXT_SIZE_VALS, DARK_MODE, READ_MODE, CONFIG_DEFAULT, BOOK_PROFILE_DEFAULT } from '../lib/Constants';
 
 import TextBackgroundContainer from './TextBackgroundContainer';
@@ -167,7 +166,7 @@ export default function App({}) {
         let startConfig = {...config, ...cfg};
         setConfig(startConfig);
         if (startConfig.currentBook) {
-          cbOpenBook(startConfig.currentBook);
+          openBook({url: startConfig.currentBook, type: startConfig.currentBookType});
         }
       });
     });
@@ -354,28 +353,31 @@ export default function App({}) {
     setOpenBrowse(true);
   };
 
-  const cbOpenBook = (newBook) => {
-    return bookParser.parseEpub(newBook)
-    .then(bookParsed => {
-      setBook(bookParsed);
-      profile.getBookProfile(newBook)
-      .then(curBookProfile => {
-        let extendedBookProfile = {...BOOK_PROFILE_DEFAULT, ...curBookProfile};
-        if (extendedBookProfile.tokens !== bookParsed.metadata.tokens) {
-          extendedBookProfile.tokens = bookParsed.metadata.tokens;
-        }
-        if (!extendedBookProfile.uri) {
-          extendedBookProfile.uri = newBook;
-        }
-        setBookProfile(extendedBookProfile);
-        if (JSON.stringify(extendedBookProfile) !== JSON.stringify(curBookProfile)) {
-          profile.setBookProfile(newBook, extendedBookProfile);
-        }
+  const openBook = (newBook) => {
+    if (newBook.type === "epub") {
+      return bookParser.parseEpub(newBook.url)
+      .then(bookParsed => {
+        setBook(bookParsed);
+        profile.getBookProfile(newBook.url)
+        .then(curBookProfile => {
+          let extendedBookProfile = {...BOOK_PROFILE_DEFAULT, ...curBookProfile};
+          if (extendedBookProfile.tokens !== bookParsed.metadata.tokens) {
+            extendedBookProfile.tokens = bookParsed.metadata.tokens;
+          }
+          if (!extendedBookProfile.uri) {
+            extendedBookProfile.uri = newBook.url;
+          }
+          setBookProfile(extendedBookProfile);
+          if (JSON.stringify(extendedBookProfile) !== JSON.stringify(curBookProfile)) {
+            profile.setBookProfile(newBook.url, extendedBookProfile);
+          }
+        });
+      })
+      .catch(err => {
+        console.error("error open book", newBook, err);
       });
-    })
-    .catch(err => {
-      console.error("error open book", newBook, err);
-    });
+    } else if (newBook.type === "pdf") {
+    }
   };
 
   const updateOffset = (newOffset) => {
@@ -410,16 +412,16 @@ export default function App({}) {
   };
 
   const openBrowsedBook = (newBook) => {
-    cbOpenBook(newBook)
+    openBook(newBook)
     .then(() => {
-      updateConfig({ currentBook: newBook });
+      updateConfig({ currentBook: newBook.url, currentBookType: newBook.type });
     });
     setOpenBrowse(false);
   };
 
   if (openBrowse) {
     return (
-      <Browse config={config} cbOpenBook={cbOpenBook} cbClose={cbCloseBrowse} />
+      <Browse config={config} cbOpenBook={openBrowsedBook} cbClose={cbCloseBrowse} />
     );
   } else {
     return (

@@ -133,7 +133,6 @@ class EpubParser {
       });
     });
   }
-
 }
 
 let epubParser = new EpubParser();

@@ -20,7 +20,7 @@ export default function BrowseFile({item, bookProfile, cbOpenBook}) {
     }
   }
   return (
-    <tr onClick={() => cbOpenBook(item.url)} className="clickable">
+    <tr onClick={() => cbOpenBook(item)} className="clickable">
       <td>
         {item.title}
       </td>

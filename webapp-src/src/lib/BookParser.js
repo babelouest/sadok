@@ -2,6 +2,9 @@ import i18next from 'i18next';
 
 import epubParser from '../lib/EpubParser';
 
+//import pdfjs from 'pdfjs-dist/legacy/build/pdf';
+//import pdfjsWorker from 'pdfjs-dist/legacy/build/pdf.worker';
+
 class BookParser {
 
 	constructor() {
@@ -9,6 +12,10 @@ class BookParser {
 
   parseEpub(epub) {
     return epubParser.extractEpubText(epub)
+  }
+
+  parsePDF(pdfBook) {
+    //let pdf = pdfjsLib.getDocument(pdfUrl);
   }
 
   extractUrlText(textUrl) {
@@ -26,55 +33,6 @@ class BookParser {
       title = title[title.length-1];
       return decodeURIComponent(title.substring(0, title.lastIndexOf('.')).replaceAll("_", " "));
     }
-  }
-
-  parseTxtToCoord(text) {
-    let coordList = [],
-        wordStart = 0,
-        inAWord = false,
-        i = 0;
-    if (text) {
-      while (i<text.length) {
-        let curChar = text.charCodeAt(i), nextChar = 0, prevChar = 0;
-        if (i < text.length-1) {
-          nextChar = text.charCodeAt(i+1);
-        }
-        if (i) {
-          prevChar = text.charCodeAt(i-1);
-        }
-        if (inAWord) {
-          if (this.isWhitespace(curChar) && prevChar && !this.isNonBreakSpacePreviousNonChar(prevChar)) { // Look for next whitespace
-            inAWord = false;
-            if (text.substring(wordStart, i).trim()) {
-              let coord = {start: wordStart, end: i};
-              coordList.push(coord);
-            }
-            wordStart = 0;
-          } else if (nextChar && this.isSeparator(curChar) && !this.isWhitespace(nextChar)) { // Look for a word separator without a whitespace right after
-            inAWord = false;
-            if (text.substring(wordStart, i+1).trim()) {
-              let coord = {start: wordStart, end: i+1};
-              coordList.push(coord);
-            }
-            wordStart = 0;
-          }
-        } else {
-          // Look for next non whitespace
-          if (!this.isWhitespace(curChar)) {
-            wordStart = i;
-            inAWord = true;
-          }
-        }
-        i++;
-        if (i === text.length && wordStart) {
-          if (text.substring(wordStart, i).trim()) {
-            let coord = {start: wordStart, end: i};
-            coordList.push(coord);
-          }
-        }
-      }
-    }
-    return coordList;
   }
 
   getExpectedType(url) {
