@@ -1,0 +1,14 @@
+{
+  "name": "sadok-profile",
+  "version": "1.0.0",
+  "description": "Simple Sadok profile manager",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Nicolas Mora <mail@babelouest.org>",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}

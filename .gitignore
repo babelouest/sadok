@@ -2,3 +2,4 @@ webapp/
 sadok
 *.o
 sadok.conf
+sadok.json

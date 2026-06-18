@@ -1,0 +1,33 @@
+#
+#
+# Sadok e-book reader
+#
+# Copyright 2024-2025 Nicolas Mora <mail@babelouest.org>
+# Gnu Public License V3 <http://fsf.org/>
+#
+#
+
+# port to open for remote commands
+port=7235
+
+# url prefix
+api_prefix="api"
+
+# access-control-allow-origin value
+allow_origin="*"
+
+# log mode (console, syslog, file)
+log_mode="syslog"
+
+# log level: NONE, ERROR, WARNING, INFO, DEBUG
+log_level="INFO"
+
+# output to log file (required if log_mode is file)
+log_file="/var/log/sadok.log"
+
+data_file="/var/cache/sadok/sadok.json"
+
+# TLS/SSL configuration values
+#use_secure_connection=false
+#secure_connection_key_file="../cert.key"
+#secure_connection_pem_file="../cert.pem"
