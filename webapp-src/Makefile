@@ -21,8 +21,7 @@
 
 WEBAPP_DEST=../webapp
 JSC=npm
-SOURCES=src/index.js src/lib/Profile.js src/lib/EpubParser.js src/lib/PDFParser.js src/lib/APIManager.js src/lib/Constants.js src/lib/SpeechSynth.js src/lib/BookParser.js src/index.js src/Sadok/Cover.js src/Sadok/TextBackgroundStyle.js src/Sadok/NavButtons.js src/Sadok/TopTitle.js src/Sadok/Browse.js src/Sadok/BrowseFile.js src/Sadok/MenuSpeedReader.js src/Sadok/SizeFormat.js src/Sadok/BrowseDir.js src/Sadok/ChapterItem.js src/Sadok/SubNode.js src/Sadok/Parameters.js src/Sadok/MenuSentenceReader.js src/Sadok/TimeRemaining.js src/Sadok/NodeParser.js src/Sadok/Menu.js src/Sadok/DateFormat.js src/Sadok/Chapters.js src/Sadok/ImageDisplayed.js src/Sadok/TextDisplayed.js src/Sadok/BottomInfo.js src/Sadok/MenuSpeechSynth.js src/Sadok/App.js src/Sadok/TextBackgroundContainer.js src/Sadok/ParametersProfile.js
-
+SOURCES=src/index.js src/lib/Profile.js src/lib/EpubParser.js src/lib/PDFParser.js src/lib/APIManager.js src/lib/Constants.js src/lib/SpeechSynth.js src/lib/BookParser.js src/Sadok/Cover.js src/Sadok/TextBackgroundStyle.js src/Sadok/NavButtons.js src/Sadok/TopTitle.js src/Sadok/Browse.js src/Sadok/BrowseFile.js src/Sadok/SortIcon.js src/Sadok/MenuSpeedReader.js src/Sadok/SizeFormat.js src/Sadok/BrowseDir.js src/Sadok/ChapterItem.js src/Sadok/SubNode.js src/Sadok/Parameters.js src/Sadok/MenuSentenceReader.js src/Sadok/TimeRemaining.js src/Sadok/NodeParser.js src/Sadok/Menu.js src/Sadok/DateFormat.js src/Sadok/Chapters.js src/Sadok/ImageDisplayed.js src/Sadok/TextDisplayed.js src/Sadok/BottomInfo.js src/Sadok/MenuSpeechSynth.js src/Sadok/App.js src/Sadok/TextBackgroundContainer.js src/Sadok/ParametersProfile.js
 
 all: webapp
 

@@ -18,7 +18,8 @@ export default function Menus({
   cbTogglePlay,
   cbUpdateConfig,
   cbRefreshConfig,
-  cbOpenBrowse
+  cbOpenBrowse,
+  cbRemoveProfile
 }) {
 
   if (!playReader) {
@@ -50,7 +51,8 @@ export default function Menus({
                   cbNavigateBeginChapter={cbNavigateBeginChapter}
                   cbNavigateNextChapter={cbNavigateNextChapter}
                   cbTogglePlay={cbTogglePlay}
-                  cbSetOffset={cbSetOffset} />
+                  cbSetOffset={cbSetOffset}
+                  cbRemoveProfile={cbRemoveProfile} />
         <Parameters book={book}
                     offset={offset}
                     config={config}

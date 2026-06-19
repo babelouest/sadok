@@ -9,12 +9,17 @@ import { READ_MODE } from '../lib/Constants';
 export default function BrowseFile({item, bookProfile, cbOpenBook}) {
   let bookProfileJsx;
   if (bookProfile) {
-    if (bookProfile.readMode === READ_MODE.SPEED_READER) {
+    if (bookProfile.offset >= bookProfile.tokens) {
+      bookProfileJsx = 
+        <span className="badge text-bg-info rounded-pill elt-right">
+          <img className="elt-right" src="img/check_small_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
+        </span>
+    } else if (bookProfile.readMode === READ_MODE.SPEED_READER) {
       if (bookProfile.tokens) {
         bookProfileJsx = 
           <span className="badge text-bg-info rounded-pill elt-right">
             {i18next.t("percent", {val: Math.floor(bookProfile.offset*100/bookProfile.tokens)})}
-            <img className="elt-right" src="img/speed_24dp_000000_FILL0_wght400_GRAD0_opsz24.svg" />
+            <img className="elt-right" src="img/speed_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
           </span>
       }
     }

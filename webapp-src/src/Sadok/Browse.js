@@ -6,6 +6,7 @@ import profile from '../lib/Profile';
 import apiManager from '../lib/APIManager';
 import BrowseDir from './BrowseDir';
 import BrowseFile from './BrowseFile';
+import SortIcon from './SortIcon';
 
 const getSubDir = (list, breadcrumb) => {
   let subDir = [];
@@ -22,6 +23,20 @@ const getSubDir = (list, breadcrumb) => {
   return subDir;
 };
 
+const filterList = (list, filterPattern) => {
+  let filteredList = [];
+  list.forEach(elt => {
+    if (elt.type === "dir") {
+      filteredList = filteredList.concat(filterList(elt.content, filterPattern));
+    } else {
+      if (elt.title.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().includes(filterPattern)) {
+        filteredList.push(elt);
+      }
+    }
+  });
+  return filteredList;
+};
+
 const findBookProfileByUri = (bookProfiles, uri) => {
   let bp = false;
   Object.keys(bookProfiles).forEach(key => {
@@ -32,13 +47,61 @@ const findBookProfileByUri = (bookProfiles, uri) => {
   return bp;
 };
 
+const getOngoingOrComplete = (list, bookProfiles, complete) => {
+  let onGoing = [];
+  list.forEach(elt => {
+    if (elt.type === "dir") {
+      onGoing = onGoing.concat(getOngoingOrComplete(elt.content, bookProfiles, complete));
+    } else  {
+      let prof = findBookProfileByUri(bookProfiles, elt.url);
+      if (prof && prof.offset !== undefined && prof.tokens !== undefined) {
+        if (!complete && prof.offset < prof.tokens) {
+          onGoing.push({...elt});
+        } else if (complete && prof.offset >= prof.tokens) {
+          onGoing.push({...elt});
+        }
+      }
+    }
+  });
+  return onGoing;
+};
+
+const sortList = (list, column, asc) => {
+  if (column === "title") {
+    if (asc) {
+      return [...list].sort((a, b) => (a.title.toLowerCase().localeCompare(b.title.toLowerCase())));
+    } else {
+      return [...list].sort((a, b) => (b.title.toLowerCase().localeCompare(a.title.toLowerCase())));
+    }
+  } else if (column === "size") {
+    if (asc) {
+      return [...list].sort((a, b) => a.size - b.size);
+    } else {
+      return [...list].sort((a, b) => b.size - b.size);
+    }
+  } else if (column === "date") {
+    if (asc) {
+      return [...list].sort((a, b) => (new Date(a.date)).getTime() - (new Date(b.date)).getTime());
+    } else {
+      return [...list].sort((a, b) => (new Date(b.date)).getTime() - (new Date(a.date)).getTime());
+    }
+  } else {
+    return list;
+  }
+};
+
 export default function Browse({config, cbOpenBook, cbClose}) {
   const [ rootList, setRootList ] = useState([]);
   const [ list, setList ] = useState([]);
+  const [ ongoingList, setOngoingList ] = useState(false);
+  const [ completeList, setCompleteList ] = useState(false);
   const [ bookProfiles, seBookProfiles ] = useState([]);
   const [ filteredList, setFilteredList ] = useState(false);
   const [ breadcrumb, setBreadcrumb ] = useState([]);
   const [ filter, setFilter ] = useState("");
+  const [ orderColumn, setOrderColumn ] = useState("title");
+  const [ orderAsc, setOrderAsc ] = useState(true);
+  const [ show, setShow ] = useState(true);
 
   useEffect(() => {
     apiManager.APIRequestExecute("list.json")
@@ -58,16 +121,9 @@ export default function Browse({config, cbOpenBook, cbClose}) {
   useEffect(() => {
     let pattern = filter.trim().normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
     if (pattern) {
-      let newFilteredList = [];
-      list.forEach(l => {
-        if (l.title.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().includes(pattern)) {
-          newFilteredList.push(l);
-        }
-      });
-      setFilteredList(newFilteredList);
+      setFilteredList(filterList(list, pattern));
     } else {
       setFilteredList(false);
-      setFilter("");
     }
   },[filter]);
 
@@ -106,28 +162,65 @@ export default function Browse({config, cbOpenBook, cbClose}) {
     setFilter(e.target.value);
   };
 
+  const toggleOngoing = () => {
+    if (!ongoingList) {
+      setOngoingList(getOngoingOrComplete(list, bookProfiles, false));
+    } else {
+      setOngoingList(false);
+    }
+  };
+
+  const toggleComplete = () => {
+    if (!completeList) {
+      setCompleteList(getOngoingOrComplete(list, bookProfiles, true));
+    } else {
+      setCompleteList(false);
+    }
+  };
+
+  const changeShow = (e, val) => {
+    e.preventDefault();
+    setShow(val);
+  };
+
+  const changeOrder = (e, order) => {
+    e.preventDefault();
+    if (order === orderColumn) {
+      setOrderAsc(!orderAsc);
+    } else {
+      setOrderColumn(order);
+      setOrderAsc(true);
+    }
+  };
+
   let listDirJsx = [], listFilesJsx = [];
-  if (filteredList) {
-    filteredList.forEach((item, index) => {
-      if (item.type === "dir") {
-        listDirJsx.push (
-          <BrowseDir key={item.title} item={item} cbOpenDir={cbOpenDir} />
-        );
-      } else {
-        listFilesJsx.push (
-          <BrowseFile key={item.title} item={item} bookProfile={findBookProfileByUri(bookProfiles, item.url)} cbOpenBook={cbOpenBook} />
-        );
-      }
+  if (completeList) {
+    sortList(completeList, orderColumn, orderAsc).forEach((item, index) => {
+      listFilesJsx.push (
+        <BrowseFile key={index+item.url} item={item} bookProfile={findBookProfileByUri(bookProfiles, item.url)} cbOpenBook={cbOpenBook} />
+      );
+    });
+  } else if (ongoingList) {
+    sortList(ongoingList, orderColumn, orderAsc).forEach((item, index) => {
+      listFilesJsx.push (
+        <BrowseFile key={index+item.url} item={item} bookProfile={findBookProfileByUri(bookProfiles, item.url)} cbOpenBook={cbOpenBook} />
+      );
+    });
+  } else if (filteredList) {
+    sortList(filteredList, orderColumn, orderAsc).forEach((item, index) => {
+      listFilesJsx.push (
+        <BrowseFile key={index+item.url} item={item} bookProfile={findBookProfileByUri(bookProfiles, item.url)} cbOpenBook={cbOpenBook} />
+      );
     });
   } else {
-    list.forEach((item, index) => {
-      if (item.type === "dir") {
+    sortList(list, orderColumn, orderAsc).forEach((item, index) => {
+      if (item.type === "dir" && (show === true || show === "folders")) {
         listDirJsx.push (
-          <BrowseDir key={item.title} item={item} cbOpenDir={cbOpenDir} />
+          <BrowseDir key={index+item.title} item={item} cbOpenDir={cbOpenDir} />
         );
-      } else {
+      } else if (item.type !== "dir" && (show === true || show === "files")) {
         listFilesJsx.push (
-          <BrowseFile key={item.title} item={item} bookProfile={findBookProfileByUri(bookProfiles, item.url)} cbOpenBook={cbOpenBook} />
+          <BrowseFile key={index+item.url} item={item} bookProfile={findBookProfileByUri(bookProfiles, item.url)} cbOpenBook={cbOpenBook} />
         );
       }
     });
@@ -163,7 +256,19 @@ export default function Browse({config, cbOpenBook, cbClose}) {
           </div>
         </div>
         <div className="input-group mb-3">
-          <input type="text" className="form-control" placeholder={i18next.t("browse-filter")} value={filter} onChange={changeFilter} />
+          <button className="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" disabled={completeList || filteredList}>{i18next.t("browse-show")}</button>
+          <ul className="dropdown-menu">
+            <li><a className={"dropdown-item"+(show===true?" active":"")} href="#" onClick={(e) => changeShow(e, false)}>{i18next.t("browse-show-all")}</a></li>
+            <li><a className={"dropdown-item"+(show==="files"?" active":"")} href="#" onClick={(e) => changeShow(e, "files")}>{i18next.t("browse-show-files")}</a></li>
+            <li><a className={"dropdown-item"+(show==="folders"?" active":"")} href="#" onClick={(e) => changeShow(e, "folders")}>{i18next.t("browse-show-folders")}</a></li>
+          </ul>
+          <input type="text" className="form-control" placeholder={i18next.t("browse-filter")} value={filter} onChange={changeFilter} disabled={ongoingList || completeList} />
+          <button className="btn btn-secondary" type="button" title={i18next.t("browse-ongoing")} onClick={toggleOngoing} disabled={completeList || filteredList} >
+            <img src="img/book_5_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
+          </button>
+          <button className="btn btn-secondary" type="button" title={i18next.t("browse-done")} onClick={toggleComplete} disabled={ongoingList || filteredList} >
+            <img src="img/check_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
+          </button>
         </div>
       </div>
       <div className="overflow-auto table-responsive">
@@ -171,13 +276,22 @@ export default function Browse({config, cbOpenBook, cbClose}) {
           <thead className="">
             <tr>
               <th scope="col">
-                {i18next.t("browse-filename")}
+                <a href="#" onClick={(e) => changeOrder(e, "title")}>
+                  {i18next.t("browse-filename")}
+                  <SortIcon column={orderColumn==="title"} asc={orderAsc} />
+                </a>
               </th>
               <th scope="col">
-                {i18next.t("browse-size")}
+                <a href="#" onClick={(e) => changeOrder(e, "size")}>
+                  {i18next.t("browse-size")}
+                  <SortIcon column={orderColumn==="size"} asc={orderAsc} />
+                </a>
               </th>
               <th scope="col">
-                {i18next.t("browse-date")}
+                <a href="#" onClick={(e) => changeOrder(e, "date")}>
+                  {i18next.t("browse-date")}
+                  <SortIcon column={orderColumn==="date"} asc={orderAsc} />
+                </a>
               </th>
               <th scope="col">
               </th>

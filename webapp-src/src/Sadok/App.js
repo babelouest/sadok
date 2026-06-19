@@ -173,8 +173,10 @@ export default function App({}) {
   },[]);
 
   useEffect(() => { // [bookProfile]
-    profile.setBookProfile(config.currentBook, bookProfile);
-  },[bookProfile]);
+    if (config.currentBook && !playReader) {
+      profile.setBookProfile(config.currentBook, bookProfile);
+    }
+  },[bookProfile,playReader]);
 
   useEffect(() => { // [book,config,playReader]
     document.body.addEventListener("keyup", keyUpEvent);
@@ -209,9 +211,19 @@ export default function App({}) {
       if (currentText.text) {
         setCurrentText(currentText.text);
       }
+    } else {
+      setCurrentText("");
+      setChapterIndex(0);
+      setChapter(false);
     }
     if (playReader) {
       let timeoutFactor = 1;
+      if (currentText.text.length > 16 && config.speedReaderSlowLongWords) {
+        timeoutFactor = Math.floor(currentText.text.length/20);
+        if (timeoutFactor > 20) {
+          timeoutFactor = 20;
+        }
+      }
       const intervalId = setTimeout(() => {
         if (book?.metadata?.tokens && bookProfile.offset < book?.metadata?.tokens) {
           setBookProfile({...bookProfile, ...{offset: bookProfile.offset+1}});
@@ -377,6 +389,7 @@ export default function App({}) {
         console.error("error open book", newBook, err);
       });
     } else if (newBook.type === "pdf") {
+    } else if (newBook.type === "txt") {
     }
   };
 
@@ -419,6 +432,14 @@ export default function App({}) {
     setOpenBrowse(false);
   };
 
+  const cbRemoveProfile = () => {
+    profile.deleteBookProfile(bookProfile.uri)
+    .then(() => {
+      updateConfig({ currentBook: false, currentBookType: false });
+      setBook({metadata: {}, bookContent: []});
+    });
+  };
+
   if (openBrowse) {
     return (
       <Browse config={config} cbOpenBook={openBrowsedBook} cbClose={cbCloseBrowse} />
@@ -440,7 +461,8 @@ export default function App({}) {
               cbTogglePlay={togglePlay}
               cbUpdateConfig={updateConfig}
               cbRefreshConfig={cbRefreshConfig}
-              cbOpenBrowse={cbOpenBrowse} />
+              cbOpenBrowse={cbOpenBrowse}
+              cbRemoveProfile={cbRemoveProfile} />
         <TextBackgroundContainer config={config}
                                  chapter={chapter}
                                  chapterIndex={chapterIndex}

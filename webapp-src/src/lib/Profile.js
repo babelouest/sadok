@@ -318,6 +318,44 @@ class Profile {
       return ({});
     });
   }
+
+  deleteBookProfile(bookUri) {
+    console.log("plop", bookUri);
+    if (this.useProfileApi && this.profileApiName) {
+      return this.deleteBookProfileApi(bookUri);
+    } else {
+      return this.deleteBookProfileLocalStrorage(bookUri);
+    }
+  }
+
+  deleteBookProfileApi(bookUri) {
+    return stringToUUIDv5(bookUri)
+    .then(guid => {
+      return apiManager.APIRequestExecute(API_URL + encodeURIComponent(this.profileApiName) + API_BOOK_PROFILE_URL + guid, "DELETE")
+      .catch((err) => {
+        console.error(err);
+      });
+    });
+  }
+  
+  deleteBookProfileLocalStrorage(bookUri) {
+    if (window.localStorage) {
+      try {
+        return stringToUUIDv5(bookUri)
+        .then(guid => {
+          window.localStorage.removeItem(LS_BOOK_PROFILE_PREFIX+guid);
+          return Promise.resolve();
+        });
+      } catch (err) {
+        console.error(err);
+        return Promise.resolve();
+      }
+      return Promise.resolve();
+    } else {
+      return Promise.resolve();
+    }
+  }
+
 }
 
 let profile = new Profile();

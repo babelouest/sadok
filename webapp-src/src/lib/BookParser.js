@@ -18,6 +18,9 @@ class BookParser {
     //let pdf = pdfjsLib.getDocument(pdfUrl);
   }
 
+  parseTxt(txtUrl) {
+  }
+
   extractUrlText(textUrl) {
     return $.ajax({
       method: "GET",

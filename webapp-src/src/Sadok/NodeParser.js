@@ -124,6 +124,13 @@ export default function NodeParser({node, offset, book}) {
         </small>
       )
       break;
+    case "ol":
+      return (
+        <ol className={node.classList}>
+          <SubNode node={node} offset={offset} book={book} />
+        </ol>
+      )
+      break;
     case "ul":
       return (
         <ul className={node.classList}>
@@ -170,11 +177,102 @@ export default function NodeParser({node, offset, book}) {
         </figure>
       )
       break;
+    case "abbr":
+      return (
+        <abbr className={node.classList}>
+          <SubNode node={node} offset={offset} book={book} />
+        </abbr>
+      )
+      break;
+    case "blockquote":
+      return (
+        <blockquote className={node.classList}>
+          <SubNode node={node} offset={offset} book={book} />
+        </blockquote>
+      )
+      break;
+    case "q":
+      return (
+        <q className={node.classList}>
+          <SubNode node={node} offset={offset} book={book} />
+        </q>
+      )
+      break;
+    case "sub":
+      return (
+        <sub className={node.classList}>
+          <SubNode node={node} offset={offset} book={book} />
+        </sub>
+      )
+      break;
+    case "time":
+      return (
+        <time className={node.classList}>
+          <SubNode node={node} offset={offset} book={book} />
+        </time>
+      )
+      break;
     case "figcaption":
       return (
         <figcaption className={node.classList}>
           <SubNode node={node} offset={offset} book={book} />
         </figcaption>
+      )
+      break;
+    case "table":
+      return (
+        <table className={node.classList}>
+          <SubNode node={node} offset={offset} book={book} />
+        </table>
+      )
+      break;
+    case "thead":
+      return (
+        <thead className={node.classList}>
+          <SubNode node={node} offset={offset} book={book} />
+        </thead>
+      )
+      break;
+    case "tbody":
+      return (
+        <tbody className={node.classList}>
+          <SubNode node={node} offset={offset} book={book} />
+        </tbody>
+      )
+      break;
+    case "tfoot":
+      return (
+        <tfoot className={node.classList}>
+          <SubNode node={node} offset={offset} book={book} />
+        </tfoot>
+      )
+      break;
+    case "th":
+      return (
+        <th className={node.classList}>
+          <SubNode node={node} offset={offset} book={book} />
+        </th>
+      )
+      break;
+    case "tr":
+      return (
+        <tr className={node.classList}>
+          <SubNode node={node} offset={offset} book={book} />
+        </tr>
+      )
+      break;
+    case "td":
+      return (
+        <td className={node.classList}>
+          <SubNode node={node} offset={offset} book={book} />
+        </td>
+      )
+      break;
+    case "nav":
+      return (
+        <nav className={node.classList}>
+          <SubNode node={node} offset={offset} book={book} />
+        </nav>
       )
       break;
     case "br":

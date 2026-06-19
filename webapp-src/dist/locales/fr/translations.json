@@ -53,6 +53,8 @@
   "sentence-reader-text-size": "Taille du texte",
   "percent": "{{val}}%",
   "chapters": "Table des chapitres",
+  "book-complete-read": "Marquer comme lu",
+  "book-remove-profile": "Supprimer le profil du livre",
   "parameters": "Paramètres",
   "browse": "Sélectionner un livre électronique",
   "browse-filename": "Nom",
@@ -63,5 +65,9 @@
   "size-kb": "{{val}} Ko",
   "size-b": "{{val}} o",
   "close": "Fermer",
-  "browse-filter": "Filtrer"
+  "browse-filter": "Filtrer",
+  "browse-show": "Montrer",
+  "browse-show-all": "Fichiers et dossiers",
+  "browse-show-files": "Fichiers",
+  "browse-show-folders": "Dossiers"
 }

@@ -16,7 +16,8 @@ export default function Chapters({
   cbNavigateBeginChapter,
   cbNavigateNextChapter,
   cbTogglePlay,
-  cbSetOffset
+  cbSetOffset,
+  cbRemoveProfile
 }) {
 
   useEffect(() => {
@@ -63,6 +64,12 @@ export default function Chapters({
           value={offset}
           onChange={(e) => cbSetOffset(parseInt(e.target.value))} />
           <span className="input-group-text" id="basic-addon2">/ {book?.metadata?.tokens}</span>
+          <button className="btn btn-secondary" type="button" onClick={() => cbSetOffset(book.metadata.tokens)} title={i18next.t("book-complete-read")} disabled={chapterIndex >= book.bookContent.length} >
+            <img src="img/download_done_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt={i18next.t("nav-next-chapter")} />
+          </button>
+          <button className="btn btn-secondary" type="button" onClick={() => cbRemoveProfile()} title={i18next.t("book-remove-profile")} disabled={chapterIndex >= book.bookContent.length} >
+            <img src="img/delete_forever_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt={i18next.t("nav-next-chapter")} />
+          </button>
         </div>
         <NavButtons book={book}
                     offset={offset}
@@ -76,6 +83,7 @@ export default function Chapters({
         <div className="chapter-list">
           <div className="mb-3">
             <div className="list-group">
+              <hr/>
               {chaptersJsx}
             </div>
           </div>

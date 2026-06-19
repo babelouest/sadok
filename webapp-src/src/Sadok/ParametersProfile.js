@@ -28,14 +28,14 @@ export default function ParametersProfile({config, cbSaveProfile}) {
                  value={profileName}
                  onChange={(e) => setProfileName(e.target.value)}
                  disabled={!changeProfile} />
-          <button className="btn btn-outline-secondary"
+          <button className="btn btn-secondary"
                   type="button"
                   title={i18next.t("profile-name-edit")}
                   onClick={() => setChangeProfile(true)}
                   disabled={changeProfile}>
             <img src="img/edit_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt={i18next.t("profile-name-edit")} />
           </button>
-          <button className="btn btn-outline-secondary"
+          <button className="btn btn-secondary"
                   type="button"
                   title={i18next.t("profile-name-save")}
                   onClick={saveProfile}
