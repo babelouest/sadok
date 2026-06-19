@@ -15,7 +15,7 @@ export default function Parameters({
   offset,
   config,
   cbUpdateConfig,
-  cbRefreshConfig
+  cbInitConfig
 }) {
 
   const setDarkMode = (e, mode) => {
@@ -42,7 +42,7 @@ export default function Parameters({
 
   const saveProfile = (profileName) => {
     profile.setProfileApiName(profileName);
-    cbRefreshConfig();
+    cbInitConfig();
   };
 
   const setLang = (e) => {
