@@ -158,7 +158,7 @@ export default function App({}) {
     }
   };
 
-  useEffect(() => { // []
+  useEffect(() => { // [] (starup)
     profile.initProfile()
     .then(() => {
       profile.getGlobalConfig()
@@ -172,13 +172,13 @@ export default function App({}) {
     });
   },[]);
 
-  useEffect(() => { // [bookProfile]
+  useEffect(() => { // [bookProfile] (save profile)
     if (config.currentBook && !playReader) {
       profile.setBookProfile(config.currentBook, bookProfile);
     }
   },[bookProfile,playReader]);
 
-  useEffect(() => { // [book,config,playReader]
+  useEffect(() => { // [book,config,playReader] (events)
     document.body.addEventListener("keyup", keyUpEvent);
 
     // Stop reading when screen is no longer visible
@@ -194,7 +194,7 @@ export default function App({}) {
     }
   },[book,config,playReader]);
 
-  useEffect(() => { // [book,bookProfile,playReader]
+  useEffect(() => { // [book,bookProfile,playReader] (show text and loop)
     const currentText = getCurrentText(book.bookContent, bookProfile.offset);
     if (currentText) {
       if (currentText.chapterIndex !== chapterIndex) {
@@ -235,11 +235,11 @@ export default function App({}) {
     }
   },[book,bookProfile,playReader]);
 
-  useEffect(() => { // [currentText]
+  useEffect(() => { // [currentText] (scroll to current word)
     bgWordScrollIfNotVisible();
   },[currentText]);
 
-  useEffect(() => { // [config]
+  useEffect(() => { // [config] (dark mode?)
     const darkModeMql = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)');
     if ((config.darkMode === "system" && darkModeMql && darkModeMql.matches) || config.darkMode === "enabled") {
       document.documentElement.setAttribute('data-bs-theme','dark');
@@ -268,12 +268,17 @@ export default function App({}) {
     profile.setGlobalConfig(updatedConfig);
   };
 
-  const cbRefreshConfig = () => {
+  const cbInitConfig = () => {
     profile.initProfile()
     .then(() => {
       profile.getGlobalConfig()
       .then(cfg => {
-        setConfig({...config, ...cfg});
+        setConfig({...CONFIG_DEFAULT, ...cfg});
+        if (cfg.currentBook) {
+          openBook({url: cfg.currentBook, type: cfg.currentBookType});
+        } else {
+          setBook({metadata: {}, bookContent: []});
+        }
       });
     });
   };
@@ -460,7 +465,7 @@ export default function App({}) {
               cbNavigateNextChapter={cbNavigateNextChapter}
               cbTogglePlay={togglePlay}
               cbUpdateConfig={updateConfig}
-              cbRefreshConfig={cbRefreshConfig}
+              cbInitConfig={cbInitConfig}
               cbOpenBrowse={cbOpenBrowse}
               cbRemoveProfile={cbRemoveProfile} />
         <TextBackgroundContainer config={config}
