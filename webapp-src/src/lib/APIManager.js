@@ -44,6 +44,9 @@ class APIManager {
         return Promise.reject("error");
       }
     })
+    .catch(err => {
+      console.error("API error", err);
+    });
 	}
 }
 
