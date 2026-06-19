@@ -282,6 +282,7 @@ int callback_profile_delete_book (const struct _u_request * request, struct _u_r
         y_log_message(Y_LOG_LEVEL_ERROR, "callback_profile_delete_book - Error json_load_file");
         response->status = 500;
       }
+      json_decref(j_data);
     } else {
       response->status = 400;
     }

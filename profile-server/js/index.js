@@ -127,3 +127,22 @@ app.post("/api/profile/:name/book/:book_uri", (request, response) => {
     response.status(400).end()
   }
 });
+
+app.delete("/api/profile/:name/book/:book_uri", (request, response) => {
+  let fileJson = JSON.parse(fs.readFileSync(DATA_FILE_PATH, 'utf8'));
+  if (fileJson) {
+    if (fileJson[request.params.name]?.bookshelf?[request.params.book_uri]) {
+      delete(fileJson[request.params.name].bookshelf[request.params.book_uri]);
+      try {
+        fs.writeFileSync(DATA_FILE_PATH, JSON.stringify(fileJson));
+        response.status(200).end()
+      } catch (e) {
+        console.error("Error writing file", response)
+        response.status(500).end()
+      }
+    }
+  } else {
+    console.error("Error reading file", response)
+    response.status(500).end()
+  }
+});
