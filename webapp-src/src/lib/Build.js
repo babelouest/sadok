@@ -1,2 +1,2 @@
-let build={"id":"202606191622"};
+let build={"id":"202606201022"};
 export default build

@@ -88,7 +88,7 @@ export default function Parameters({
           <label className="input-group-text" htmlFor="text-background-opacity">
             {i18next.t("lang")}
           </label>
-          <select className="form-select" id="text-background-opacity" value={config.lang} onChange={setLang}>
+          <select className="form-select" id="text-background-opacity" value={i18next.lang} onChange={setLang}>
             <option value="en">{i18next.t("lang-en")}</option>
             <option value="fr">{i18next.t("lang-fr")}</option>
           </select>
