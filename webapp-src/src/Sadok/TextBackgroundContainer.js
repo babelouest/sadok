@@ -30,11 +30,11 @@ export default function TextBackgroundContainer({
           <NodeParser node={node} offset={-1} key={index} book={book} />
         );
       }
-    })
+    });
     return (
       <>
         <TextBackgroundStyle useBookCss={config?.useBookCss||false} styles={book.styles||[]} />
-        <Cover book={book} opacity={textBackgroundOpacity} showCover={!playReader && showCoverBackground} />
+        <Cover book={book?.book||false} opacity={textBackgroundOpacity} showCover={!playReader && showCoverBackground} />
         <div id="sadok-text-background" className={"text-background-container padding-top-text text-background opacity-" + textBackgroundOpacity} onClick={cbTogglePlay}>
           {nodesJsx}
         </div>

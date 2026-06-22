@@ -69,5 +69,7 @@
   "browse-show": "Show",
   "browse-show-all": "Files and folders",
   "browse-show-files": "Files",
-  "browse-show-folders": "Folders"
+  "browse-show-folders": "Folders",
+  "time-remaining-compact": "{{h}}:{{m}}:{{s}}",
+  "time-remaining-long": " - {{h}}:{{m}}:{{s}} remaining"
 }
