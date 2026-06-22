@@ -199,12 +199,12 @@ export default function App({}) {
   useEffect(() => { // [book,bookProfile,playReader] (show text and loop)
     const currentText = getCurrentText(book.bookContent, bookProfile.offset);
     if (currentText) {
-      if (previousDisplay.current === currentText.text && !jumpTextRight) {
+      if (previousDisplay.current?.text === currentText.text && previousDisplay.current.chapterOffset !== currentText.chapterOffset && !jumpTextRight && playReader) {
         setJumpTextRight(true);
       } else if (jumpTextRight) {
         setJumpTextRight(false);
       }
-      previousDisplay.current = currentText.text;
+      previousDisplay.current = currentText;
       if (!chapter || currentText.chapterIndex !== chapterIndex) {
         setChapterIndex(currentText.chapterIndex);
         setChapter(book.bookContent[currentText.chapterIndex]);
