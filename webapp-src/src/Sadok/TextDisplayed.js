@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 
-import NodeParser from './NodeParser';
-
 export default function TextDisplayed({
   text,
   textSize,

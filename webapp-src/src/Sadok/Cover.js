@@ -14,6 +14,8 @@ export default function Cover({book, opacity, showCover}) {
           setImgData(dataUrlPrefix+reader.result.split(",")[1]);
         };
       });
+    } else {
+      setImgData(false);
     }
   },[book,showCover]);
 

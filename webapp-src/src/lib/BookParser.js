@@ -1,6 +1,7 @@
 import i18next from 'i18next';
 
 import epubParser from '../lib/EpubParser';
+import apiManager from './APIManager';
 
 //import pdfjs from 'pdfjs-dist/legacy/build/pdf';
 //import pdfjsWorker from 'pdfjs-dist/legacy/build/pdf.worker';
@@ -19,23 +20,62 @@ class BookParser {
   }
 
   parseTxt(txtUrl) {
-  }
-
-  extractUrlText(textUrl) {
-    return $.ajax({
+    return fetch(txtUrl, {
       method: "GET",
-      url: textUrl
+      redirect: "error"
+    })
+    .then(resp => {
+      if (resp.ok) {
+        return resp.text()
+        .then(text => {
+          let splitText = text.split("\n");
+          let nodes = [], tokensTotal = 0;
+          splitText.forEach(paragraph => {
+            let coords = parseTxtToCoord(paragraph);
+            tokensTotal += coords.length;
+            nodes.push({
+              classList: "",
+              id: "",
+              tag: "p",
+              tokens: coords.length,
+              parsedNodes: [{
+                classList: "",
+                id: "",
+                tag: "#text",
+                tokens: coords.length,
+                coord: coords,
+                text: paragraph,
+                parsedNodes: []
+              }]
+            });
+          });
+          return {
+            book: false,
+            metadata: {
+              type: "txt",
+              author: false,
+              title: parseTitleFromUrl(txtUrl),
+              year: false,
+              tokens: tokensTotal,
+            },
+            styles: [],
+            fonts: [],
+            imgResources: [],
+            bookContent: [{
+              depth: 0,
+              label: false,
+              parsedNodes: nodes,
+              tokens: tokensTotal
+            }]
+          };
+        });
+      } else {
+        return Promise.reject("error");
+      }
+    })
+    .catch(err => {
+      console.error("API error", err);
     });
-  }
-
-  parseTitleFromUrl(url, metadata = false) {
-    if (metadata?.title) {
-      return (metadata.author?metadata.author+" - ":"") + metadata.title;
-    } else {
-      let title = url.split("/");
-      title = title[title.length-1];
-      return decodeURIComponent(title.substring(0, title.lastIndexOf('.')).replaceAll("_", " "));
-    }
   }
 
   getExpectedType(url) {
@@ -261,4 +301,14 @@ export const isNonBreakSpacePreviousNonChar = (code) => {
     0x2013, // –
     0x2014, // —
   ].indexOf(code) > -1)
+}
+
+export const parseTitleFromUrl = (url, metadata = false) => {
+  if (metadata?.title) {
+    return (metadata.author?metadata.author+" - ":"") + metadata.title;
+  } else {
+    let title = url.split("/");
+    title = title[title.length-1];
+    return decodeURIComponent(title.substring(0, title.lastIndexOf('.')).replaceAll("_", " "));
+  }
 }

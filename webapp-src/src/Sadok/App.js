@@ -126,7 +126,9 @@ export default function App({}) {
   const [ chapterLabel, setChapterLabel ] = useState(false);
   const [ debugMode, setDebugMode ] = useState(false);
   const [ openBrowse, setOpenBrowse ] = useState(false);
+  const [ jumpTextRight, setJumpTextRight ] = useState(false);
   const wakeLock = useRef(null);
+  const previousDisplay = useRef(null);
 
   const keyUpEvent = (e) => {
     if (e.key === " " || e.code === "Space" || e.keyCode === 32) { // Start reading when space key is pressed
@@ -197,7 +199,13 @@ export default function App({}) {
   useEffect(() => { // [book,bookProfile,playReader] (show text and loop)
     const currentText = getCurrentText(book.bookContent, bookProfile.offset);
     if (currentText) {
-      if (currentText.chapterIndex !== chapterIndex) {
+      if (previousDisplay.current === currentText.text && !jumpTextRight) {
+        setJumpTextRight(true);
+      } else if (jumpTextRight) {
+        setJumpTextRight(false);
+      }
+      previousDisplay.current = currentText.text;
+      if (!chapter || currentText.chapterIndex !== chapterIndex) {
         setChapterIndex(currentText.chapterIndex);
         setChapter(book.bookContent[currentText.chapterIndex]);
         book.bookContent.forEach((chap, index) => {
@@ -205,7 +213,6 @@ export default function App({}) {
             setChapterLabel(chap.label);
           }
         });
-        setChapter(book.bookContent[currentText.chapterIndex]);
       }
       setChapterOffset(currentText.chapterOffset);
       if (currentText.text) {
@@ -371,9 +378,15 @@ export default function App({}) {
   };
 
   const openBook = (newBook) => {
+    let prom = false;
     if (newBook.type === "epub") {
-      return bookParser.parseEpub(newBook.url)
-      .then(bookParsed => {
+      prom = bookParser.parseEpub(newBook.url);
+    } else if (newBook.type === "pdf") {
+    } else if (newBook.type === "txt") {
+      prom = bookParser.parseTxt(newBook.url)
+    }
+    if (prom) {
+      return prom.then(bookParsed => {
         setBook(bookParsed);
         profile.getBookProfile(newBook.url)
         .then(curBookProfile => {
@@ -393,8 +406,8 @@ export default function App({}) {
       .catch(err => {
         console.error("error open book", newBook, err);
       });
-    } else if (newBook.type === "pdf") {
-    } else if (newBook.type === "txt") {
+    } else {
+      return Promise.reject(false);
     }
   };
 
@@ -479,6 +492,7 @@ export default function App({}) {
                                  cbTogglePlay={togglePlay} />
         <div className="perfect-centering" onClick={togglePlay}>
           <p className={"fw-bold "+getTextSize[config.speedReaderTextSize]}>
+            {jumpTextRight?<span>&nbsp;&nbsp;&nbsp;</span>:<></>}
             {currentText}
           </p>
         </div>
