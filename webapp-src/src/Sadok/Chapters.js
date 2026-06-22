@@ -83,8 +83,9 @@ export default function Chapters({
         <div className="chapter-list">
           <div className="mb-3">
             <div className="list-group">
-              <hr/>
-              {chaptersJsx}
+              <div className="chapter-list elt-bottom">
+                {chaptersJsx}
+              </div>
             </div>
           </div>
         </div>
