@@ -2,11 +2,14 @@ import React, { useState, useEffect } from 'react';
 import i18next from 'i18next';
 
 import profile from '../lib/Profile';
+import bookParser from '../lib/BookParser';
 
 import apiManager from '../lib/APIManager';
 import BrowseDir from './BrowseDir';
 import BrowseFile from './BrowseFile';
 import SortIcon from './SortIcon';
+import BookInfo from './BookInfo';
+import ChapterList from './ChapterList';
 
 const getSubDir = (list, breadcrumb) => {
   let subDir = [];
@@ -102,6 +105,8 @@ export default function Browse({config, cbOpenBook, cbClose}) {
   const [ orderColumn, setOrderColumn ] = useState("title");
   const [ orderAsc, setOrderAsc ] = useState(true);
   const [ show, setShow ] = useState(true);
+  const [ viewBook, setViewBook ] = useState(false);
+  const [ viewBookInfo, setViewBookInfo ] = useState(false);
 
   useEffect(() => {
     apiManager.APIRequestExecute("list.json")
@@ -193,42 +198,78 @@ export default function Browse({config, cbOpenBook, cbClose}) {
     }
   };
 
-  let listDirJsx = [], listFilesJsx = [];
-  if (completeList) {
-    sortList(completeList, orderColumn, orderAsc).forEach((item, index) => {
-      listFilesJsx.push (
-        <BrowseFile key={index+item.url} item={item} bookProfile={findBookProfileByUri(bookProfiles, item.url)} cbOpenBook={cbOpenBook} />
-      );
-    });
-  } else if (ongoingList) {
-    sortList(ongoingList, orderColumn, orderAsc).forEach((item, index) => {
-      listFilesJsx.push (
-        <BrowseFile key={index+item.url} item={item} bookProfile={findBookProfileByUri(bookProfiles, item.url)} cbOpenBook={cbOpenBook} />
-      );
-    });
-  } else if (filteredList) {
-    sortList(filteredList, orderColumn, orderAsc).forEach((item, index) => {
-      listFilesJsx.push (
-        <BrowseFile key={index+item.url} item={item} bookProfile={findBookProfileByUri(bookProfiles, item.url)} cbOpenBook={cbOpenBook} />
-      );
-    });
+  const cbViewBook = (bookItem) => {
+    let prom = false;
+    if (bookItem.type === "epub") {
+      prom = bookParser.parseEpub(bookItem.url);
+    } else if (bookItem.type === "pdf") {
+    } else if (bookItem.type === "txt") {
+      prom = bookParser.parseTxt(bookItem.url)
+    }
+    if (prom) {
+      return prom.then(bookParsed => {
+        setViewBookInfo(bookParsed);
+        setViewBook(true);
+      });
+    }
+  };
+
+  const cbCloseViewBook = () => {
+    setViewBook(false);
+  };
+
+  if (viewBook) {
+    return (
+      <>
+        <div className="m-3">
+          <button className="btn btn-secondary" type="button" title={i18next.t("close")} onClick={cbCloseViewBook}>
+            <img src="img/close_small_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg"/>
+          </button>
+        </div>
+        <div className="mb-3">
+          <BookInfo book={viewBookInfo} config={config} />
+        </div>
+        <div className="mb-3">
+          <ChapterList book={viewBookInfo} config={config} offset={-1} cbSetOffset={false} />
+        </div>
+      </>
+    );
   } else {
-    sortList(list, orderColumn, orderAsc).forEach((item, index) => {
-      if (item.type === "dir" && (show === true || show === "folders")) {
-        listDirJsx.push (
-          <BrowseDir key={index+item.title} item={item} cbOpenDir={cbOpenDir} />
-        );
-      } else if (item.type !== "dir" && (show === true || show === "files")) {
+    let listDirJsx = [], listFilesJsx = [];
+    if (completeList) {
+      sortList(completeList, orderColumn, orderAsc).forEach((item, index) => {
         listFilesJsx.push (
-          <BrowseFile key={index+item.url} item={item} bookProfile={findBookProfileByUri(bookProfiles, item.url)} cbOpenBook={cbOpenBook} />
+          <BrowseFile key={index+item.url} item={item} bookProfile={findBookProfileByUri(bookProfiles, item.url)} cbOpenBook={cbOpenBook} cbViewBook={cbViewBook} />
         );
-      }
-    });
-  }
-  return (
-    <>
-      <div className="sticky-top">
-        <div className="input-group mb-3">
+      });
+    } else if (ongoingList) {
+      sortList(ongoingList, orderColumn, orderAsc).forEach((item, index) => {
+        listFilesJsx.push (
+          <BrowseFile key={index+item.url} item={item} bookProfile={findBookProfileByUri(bookProfiles, item.url)} cbOpenBook={cbOpenBook} cbViewBook={cbViewBook} />
+        );
+      });
+    } else if (filteredList) {
+      sortList(filteredList, orderColumn, orderAsc).forEach((item, index) => {
+        listFilesJsx.push (
+          <BrowseFile key={index+item.url} item={item} bookProfile={findBookProfileByUri(bookProfiles, item.url)} cbOpenBook={cbOpenBook} cbViewBook={cbViewBook} />
+        );
+      });
+    } else {
+      sortList(list, orderColumn, orderAsc).forEach((item, index) => {
+        if (item.type === "dir" && (show === true || show === "folders")) {
+          listDirJsx.push (
+            <BrowseDir key={index+item.title} item={item} cbOpenDir={cbOpenDir} />
+          );
+        } else if (item.type !== "dir" && (show === true || show === "files")) {
+          listFilesJsx.push (
+            <BrowseFile key={index+item.url} item={item} bookProfile={findBookProfileByUri(bookProfiles, item.url)} cbOpenBook={cbOpenBook} cbViewBook={cbViewBook} />
+          );
+        }
+      });
+    }
+    return (
+      <>
+        <div className="sticky-top">
           <div className="m-3">
             <button className="btn btn-secondary" type="button" title={i18next.t("close")} onClick={cbClose}>
               <img src="img/close_small_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg"/>
@@ -254,55 +295,55 @@ export default function Browse({config, cbOpenBook, cbClose}) {
               </ol>
             </nav>
           </div>
+          <div className="input-group mb-3">
+            <button className="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" disabled={completeList || filteredList}>{i18next.t("browse-show")}</button>
+            <ul className="dropdown-menu">
+              <li><a className={"dropdown-item"+(show===true?" active":"")} href="#" onClick={(e) => changeShow(e, false)}>{i18next.t("browse-show-all")}</a></li>
+              <li><a className={"dropdown-item"+(show==="files"?" active":"")} href="#" onClick={(e) => changeShow(e, "files")}>{i18next.t("browse-show-files")}</a></li>
+              <li><a className={"dropdown-item"+(show==="folders"?" active":"")} href="#" onClick={(e) => changeShow(e, "folders")}>{i18next.t("browse-show-folders")}</a></li>
+            </ul>
+            <input type="text" className="form-control" placeholder={i18next.t("browse-filter")} value={filter} onChange={changeFilter} disabled={ongoingList || completeList} />
+            <button className="btn btn-secondary" type="button" title={i18next.t("browse-ongoing")} onClick={toggleOngoing} disabled={completeList || filteredList} >
+              <img src="img/book_5_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
+            </button>
+            <button className="btn btn-secondary" type="button" title={i18next.t("browse-done")} onClick={toggleComplete} disabled={ongoingList || filteredList} >
+              <img src="img/check_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
+            </button>
+          </div>
         </div>
-        <div className="input-group mb-3">
-          <button className="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" disabled={completeList || filteredList}>{i18next.t("browse-show")}</button>
-          <ul className="dropdown-menu">
-            <li><a className={"dropdown-item"+(show===true?" active":"")} href="#" onClick={(e) => changeShow(e, false)}>{i18next.t("browse-show-all")}</a></li>
-            <li><a className={"dropdown-item"+(show==="files"?" active":"")} href="#" onClick={(e) => changeShow(e, "files")}>{i18next.t("browse-show-files")}</a></li>
-            <li><a className={"dropdown-item"+(show==="folders"?" active":"")} href="#" onClick={(e) => changeShow(e, "folders")}>{i18next.t("browse-show-folders")}</a></li>
-          </ul>
-          <input type="text" className="form-control" placeholder={i18next.t("browse-filter")} value={filter} onChange={changeFilter} disabled={ongoingList || completeList} />
-          <button className="btn btn-secondary" type="button" title={i18next.t("browse-ongoing")} onClick={toggleOngoing} disabled={completeList || filteredList} >
-            <img src="img/book_5_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
-          </button>
-          <button className="btn btn-secondary" type="button" title={i18next.t("browse-done")} onClick={toggleComplete} disabled={ongoingList || filteredList} >
-            <img src="img/check_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
-          </button>
+        <div className="overflow-auto table-responsive">
+          <table className="table table-striped">
+            <thead className="">
+              <tr>
+                <th scope="col">
+                  <a href="#" onClick={(e) => changeOrder(e, "title")}>
+                    {i18next.t("browse-filename")}
+                    <SortIcon column={orderColumn==="title"} asc={orderAsc} />
+                  </a>
+                </th>
+                <th scope="col">
+                  <a href="#" onClick={(e) => changeOrder(e, "size")}>
+                    {i18next.t("browse-size")}
+                    <SortIcon column={orderColumn==="size"} asc={orderAsc} />
+                  </a>
+                </th>
+                <th scope="col">
+                  <a href="#" onClick={(e) => changeOrder(e, "date")}>
+                    {i18next.t("browse-date")}
+                    <SortIcon column={orderColumn==="date"} asc={orderAsc} />
+                  </a>
+                </th>
+                <th scope="col">
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {listDirJsx}
+              {listFilesJsx}
+            </tbody>
+          </table>
         </div>
-      </div>
-      <div className="overflow-auto table-responsive">
-        <table className="table table-striped">
-          <thead className="">
-            <tr>
-              <th scope="col">
-                <a href="#" onClick={(e) => changeOrder(e, "title")}>
-                  {i18next.t("browse-filename")}
-                  <SortIcon column={orderColumn==="title"} asc={orderAsc} />
-                </a>
-              </th>
-              <th scope="col">
-                <a href="#" onClick={(e) => changeOrder(e, "size")}>
-                  {i18next.t("browse-size")}
-                  <SortIcon column={orderColumn==="size"} asc={orderAsc} />
-                </a>
-              </th>
-              <th scope="col">
-                <a href="#" onClick={(e) => changeOrder(e, "date")}>
-                  {i18next.t("browse-date")}
-                  <SortIcon column={orderColumn==="date"} asc={orderAsc} />
-                </a>
-              </th>
-              <th scope="col">
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {listDirJsx}
-            {listFilesJsx}
-          </tbody>
-        </table>
-      </div>
-    </>
-  );
+      </>
+    );
+  }
 }

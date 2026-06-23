@@ -6,7 +6,13 @@ import DateFormat from './DateFormat';
 
 import { READ_MODE } from '../lib/Constants';
 
-export default function BrowseFile({item, bookProfile, cbOpenBook}) {
+export default function BrowseFile({item, bookProfile, cbOpenBook, cbViewBook}) {
+  const viewBook = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    cbViewBook(item);
+  };
+
   let bookProfileJsx;
   if (bookProfile) {
     if (bookProfile.offset >= bookProfile.tokens) {
@@ -36,6 +42,11 @@ export default function BrowseFile({item, bookProfile, cbOpenBook}) {
         <DateFormat date={item.date} />
       </td>
       <td>
+        <a href="#" onClick={viewBook} className="elt-left">
+          <span className="badge text-bg-secondary rounded-pill">
+            <img src="img/visibility_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
+          </span>
+        </a>
         {bookProfileJsx}
       </td>
     </tr>

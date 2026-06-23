@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import i18next from 'i18next';
 
 import TimeRemaining from './TimeRemaining';
-import ChapterItem from './ChapterItem';
+import BookInfo from './BookInfo';
+import ChapterList from './ChapterList';
 import NavButtons from './NavButtons';
 
 export default function Chapters({
@@ -26,30 +27,6 @@ export default function Chapters({
     }
   },[book,offset]);
 
-  let chaptersJsx = [];
-  let chapterOffset = 0;
-  book.bookContent.map((chapter, index) => {
-    if (chapter.label) {
-      chaptersJsx.push(
-        <ChapterItem key={index}
-                     config={config}
-                     totalTokens={book.metadata.tokens}
-                     chapter={chapter}
-                     chapterOffset={chapterOffset}
-                     offset={offset}
-                     cbSetOffset={cbSetOffset}
-        />
-      );
-    }
-    chapterOffset += chapter.tokens;
-  });
-  let yearJsx;
-  if (book.metadata.year) {
-    yearJsx = 
-      <div className="mb-3 text-center">
-        {(new Date(book.metadata.year)).getFullYear()}
-      </div>
-  }
   return (
     <div className="offcanvas offcanvas-start" tabIndex="-1" id="LeftMenu" aria-labelledby="menuLabel">
       <div className="offcanvas-header">
@@ -78,16 +55,7 @@ export default function Chapters({
           </button>
         </div>
         <div className="mb-3">
-          <div className="mb-3 text-center fs-2">
-            {book?.metadata.title||""}
-          </div>
-          <div className="mb-3 text-center fw-bold">
-            {book?.metadata.author?.name||""}
-          </div>
-          {yearJsx}
-          <div className="mb-3 text-center fs-6 fst-italic">
-            {i18next.t("word-length", {val: book?.metadata.tokens||0})} - <TimeRemaining offset={0} textSpeed={(+config.speedReaderTextSpeed)} tokens={book?.metadata.tokens||1} compact={true} />
-          </div>
+          <BookInfo book={book} config={config} />
         </div>
         <NavButtons book={book}
                     offset={offset}
@@ -100,11 +68,7 @@ export default function Chapters({
                     cbNavigateNextChapter={cbNavigateNextChapter} />
         <div className="chapter-list elt-bottom">
           <div className="mb-3">
-            <div className="list-group">
-              <div className="chapter-list">
-                {chaptersJsx}
-              </div>
-            </div>
+            <ChapterList book={book} config={config} offset={offset} cbSetOffset={cbSetOffset} />
           </div>
         </div>
       </div>

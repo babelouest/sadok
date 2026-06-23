@@ -6,7 +6,9 @@ import TimeRemaining from './TimeRemaining';
 export default function ChapterItem({config, totalTokens, chapter, chapterOffset, offset, cbSetOffset}) {
   const selectChapter = (e, chapterOffset) => {
     e.preventDefault();
-    cbSetOffset(chapterOffset);
+    if (cbSetOffset) {
+      cbSetOffset(chapterOffset);
+    }
   };
 
   let remainingJsx =
