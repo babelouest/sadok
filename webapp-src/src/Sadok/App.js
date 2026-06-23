@@ -127,6 +127,7 @@ export default function App({}) {
   const [ debugMode, setDebugMode ] = useState(false);
   const [ openBrowse, setOpenBrowse ] = useState(false);
   const [ jumpTextRight, setJumpTextRight ] = useState(false);
+  const [ coverData, setCoverData ] = useState(false);
   const wakeLock = useRef(null);
   const previousDisplay = useRef(null);
 
@@ -402,6 +403,19 @@ export default function App({}) {
             profile.setBookProfile(newBook.url, extendedBookProfile);
           }
         });
+        if (bookParsed.book?.resources?.cover) {
+          bookParsed.book.loadBlob(bookParsed.book.resources.cover.href)
+          .then(res => {
+            const reader = new FileReader();
+            reader.readAsDataURL(res);
+            reader.onloadend = () => {
+              const dataUrlPrefix = `data:${bookParsed.book.resources.cover.mediaType};base64,`;
+              setCoverData(dataUrlPrefix+reader.result.split(",")[1]);
+            };
+          });
+        } else {
+          setCoverData(false);
+        }
       })
       .catch(err => {
         console.error("error open book", newBook, err);
@@ -488,6 +502,7 @@ export default function App({}) {
                                  textBackgroundOpacity={config.textBackgroundOpacity}
                                  showCoverBackground={config.coverBackground}
                                  book={book}
+                                 coverData={coverData}
                                  playReader={playReader}
                                  cbTogglePlay={togglePlay} />
         <div className="perfect-centering" onClick={togglePlay}>

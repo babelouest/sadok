@@ -71,5 +71,6 @@
   "browse-show-files": "Fichiers",
   "browse-show-folders": "Dossiers",
   "time-remaining-compact": "{{h}}:{{m}}:{{s}}",
-  "time-remaining-long": " - {{h}}:{{m}}:{{s}} restant"
+  "time-remaining-long": " - {{h}}:{{m}}:{{s}} restant",
+  "word-length": "{{val, number()}} mots"
 }

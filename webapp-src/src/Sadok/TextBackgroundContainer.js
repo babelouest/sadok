@@ -12,6 +12,7 @@ export default function TextBackgroundContainer({
   textBackgroundOpacity,
   showCoverBackground,
   book,
+  coverData,
   playReader,
   cbTogglePlay
 }) {
@@ -34,11 +35,15 @@ export default function TextBackgroundContainer({
     return (
       <>
         <TextBackgroundStyle useBookCss={config?.useBookCss||false} styles={book.styles||[]} />
-        <Cover book={book?.book||false} opacity={textBackgroundOpacity} showCover={!playReader && showCoverBackground} />
+        <Cover coverData={coverData} opacity={textBackgroundOpacity} showCover={!playReader && showCoverBackground} />
         <div id="sadok-text-background" className={"text-background-container padding-top-text text-background opacity-" + textBackgroundOpacity} onClick={cbTogglePlay}>
           {nodesJsx}
         </div>
       </>
+    );
+  } else if (coverData) {
+    return (
+      <Cover coverData={coverData} opacity={textBackgroundOpacity} showCover={!playReader && showCoverBackground} />
     );
   }
 }

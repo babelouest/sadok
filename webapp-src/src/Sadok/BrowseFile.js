@@ -11,13 +11,13 @@ export default function BrowseFile({item, bookProfile, cbOpenBook}) {
   if (bookProfile) {
     if (bookProfile.offset >= bookProfile.tokens) {
       bookProfileJsx = 
-        <span className="badge text-bg-info rounded-pill elt-right">
+        <span className="badge text-bg-secondary rounded-pill">
           <img className="elt-right" src="img/check_small_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
         </span>
     } else if (bookProfile.readMode === READ_MODE.SPEED_READER) {
       if (bookProfile.tokens) {
         bookProfileJsx = 
-          <span className="badge text-bg-info rounded-pill elt-right">
+          <span className="badge text-bg-secondary rounded-pill">
             {i18next.t("percent", {val: Math.floor(bookProfile.offset*100/bookProfile.tokens)})}
             <img className="elt-right" src="img/speed_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
           </span>
@@ -26,7 +26,7 @@ export default function BrowseFile({item, bookProfile, cbOpenBook}) {
   }
   return (
     <tr onClick={() => cbOpenBook(item)} className="clickable">
-      <td>
+      <td className="text-break">
         {item.title}
       </td>
       <td>

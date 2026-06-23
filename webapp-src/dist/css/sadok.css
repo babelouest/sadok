@@ -115,3 +115,6 @@
   padding-left: 50px;
   padding-right: 50px;
 }
+.browse-name {
+  overflow-wrap: break-word;
+}

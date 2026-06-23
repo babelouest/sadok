@@ -19,7 +19,6 @@ export default function Chapters({
   cbSetOffset,
   cbRemoveProfile
 }) {
-
   useEffect(() => {
     let elm = document.getElementById("sadok-current-chapter");
     if (elm) {
@@ -44,6 +43,13 @@ export default function Chapters({
     }
     chapterOffset += chapter.tokens;
   });
+  let yearJsx;
+  if (book.metadata.year) {
+    yearJsx = 
+      <div className="mb-3 text-center">
+        {(new Date(book.metadata.year)).getFullYear()}
+      </div>
+  }
   return (
     <div className="offcanvas offcanvas-start" tabIndex="-1" id="LeftMenu" aria-labelledby="menuLabel">
       <div className="offcanvas-header">
@@ -71,6 +77,18 @@ export default function Chapters({
             <img src="img/delete_forever_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt={i18next.t("nav-next-chapter")} />
           </button>
         </div>
+        <div className="mb-3">
+          <div className="mb-3 text-center fs-2">
+            {book?.metadata.title||""}
+          </div>
+          <div className="mb-3 text-center fw-bold">
+            {book?.metadata.author?.name||""}
+          </div>
+          {yearJsx}
+          <div className="mb-3 text-center fs-6 fst-italic">
+            {i18next.t("word-length", {val: book?.metadata.tokens||0})} - <TimeRemaining offset={0} textSpeed={(+config.speedReaderTextSpeed)} tokens={book?.metadata.tokens||1} compact={true} />
+          </div>
+        </div>
         <NavButtons book={book}
                     offset={offset}
                     chapterIndex={chapterIndex}
@@ -80,10 +98,10 @@ export default function Chapters({
                     cbNavigatePrevious={cbNavigatePrevious}
                     cbNavigateBeginChapter={cbNavigateBeginChapter}
                     cbNavigateNextChapter={cbNavigateNextChapter} />
-        <div className="chapter-list">
+        <div className="chapter-list elt-bottom">
           <div className="mb-3">
             <div className="list-group">
-              <div className="chapter-list elt-bottom">
+              <div className="chapter-list">
                 {chaptersJsx}
               </div>
             </div>
