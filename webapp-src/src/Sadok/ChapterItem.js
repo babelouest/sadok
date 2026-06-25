@@ -28,8 +28,8 @@ export default function ChapterItem({config, totalTokens, chapter, chapterOffset
          onClick={(e) => selectChapter(e, chapterOffset)}
          aria-current="true"
          id={currentId}
-         data-bs-toggle="offcanvas"
-         data-bs-target="#LeftMenu">
+         data-bs-toggle={cbSetOffset?"offcanvas":""}
+         data-bs-target={cbSetOffset?"#LeftMenu":""}>
         <div className="d-flex w-80 justify-content-between">
           <h6 className="mb-1 fw-bold">
             {chapter.label}

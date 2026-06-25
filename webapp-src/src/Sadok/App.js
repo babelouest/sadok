@@ -116,7 +116,7 @@ const getNextTextBlock = (firstOffset, textLen, fullPlain, textCoordList, debugM
 export default function App({}) {
   const [ config, setConfig ] = useState({...CONFIG_DEFAULT, ...{ lang: i18next.language }});
   const [ bookProfile, setBookProfile ] = useState(BOOK_PROFILE_DEFAULT);
-  const [ book, setBook ] = useState({metadata: {}, bookContent: []});
+  const [ book, setBook ] = useState({metadata: {tokens: 0}, bookContent: []});
   const [ cssFonts, setCssFonts ] = useState([]);
   const [ chapter, setChapter ] = useState(false);
   const [ chapterIndex, setChapterIndex ] = useState(-1);
@@ -128,8 +128,9 @@ export default function App({}) {
   const [ openBrowse, setOpenBrowse ] = useState(false);
   const [ jumpTextRight, setJumpTextRight ] = useState(false);
   const [ coverData, setCoverData ] = useState(false);
-  const wakeLock = useRef(null);
-  const previousDisplay = useRef(null);
+  const wakeLockRef = useRef(null);
+  const previousDisplayRef = useRef(null);
+  const sessionOffsetTimeoutRef = useRef(false);
 
   const keyUpEvent = (e) => {
     if (e.key === " " || e.code === "Space" || e.keyCode === 32) { // Start reading when space key is pressed
@@ -168,7 +169,7 @@ export default function App({}) {
       .then(cfg => {
         let startConfig = {...config, ...cfg};
         setConfig(startConfig);
-        if (startConfig.currentBook) {
+        if (startConfig.currentBook && !startConfig.currentBook.startsWith("file://")) {
           openBook({url: startConfig.currentBook, type: startConfig.currentBookType});
         }
       });
@@ -200,12 +201,12 @@ export default function App({}) {
   useEffect(() => { // [book,bookProfile,playReader] (show text and loop)
     const currentText = getCurrentText(book.bookContent, bookProfile.offset);
     if (currentText) {
-      if (previousDisplay.current?.text === currentText.text && previousDisplay.current.chapterOffset !== currentText.chapterOffset && !jumpTextRight && playReader) {
+      if (previousDisplayRef.current?.text === currentText.text && previousDisplayRef.current.chapterOffset !== currentText.chapterOffset && !jumpTextRight && playReader) {
         setJumpTextRight(true);
       } else if (jumpTextRight) {
         setJumpTextRight(false);
       }
-      previousDisplay.current = currentText;
+      previousDisplayRef.current = currentText;
       if (!chapter || currentText.chapterIndex !== chapterIndex) {
         setChapterIndex(currentText.chapterIndex);
         setChapter(book.bookContent[currentText.chapterIndex]);
@@ -226,17 +227,18 @@ export default function App({}) {
     }
     if (playReader) {
       let timeoutFactor = 1;
-      if (currentText.text.length > 16 && config.speedReaderSlowLongWords) {
+      if (currentText.text?.length > 16 && config.speedReaderSlowLongWords) {
         timeoutFactor = Math.floor(currentText.text.length/20);
         if (timeoutFactor > 20) {
           timeoutFactor = 20;
         }
       }
       const intervalId = setTimeout(() => {
-        if (book?.metadata?.tokens && bookProfile.offset < book?.metadata?.tokens) {
+        if (book?.metadata?.tokens && bookProfile.offset < book.metadata.tokens) {
           setBookProfile({...bookProfile, ...{offset: bookProfile.offset+1}});
         } else {
           setPlayReader(false);
+          endFullScreen();
         }
       }, timeoutFactor*(60000/config.speedReaderTextSpeed));
       return () => clearTimeout(intervalId);
@@ -298,17 +300,17 @@ export default function App({}) {
     } else if (elem.webkitRequestFullscreen) { /* Safari */
       elem.webkitRequestFullscreen();
     }
-    if ("wakeLock" in navigator) {
+    if ("wakeLockRef" in navigator) {
       try {
-        if (wakeLock.current) {
-          wakeLock.current.release();
-          wakeLock.current = null;
+        if (wakeLockRef.current) {
+          wakeLockRef.current.release();
+          wakeLockRef.current = null;
         }
-        navigator.wakeLock.request("screen").then((res) => {
-          wakeLock.current = res;
+        navigator.wakeLockRef.request("screen").then((res) => {
+          wakeLockRef.current = res;
         });
       } catch (err) {
-        console.error("Error wakeLock", err);
+        console.error("Error wakeLockRef", err);
       }
     }
   }
@@ -324,14 +326,14 @@ export default function App({}) {
       } catch (err) {
       }
     }
-    if ("wakeLock" in navigator) {
+    if ("wakeLockRef" in navigator) {
       try {
-        if (wakeLock.current) {
-          wakeLock.current.release();
-          wakeLock.current = null;
+        if (wakeLockRef.current) {
+          wakeLockRef.current.release();
+          wakeLockRef.current = null;
         }
       } catch (err) {
-        console.error("Error wakeLock unlock", err);
+        console.error("Error wakeLockRef unlock", err);
       }
     }
   }
@@ -352,6 +354,7 @@ export default function App({}) {
         }
       }
     } else {
+      // todo
     }
   };
 
@@ -371,6 +374,7 @@ export default function App({}) {
         }
       }
     } else {
+      // todo
     }
   };
 
@@ -382,9 +386,14 @@ export default function App({}) {
     let prom = false;
     if (newBook.type === "epub") {
       prom = bookParser.parseEpub(newBook.url);
+    } else if (newBook.type === "epubInline") {
+      const blob = new File([newBook.data], newBook.url, { type: 'application/epub+zip' });
+      prom = bookParser.parseEpub(blob);
     } else if (newBook.type === "pdf") {
     } else if (newBook.type === "txt") {
-      prom = bookParser.parseTxt(newBook.url)
+      prom = bookParser.parseTxt(newBook.url);
+    } else if (newBook.type === "txtInline") {
+      prom = bookParser.parseTxtInline(newBook.url, newBook.data);
     }
     if (prom) {
       return prom.then(bookParsed => {
@@ -426,9 +435,16 @@ export default function App({}) {
   };
 
   const updateOffset = (newOffset) => {
-    let newSessionOffset = [...bookProfile.sessionOffset];
-    newSessionOffset.push(newOffset);
-    let extendedBookProfile = {...bookProfile, ...{offset: newOffset, sessionOffset: newSessionOffset}};
+    clearTimeout(sessionOffsetTimeoutRef.current);
+    sessionOffsetTimeoutRef.current = setTimeout(() => {
+      let newSessionOffset = [...bookProfile.sessionOffset];
+      newSessionOffset.push(newOffset);
+      if (newSessionOffset.length > 10) {
+        newSessionOffset = newSessionOffset.slice(-10);
+      }
+      setBookProfile({...bookProfile, ...{sessionOffset: newSessionOffset}});
+    }, 1000);
+    let extendedBookProfile = {...bookProfile, ...{offset: newOffset}};
     setBookProfile(extendedBookProfile);
   };
 
@@ -440,7 +456,7 @@ export default function App({}) {
     let newOffset = 0;
     book.bookContent.forEach((chap, i) => {
       if (i === chapterIndex) {
-        setBookProfile({...bookProfile, ...{offset: newOffset}});
+        updateOffset(newOffset);
       }
       newOffset += chap.tokens;
     });
@@ -450,7 +466,7 @@ export default function App({}) {
     let newOffset = 0;
     book.bookContent.forEach((chap, i) => {
       if (i === (chapterIndex+1)) {
-        setBookProfile({...bookProfile, ...{offset: newOffset}});
+        updateOffset(newOffset);
       }
       newOffset += chap.tokens;
     });
@@ -464,6 +480,14 @@ export default function App({}) {
     setOpenBrowse(false);
   };
 
+  const openBookByContent = (url, type, data) => {
+    openBook({type: type+"Inline", data: data, url: url})
+    .then(() => {
+      updateConfig({ currentBook: url, currentBookType: type });
+    });
+    setOpenBrowse(false);
+  };
+
   const cbRemoveProfile = () => {
     profile.deleteBookProfile(bookProfile.uri)
     .then(() => {
@@ -472,9 +496,13 @@ export default function App({}) {
     });
   };
 
+  const cbSessionClear = () => {
+    setBookProfile({...bookProfile, ...{sessionOffset: [bookProfile.offset]}});
+  };
+
   if (openBrowse) {
     return (
-      <Browse config={config} cbOpenBook={openBrowsedBook} cbClose={cbCloseBrowse} />
+      <Browse config={config} cbOpenBook={openBrowsedBook} cbOpenBookByContent={openBookByContent} cbClose={cbCloseBrowse} />
     );
   } else {
     return (
@@ -482,6 +510,7 @@ export default function App({}) {
         <TopTitle book={book} cbTogglePlay={togglePlay} />
         <Menu book={book}
               offset={bookProfile.offset}
+              bookProfile={bookProfile}
               chapterIndex={chapterIndex}
               config={config}
               playReader={playReader}
@@ -494,7 +523,8 @@ export default function App({}) {
               cbUpdateConfig={updateConfig}
               cbInitConfig={cbInitConfig}
               cbOpenBrowse={cbOpenBrowse}
-              cbRemoveProfile={cbRemoveProfile} />
+              cbRemoveProfile={cbRemoveProfile}
+              cbSessionClear={cbSessionClear} />
         <TextBackgroundContainer config={config}
                                  chapter={chapter}
                                  chapterIndex={chapterIndex}
@@ -510,6 +540,7 @@ export default function App({}) {
             {jumpTextRight?<span>&nbsp;&nbsp;&nbsp;</span>:<></>}
             {currentText}
           </p>
+          {!book.metadata.tokens?<h2>{i18next.t("no-book")}</h2>:<></>}
         </div>
         <BottomInfo book={book}
                     chapterLabel={chapterLabel}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import i18next from 'i18next';
 
 import profile from '../lib/Profile';
@@ -10,6 +10,7 @@ import BrowseFile from './BrowseFile';
 import SortIcon from './SortIcon';
 import BookInfo from './BookInfo';
 import ChapterList from './ChapterList';
+import Cover from './Cover';
 
 const getSubDir = (list, breadcrumb) => {
   let subDir = [];
@@ -93,7 +94,7 @@ const sortList = (list, column, asc) => {
   }
 };
 
-export default function Browse({config, cbOpenBook, cbClose}) {
+export default function Browse({config, cbOpenBook, cbOpenBookByContent, cbClose}) {
   const [ rootList, setRootList ] = useState([]);
   const [ list, setList ] = useState([]);
   const [ ongoingList, setOngoingList ] = useState(false);
@@ -107,6 +108,8 @@ export default function Browse({config, cbOpenBook, cbClose}) {
   const [ show, setShow ] = useState(true);
   const [ viewBook, setViewBook ] = useState(false);
   const [ viewBookInfo, setViewBookInfo ] = useState(false);
+  const [ viewBookCoverData, setviewBookCoverData ] = useState(false);
+  const inputFile = useRef(null);
 
   useEffect(() => {
     apiManager.APIRequestExecute("list.json")
@@ -208,6 +211,19 @@ export default function Browse({config, cbOpenBook, cbClose}) {
     }
     if (prom) {
       return prom.then(bookParsed => {
+        if (bookParsed.book?.resources?.cover) {
+          bookParsed.book.loadBlob(bookParsed.book.resources.cover.href)
+          .then(res => {
+            const reader = new FileReader();
+            reader.readAsDataURL(res);
+            reader.onloadend = () => {
+              const dataUrlPrefix = `data:${bookParsed.book.resources.cover.mediaType};base64,`;
+              setviewBookCoverData(dataUrlPrefix+reader.result.split(",")[1]);
+            };
+          });
+        } else {
+          setviewBookCoverData(false);
+        }
         setViewBookInfo(bookParsed);
         setViewBook(true);
       });
@@ -218,9 +234,36 @@ export default function Browse({config, cbOpenBook, cbClose}) {
     setViewBook(false);
   };
 
+  const openLocalFile = (e) => {
+    let file = e.target.files[0];
+    let fr = new FileReader();
+    if (e.target.files[0].type.startsWith("application/pdf") || e.target.files[0].name.toLowerCase().endsWith(".pdf")) {
+      // Load as pdf
+      /*fr.onload = (ev2) => {
+        cbOpenBookByContent("file://" + e.target.files[0].name, "pdf", ev2.target.result);
+      };
+      fr.readAsArrayBuffer(file);*/
+    } else if (e.target.files[0].type.startsWith("application/epub") || e.target.files[0].name.toLowerCase().endsWith(".epub")) {
+      fr.onload = (ev2) => {
+        // Load as ePub
+        cbOpenBookByContent("file://" + e.target.files[0].name, "epub", ev2.target.result);
+      };
+      fr.readAsArrayBuffer(file);
+    } else {
+      fr.onload = (ev2) => {
+        // Load as text
+        if ((typeof ev2.target.result) === "string") {
+          cbOpenBookByContent("file://" + e.target.files[0].name, "txt", ev2.target.result);
+        }
+      };
+      fr.readAsText(file);
+    }
+  };
+
   if (viewBook) {
     return (
       <>
+        <Cover coverData={viewBookCoverData} opacity={"50"} showCover={true} />
         <div className="m-3">
           <button className="btn btn-secondary" type="button" title={i18next.t("close")} onClick={cbCloseViewBook}>
             <img src="img/close_small_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg"/>
@@ -229,7 +272,7 @@ export default function Browse({config, cbOpenBook, cbClose}) {
         <div className="mb-3">
           <BookInfo book={viewBookInfo} config={config} />
         </div>
-        <div className="mb-3">
+        <div className="mb-3 opacity-75">
           <ChapterList book={viewBookInfo} config={config} offset={-1} cbSetOffset={false} />
         </div>
       </>
@@ -309,6 +352,9 @@ export default function Browse({config, cbOpenBook, cbClose}) {
             <button className="btn btn-secondary" type="button" title={i18next.t("browse-done")} onClick={toggleComplete} disabled={ongoingList || filteredList} >
               <img src="img/check_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
             </button>
+            <button className="btn btn-secondary" type="button" title={i18next.t("browse-open-local-file")} onClick={() => inputFile.current.click()} >
+              <img src="img/upload_file_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
+            </button>
           </div>
         </div>
         <div className="overflow-auto table-responsive">
@@ -343,6 +389,10 @@ export default function Browse({config, cbOpenBook, cbClose}) {
             </tbody>
           </table>
         </div>
+        <input type="file"
+               className="upload"
+               ref={inputFile}
+               onChange={openLocalFile} />
       </>
     );
   }

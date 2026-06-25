@@ -3,7 +3,7 @@ import i18next from 'i18next';
 
 import speechSynth from '../lib/SpeechSynth';
 
-export default function MenuSpeechSynth({config, cbUpdateConfig}) {
+export default function MenuSpeechSynth({config, currentMode, cbUpdateConfig}) {
   const toggleSpeechLang = (e) => {
     cbUpdateConfig({
       speechLang: e.target.value
@@ -39,11 +39,11 @@ export default function MenuSpeechSynth({config, cbUpdateConfig}) {
     return(
     <div className="accordion-item">
       <h2 className="accordion-header">
-        <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSpeechSynth" aria-expanded="true" aria-controls="collapseSpeechSynth">
+        <button className={"accordion-button"+(currentMode?"":" collapsed")} type="button" data-bs-toggle="collapse" data-bs-target="#collapseSpeechSynth" aria-expanded="true" aria-controls="collapseSpeechSynth">
           {i18next.t("speech-synth-title")}
         </button>
       </h2>
-      <div id="collapseSpeechSynth" className="accordion-collapse collapse" data-bs-parent="#accordionMenu">
+      <div id="collapseSpeechSynth" className={"accordion-collapse collapse"+(currentMode?" show":"")} data-bs-parent="#accordionMenu">
         <div className="accordion-body">
           <div className="mb-3">
             <label htmlFor="speechLangLabel">

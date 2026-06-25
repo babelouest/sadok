@@ -1,5 +1,6 @@
 {
   "title": "Sadok - #{{build}}",
+  "no-book": "Veuillez sélectionner un livre dans la bibliothèque",
   "nav-begin-chapter": "Début du chapitre",
   "nav-previous-10": "10 blocs en arrière",
   "nav-previous": "1 bloc en arrière",
@@ -72,5 +73,6 @@
   "browse-show-folders": "Dossiers",
   "time-remaining-compact": "{{h}}:{{m}}:{{s}}",
   "time-remaining-long": " - {{h}}:{{m}}:{{s}} restant",
-  "word-length": "{{val, number()}} mots"
+  "word-length": "{{val, number()}} mots",
+  "browse-open-local-file": "Ouvrir un fichier"
 }

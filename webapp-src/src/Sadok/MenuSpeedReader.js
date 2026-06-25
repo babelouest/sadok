@@ -3,7 +3,7 @@ import i18next from 'i18next';
 
 import { SpeedReaderWordsPerMinuteAvailable } from '../lib/Constants';
 
-export default function MenuSpeedReader({config, cbUpdateConfig}) {
+export default function MenuSpeedReader({config, currentMode, cbUpdateConfig}) {
 
   const setTextSpeed = (e) => {
     cbUpdateConfig({speedReaderTextSpeed: e.target.value});
@@ -20,11 +20,11 @@ export default function MenuSpeedReader({config, cbUpdateConfig}) {
   return (
     <div className="accordion-item">
       <h2 className="accordion-header">
-        <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSpeedReader" aria-expanded="true" aria-controls="collapseSpeedReader">
+        <button className={"accordion-button"+(currentMode?"":" collapsed")} type="button" data-bs-toggle="collapse" data-bs-target="#collapseSpeedReader" aria-expanded="true" aria-controls="collapseSpeedReader">
           {i18next.t("speed-reader-title")}
         </button>
       </h2>
-      <div id="collapseSpeedReader" className="accordion-collapse collapse" data-bs-parent="#accordionMenu">
+      <div id="collapseSpeedReader" className={"accordion-collapse collapse"+(currentMode?" show":"")} data-bs-parent="#accordionMenu">
         <div className="accordion-body">
           <div className="input-group mb-3">
             <div className="input-group mb-3">

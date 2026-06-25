@@ -7,6 +7,7 @@ import Chapters from './Chapters';
 export default function Menus({
   book,
   offset,
+  bookProfile,
   chapterIndex,
   config,
   playReader,
@@ -19,7 +20,8 @@ export default function Menus({
   cbUpdateConfig,
   cbInitConfig,
   cbOpenBrowse,
-  cbRemoveProfile
+  cbRemoveProfile,
+  cbSessionClear
 }) {
 
   if (!playReader) {
@@ -30,7 +32,7 @@ export default function Menus({
             <button className="btn btn-secondary" type="button" onClick={cbOpenBrowse} title={i18next.t("browse")}>
               <img src="img/auto_stories_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg"/>
             </button>
-            <button className="btn btn-secondary" type="button" data-bs-toggle="offcanvas" data-bs-target="#LeftMenu" aria-controls="LeftMenu" title={i18next.t("chapters")}>
+            <button className="btn btn-secondary" type="button" data-bs-toggle="offcanvas" data-bs-target="#LeftMenu" aria-controls="LeftMenu" title={i18next.t("chapters")} disabled={!book.metadata.tokens}>
               <img src="img/format_list_numbered_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg"/>
             </button>
           </div>
@@ -42,6 +44,7 @@ export default function Menus({
         </div>
         <Chapters book={book}
                   offset={offset}
+                  bookProfile={bookProfile}
                   config={config}
                   chapterIndex={chapterIndex}
                   playReader={playReader}
@@ -52,7 +55,8 @@ export default function Menus({
                   cbNavigateNextChapter={cbNavigateNextChapter}
                   cbTogglePlay={cbTogglePlay}
                   cbSetOffset={cbSetOffset}
-                  cbRemoveProfile={cbRemoveProfile} />
+                  cbRemoveProfile={cbRemoveProfile}
+                  cbSessionClear={cbSessionClear} />
         <Parameters book={book}
                     offset={offset}
                     config={config}

@@ -118,3 +118,6 @@
 .browse-name {
   overflow-wrap: break-word;
 }
+.upload {
+  display:none;
+}

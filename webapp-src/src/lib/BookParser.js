@@ -28,46 +28,7 @@ class BookParser {
       if (resp.ok) {
         return resp.text()
         .then(text => {
-          let splitText = text.split("\n");
-          let nodes = [], tokensTotal = 0;
-          splitText.forEach(paragraph => {
-            let coords = parseTxtToCoord(paragraph);
-            tokensTotal += coords.length;
-            nodes.push({
-              classList: "",
-              id: "",
-              tag: "p",
-              tokens: coords.length,
-              parsedNodes: [{
-                classList: "",
-                id: "",
-                tag: "#text",
-                tokens: coords.length,
-                coord: coords,
-                text: paragraph,
-                parsedNodes: []
-              }]
-            });
-          });
-          return {
-            book: false,
-            metadata: {
-              type: "txt",
-              author: false,
-              title: parseTitleFromUrl(txtUrl),
-              year: false,
-              tokens: tokensTotal,
-            },
-            styles: [],
-            fonts: [],
-            imgResources: [],
-            bookContent: [{
-              depth: 0,
-              label: false,
-              parsedNodes: nodes,
-              tokens: tokensTotal
-            }]
-          };
+          return this.parseTxtInline(txtUrl, text);
         });
       } else {
         return Promise.reject("error");
@@ -75,6 +36,49 @@ class BookParser {
     })
     .catch(err => {
       console.error("API error", err);
+    });
+  }
+
+  parseTxtInline(url, data) {
+    let splitText = data.split("\n");
+    let nodes = [], tokensTotal = 0;
+    splitText.forEach(paragraph => {
+      let coords = parseTxtToCoord(paragraph);
+      tokensTotal += coords.length;
+      nodes.push({
+        classList: "",
+        id: "",
+        tag: "p",
+        tokens: coords.length,
+        parsedNodes: [{
+          classList: "",
+          id: "",
+          tag: "#text",
+          tokens: coords.length,
+          coord: coords,
+          text: paragraph,
+          parsedNodes: []
+        }]
+      });
+    });
+    return Promise.resolve({
+      book: false,
+      metadata: {
+        type: "txt",
+        author: false,
+        title: parseTitleFromUrl(url),
+        year: false,
+        tokens: tokensTotal,
+      },
+      styles: [],
+      fonts: [],
+      imgResources: [],
+      bookContent: [{
+        depth: 0,
+        label: false,
+        parsedNodes: nodes,
+        tokens: tokensTotal
+      }]
     });
   }
 

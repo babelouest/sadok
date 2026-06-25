@@ -5,10 +5,12 @@ import TimeRemaining from './TimeRemaining';
 import BookInfo from './BookInfo';
 import ChapterList from './ChapterList';
 import NavButtons from './NavButtons';
+import SessionBookmarks from './SessionBookmarks';
 
 export default function Chapters({
   book,
   offset,
+  bookProfile,
   chapterIndex,
   config,
   playReader,
@@ -18,15 +20,9 @@ export default function Chapters({
   cbNavigateNextChapter,
   cbTogglePlay,
   cbSetOffset,
-  cbRemoveProfile
+  cbRemoveProfile,
+  cbSessionClear
 }) {
-  useEffect(() => {
-    let elm = document.getElementById("sadok-current-chapter");
-    if (elm) {
-      elm.scrollIntoView();
-    }
-  },[book,offset]);
-
   return (
     <div className="offcanvas offcanvas-start" tabIndex="-1" id="LeftMenu" aria-labelledby="menuLabel">
       <div className="offcanvas-header">
@@ -54,9 +50,6 @@ export default function Chapters({
             <img src="img/delete_forever_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt={i18next.t("nav-next-chapter")} />
           </button>
         </div>
-        <div className="mb-3">
-          <BookInfo book={book} config={config} />
-        </div>
         <NavButtons book={book}
                     offset={offset}
                     chapterIndex={chapterIndex}
@@ -66,6 +59,12 @@ export default function Chapters({
                     cbNavigatePrevious={cbNavigatePrevious}
                     cbNavigateBeginChapter={cbNavigateBeginChapter}
                     cbNavigateNextChapter={cbNavigateNextChapter} />
+        <div className="mb-3">
+          <SessionBookmarks sessionOffset={[...(bookProfile.sessionOffset||[])]} tokens={book?.metadata?.tokens||1} cbSetOffset={cbSetOffset} cbSessionClear={cbSessionClear} />
+        </div>
+        <div className="mb-3">
+          <BookInfo book={book} config={config} />
+        </div>
         <div className="chapter-list elt-bottom">
           <div className="mb-3">
             <ChapterList book={book} config={config} offset={offset} cbSetOffset={cbSetOffset} />

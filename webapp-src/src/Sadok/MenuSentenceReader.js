@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import i18next from 'i18next';
 
-export default function MenuSentenceReader({config, cbUpdateConfig}) {
+export default function MenuSentenceReader({config, currentMode, cbUpdateConfig}) {
 
   const setTextSize = (e) => {
     cbUpdateConfig({sentenceReaderTextSize: e.target.value});
@@ -10,11 +10,11 @@ export default function MenuSentenceReader({config, cbUpdateConfig}) {
   return (
     <div className="accordion-item">
       <h2 className="accordion-header">
-        <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSentenceReader" aria-expanded="true" aria-controls="collapseSentenceReader">
+        <button className={"accordion-button"+(currentMode?"":" collapsed")} type="button" data-bs-toggle="collapse" data-bs-target="#collapseSentenceReader" aria-expanded="true" aria-controls="collapseSentenceReader">
           {i18next.t("sentence-reader-title")}
         </button>
       </h2>
-      <div id="collapseSentenceReader" className="accordion-collapse collapse" data-bs-parent="#accordionMenu">
+      <div id="collapseSentenceReader" className={"accordion-collapse collapse"+(currentMode?" show":"")} data-bs-parent="#accordionMenu">
         <div className="accordion-body">
           <div className="input-group mb-3">
             <label className="input-group-text" htmlFor="text-size">

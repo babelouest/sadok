@@ -157,9 +157,9 @@ export default function Parameters({
         </div>
         <hr/>
         <div className="accordion" id="accordionMenu">
-          <MenuSpeedReader config={config} cbUpdateConfig={cbUpdateConfig} />
-          <MenuSpeechSynth config={config} cbUpdateConfig={cbUpdateConfig} />
-          <MenuSentenceReader config={config} cbUpdateConfig={cbUpdateConfig} />
+          <MenuSpeedReader config={config} currentMode={config.readMode===READ_MODE.SPEED_READER} cbUpdateConfig={cbUpdateConfig} />
+          <MenuSpeechSynth config={config} currentMode={config.readMode===READ_MODE.SPEECH} cbUpdateConfig={cbUpdateConfig} />
+          <MenuSentenceReader config={config} currentMode={config.readMode===READ_MODE.SENTENCE} cbUpdateConfig={cbUpdateConfig} />
         </div>
       </div>
     </div>
