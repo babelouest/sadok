@@ -199,49 +199,57 @@ export default function App({}) {
   },[book,config,playReader]);
 
   useEffect(() => { // [book,bookProfile,playReader] (show text and loop)
-    const currentText = getCurrentText(book.bookContent, bookProfile.offset);
-    if (currentText) {
-      if (previousDisplayRef.current?.text === currentText.text && previousDisplayRef.current.chapterOffset !== currentText.chapterOffset && !jumpTextRight && playReader) {
-        setJumpTextRight(true);
-      } else if (jumpTextRight) {
-        setJumpTextRight(false);
+    let currentText = false
+    if (bookProfile.readMode === READ_MODE.SPEED_READER) {
+      currentText = getCurrentText(book.bookContent, bookProfile.offset);
+      //console.log(bookProfile.offset, currentText, playReader);
+      if (currentText) {
+        if (previousDisplayRef.current?.text === currentText.text && previousDisplayRef.current.chapterOffset !== currentText.chapterOffset && !jumpTextRight && playReader) {
+          setJumpTextRight(true);
+        } else if (jumpTextRight) {
+          setJumpTextRight(false);
+        }
+        previousDisplayRef.current = currentText;
+        if (!chapter || currentText.chapterIndex !== chapterIndex) {
+          setChapterIndex(currentText.chapterIndex);
+          setChapter(book.bookContent[currentText.chapterIndex]);
+          book.bookContent.forEach((chap, index) => {
+            if (index <= currentText.chapterIndex && chap.label) {
+              setChapterLabel(chap.label);
+            }
+          });
+        }
+        setChapterOffset(currentText.chapterOffset);
+        if (currentText.text) {
+          setCurrentText(currentText.text);
+        }
+      } else {
+        setCurrentText("");
+        setChapterIndex(0);
+        setChapter(false);
       }
-      previousDisplayRef.current = currentText;
-      if (!chapter || currentText.chapterIndex !== chapterIndex) {
-        setChapterIndex(currentText.chapterIndex);
-        setChapter(book.bookContent[currentText.chapterIndex]);
-        book.bookContent.forEach((chap, index) => {
-          if (index <= currentText.chapterIndex && chap.label) {
-            setChapterLabel(chap.label);
-          }
-        });
-      }
-      setChapterOffset(currentText.chapterOffset);
-      if (currentText.text) {
-        setCurrentText(currentText.text);
-      }
-    } else {
-      setCurrentText("");
-      setChapterIndex(0);
-      setChapter(false);
+    } else if (bookProfile.readMode === READ_MODE.SPEED_READER) {
     }
     if (playReader) {
-      let timeoutFactor = 1;
-      if (currentText.text?.length > 16 && config.speedReaderSlowLongWords) {
-        timeoutFactor = Math.floor(currentText.text.length/20);
-        if (timeoutFactor > 20) {
-          timeoutFactor = 20;
+      if (bookProfile.readMode === READ_MODE.SPEED_READER) {
+        let timeoutFactor = 1;
+        if (currentText.text?.length > 16 && config.speedReaderSlowLongWords) {
+          timeoutFactor = Math.floor(currentText.text.length/20);
+          if (timeoutFactor > 20) {
+            timeoutFactor = 20;
+          }
         }
+        const intervalId = setTimeout(() => {
+          if (book?.metadata?.tokens && bookProfile.offset < book.metadata.tokens) {
+            setBookProfile({...bookProfile, ...{offset: bookProfile.offset+1}});
+          } else {
+            setPlayReader(false);
+            endFullScreen();
+          }
+        }, timeoutFactor*(60000/config.speedReaderTextSpeed));
+        return () => clearTimeout(intervalId);
+      } else if (bookProfile.readMode === READ_MODE.SPEED_READER) {
       }
-      const intervalId = setTimeout(() => {
-        if (book?.metadata?.tokens && bookProfile.offset < book.metadata.tokens) {
-          setBookProfile({...bookProfile, ...{offset: bookProfile.offset+1}});
-        } else {
-          setPlayReader(false);
-          endFullScreen();
-        }
-      }, timeoutFactor*(60000/config.speedReaderTextSpeed));
-      return () => clearTimeout(intervalId);
     }
   },[book,bookProfile,playReader]);
 
@@ -435,17 +443,18 @@ export default function App({}) {
   };
 
   const updateOffset = (newOffset) => {
+    let extendedBookProfile = {...bookProfile, ...{offset: newOffset}};
+    setBookProfile(extendedBookProfile);
     clearTimeout(sessionOffsetTimeoutRef.current);
     sessionOffsetTimeoutRef.current = setTimeout(() => {
-      let newSessionOffset = [...bookProfile.sessionOffset];
+      let newSessionOffset = [...extendedBookProfile.sessionOffset];
       newSessionOffset.push(newOffset);
       if (newSessionOffset.length > 10) {
         newSessionOffset = newSessionOffset.slice(-10);
       }
-      setBookProfile({...bookProfile, ...{sessionOffset: newSessionOffset}});
+      let newExtendedProfile = {...extendedBookProfile, ...{sessionOffset: newSessionOffset}};
+      setBookProfile(newExtendedProfile);
     }, 1000);
-    let extendedBookProfile = {...bookProfile, ...{offset: newOffset}};
-    setBookProfile(extendedBookProfile);
   };
 
   const cbCloseBrowse = () => {
