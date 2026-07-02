@@ -193,6 +193,20 @@ class BookParser {
       return false;
     }
   };
+
+  getCurrentText(bookContent, offset) {
+    const curChapterIndex = this.getChapterIndexFromOffset(bookContent, offset);
+    if (curChapterIndex) {
+      const text = this.deepSearchWord(bookContent[curChapterIndex.index].parsedNodes, curChapterIndex.offset);
+      return {
+        chapterIndex: curChapterIndex.index,
+        chapterOffset: curChapterIndex.offset,
+        text: text
+      }
+    } else {
+      return false;
+    }
+  }
 }
 
 let bookParser = new BookParser();

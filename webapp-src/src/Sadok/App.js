@@ -23,96 +23,6 @@ import TopTitle from './TopTitle';
 import BottomInfo from './BottomInfo';
 import Browse from './Browse';
 
-const bgWordScrollIfNotVisible = () => {
-  let txtElm = document.getElementById("sadok-bg-word");
-  let bottomElm = document.getElementById("sadok-bottom");
-  let topElm = document.getElementById("sadok-title");
-  if (txtElm) {
-    let txtRct = txtElm.getBoundingClientRect();
-    let downLimit = Math.max(document.documentElement.clientHeight, window.innerHeight);
-    let upLimit = 5;
-    if (bottomElm) {
-      downLimit = bottomElm.getBoundingClientRect().y;
-    }
-    if (topElm) {
-      upLimit = topElm.getBoundingClientRect().y;
-    }
-    if (txtRct.y < upLimit) {
-      txtElm.scrollIntoView({
-        behavior: "instant",
-      });
-    } else if (txtRct.y > downLimit) {
-      txtElm.scrollIntoView({
-        behavior: "smooth",
-      });
-    }
-  }
-};
-
-const getCurrentText = (bookContent, offset) => {
-  const curChapterIndex = bookParser.getChapterIndexFromOffset(bookContent, offset);
-  if (curChapterIndex) {
-    const text = bookParser.deepSearchWord(bookContent[curChapterIndex.index].parsedNodes, curChapterIndex.offset);
-    return {
-      chapterIndex: curChapterIndex.index,
-      chapterOffset: curChapterIndex.offset,
-      text: text
-    }
-  } else {
-    return false;
-  }
-};
-
-const getTextDisplayed = (fullPlain, coordList, offset, debugMode) => {
-  let textDisplayed = "";
-  let coord = coordList[offset];
-  if (coord) {
-    textDisplayed = fullPlain.substring(coord.start, coord.end);
-    if (debugMode) {
-      for (let i=0; i<textDisplayed.length; i++) {
-        console.log(textDisplayed.charAt(i), textDisplayed.charCodeAt(i).toString(16));
-      }
-    }
-  }
-  return textDisplayed;
-};
-
-const getPreviousTextBlock = (firstOffset, textLen, fullPlain, textCoordList, debugMode) => {
-  let previousOffset = firstOffset>0?firstOffset-1:0;
-  let separators = ['.', '?', '!', '…'];
-  let str = "", strForSpeech = "";
-  if (textLen && fullPlain && textCoordList) {
-    while (previousOffset > 0 &&
-           !(separators.some(x=>getTextDisplayed(fullPlain, textCoordList, (previousOffset-1), debugMode).includes(x))) &&
-           previousOffset > (firstOffset - 100)) {
-      previousOffset--;
-    }
-    if (textCoordList[firstOffset-1] && textCoordList[previousOffset]) {
-      str = fullPlain.substring(textCoordList[previousOffset].start, textCoordList[firstOffset-1].end);
-      strForSpeech = str.replaceAll("\n", " ");
-    }
-  }
-  return {text: str, textForSpeech: strForSpeech, firstOffset: previousOffset, lastOffset: firstOffset};
-};
-
-const getNextTextBlock = (firstOffset, textLen, fullPlain, textCoordList, debugMode) => {
-  let lastOffset = firstOffset;
-  let separators = ['.', '?', '!', '…'];
-  let str = "", strForSpeech = "";
-  if (textLen && fullPlain && textCoordList) {
-    while (lastOffset <= textLen &&
-           !(separators.some(x=>getTextDisplayed(fullPlain, textCoordList, lastOffset, debugMode).includes(x))) &&
-           lastOffset < (firstOffset + 100)) {
-      lastOffset++;
-    }
-    if (firstOffset < lastOffset && textCoordList[firstOffset] && textCoordList[lastOffset]) {
-      str = fullPlain.substring(textCoordList[firstOffset].start, textCoordList[lastOffset].end);
-      strForSpeech = str.replaceAll("\n", " ");
-    }
-  }
-  return {text: str, textForSpeech: strForSpeech, firstOffset: firstOffset, lastOffset: lastOffset};
-};
-
 export default function App({}) {
   const [ config, setConfig ] = useState({...CONFIG_DEFAULT, ...{ lang: i18next.language }});
   const [ bookProfile, setBookProfile ] = useState(BOOK_PROFILE_DEFAULT);
@@ -132,21 +42,35 @@ export default function App({}) {
   const previousDisplayRef = useRef(null);
   const sessionOffsetTimeoutRef = useRef(false);
 
+  const bgWordScrollIfNotVisible = () => {
+    let txtElm = document.getElementById("sadok-bg-word");
+    let bottomElm = document.getElementById("sadok-bottom");
+    let topElm = document.getElementById("sadok-title");
+    if (txtElm) {
+      let txtRct = txtElm.getBoundingClientRect();
+      let downLimit = Math.max(document.documentElement.clientHeight, window.innerHeight);
+      let upLimit = 5;
+      if (bottomElm) {
+        downLimit = bottomElm.getBoundingClientRect().y;
+      }
+      if (topElm) {
+        upLimit = topElm.getBoundingClientRect().y;
+      }
+      if (txtRct.y < upLimit) {
+        txtElm.scrollIntoView({
+          behavior: "instant",
+        });
+      } else if (txtRct.y > downLimit) {
+        txtElm.scrollIntoView({
+          behavior: "smooth",
+        });
+      }
+    }
+  };
+
   const keyUpEvent = (e) => {
     if (e.key === " " || e.code === "Space" || e.keyCode === 32) { // Start reading when space key is pressed
       togglePlay();
-    } else if (e.keyCode === 37) { // left arrow
-      if (!playReader) {
-      }
-    } else if (e.keyCode === 39) { // right arrow
-      if (!playReader) {
-      }
-    } else if (e.keyCode === 34) { // page down
-      if (!playReader) {
-      }
-    } else if (e.keyCode === 33) { // page up
-      if (!playReader) {
-      }
     }
   };
 
@@ -201,7 +125,7 @@ export default function App({}) {
   useEffect(() => { // [book,bookProfile,playReader] (show text and loop)
     let currentText = false
     if (bookProfile.readMode === READ_MODE.SPEED_READER) {
-      currentText = getCurrentText(book.bookContent, bookProfile.offset);
+      currentText = bookParser.getCurrentText(book.bookContent, bookProfile.offset);
       //console.log(bookProfile.offset, currentText, playReader);
       if (currentText) {
         if (previousDisplayRef.current?.text === currentText.text && previousDisplayRef.current.chapterOffset !== currentText.chapterOffset && !jumpTextRight && playReader) {
@@ -505,6 +429,10 @@ export default function App({}) {
     });
   };
 
+  const updateBookProfile = (updatedProfile) => {
+    setBookProfile({...bookProfile, ...updatedProfile});
+  };
+
   const cbSessionClear = () => {
     setBookProfile({...bookProfile, ...{sessionOffset: [bookProfile.offset]}});
   };
@@ -530,6 +458,7 @@ export default function App({}) {
               cbNavigateNextChapter={cbNavigateNextChapter}
               cbTogglePlay={togglePlay}
               cbUpdateConfig={updateConfig}
+              cbUpdateBookProfile={updateBookProfile}
               cbInitConfig={cbInitConfig}
               cbOpenBrowse={cbOpenBrowse}
               cbRemoveProfile={cbRemoveProfile}
