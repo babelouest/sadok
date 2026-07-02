@@ -18,6 +18,7 @@ export default function Menus({
   cbSetOffset,
   cbTogglePlay,
   cbUpdateConfig,
+  cbUpdateBookProfile,
   cbInitConfig,
   cbOpenBrowse,
   cbRemoveProfile,
@@ -66,6 +67,7 @@ export default function Menus({
                     cbSetOffset={cbSetOffset}
                     cbTogglePlay={cbTogglePlay}
                     cbUpdateConfig={cbUpdateConfig}
+                    cbUpdateBookProfile={cbUpdateBookProfile}
                     cbInitConfig={cbInitConfig} />
       </>
     );

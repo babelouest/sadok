@@ -15,6 +15,7 @@ export default function Parameters({
   offset,
   config,
   cbUpdateConfig,
+  cbUpdateBookProfile,
   cbInitConfig
 }) {
 
@@ -58,6 +59,7 @@ export default function Parameters({
 
   const setReadMode = (e) => {
     cbUpdateConfig({readMode: e.target.value});
+    cbUpdateBookProfile({readMode: e.target.value});
   };
 
   return (
