@@ -197,16 +197,55 @@ class BookParser {
   getCurrentText(bookContent, offset) {
     const curChapterIndex = this.getChapterIndexFromOffset(bookContent, offset);
     if (curChapterIndex) {
-      const text = this.deepSearchWord(bookContent[curChapterIndex.index].parsedNodes, curChapterIndex.offset);
+      const searchedWord = this.deepSearchWord(bookContent[curChapterIndex.index].parsedNodes, curChapterIndex.offset);
       return {
         chapterIndex: curChapterIndex.index,
         chapterOffset: curChapterIndex.offset,
-        text: text
+        text: searchedWord.text,
+        node: searchedWord.node,
+        nodeOffset: searchedWord.nodeOffset
       }
     } else {
       return false;
     }
   }
+
+
+  getPreviousTextBlock(firstOffset, textLen, fullPlain, textCoordList, debugMode) {
+    let previousOffset = firstOffset>0?firstOffset-1:0;
+    let separators = ['.', '?', '!', '…'];
+    let str = "", strForSpeech = "";
+    if (textLen && fullPlain && textCoordList) {
+      while (previousOffset > 0 &&
+             !(separators.some(x=>getTextDisplayed(fullPlain, textCoordList, (previousOffset-1), debugMode).includes(x))) &&
+             previousOffset > (firstOffset - 100)) {
+        previousOffset--;
+      }
+      if (textCoordList[firstOffset-1] && textCoordList[previousOffset]) {
+        str = fullPlain.substring(textCoordList[previousOffset].start, textCoordList[firstOffset-1].end);
+        strForSpeech = str.replaceAll("\n", " ");
+      }
+    }
+    return {text: str, textForSpeech: strForSpeech, firstOffset: previousOffset, lastOffset: firstOffset};
+  };
+
+  getNextTextBlock(firstOffset, textLen, fullPlain, textCoordList, debugMode) {
+    let lastOffset = firstOffset;
+    let separators = ['.', '?', '!', '…'];
+    let str = "", strForSpeech = "";
+    if (textLen && fullPlain && textCoordList) {
+      while (lastOffset <= textLen &&
+             !(separators.some(x=>getTextDisplayed(fullPlain, textCoordList, lastOffset, debugMode).includes(x))) &&
+             lastOffset < (firstOffset + 100)) {
+        lastOffset++;
+      }
+      if (firstOffset < lastOffset && textCoordList[firstOffset] && textCoordList[lastOffset]) {
+        str = fullPlain.substring(textCoordList[firstOffset].start, textCoordList[lastOffset].end);
+        strForSpeech = str.replaceAll("\n", " ");
+      }
+    }
+    return {text: str, textForSpeech: strForSpeech, firstOffset: firstOffset, lastOffset: lastOffset};
+  };
 }
 
 let bookParser = new BookParser();

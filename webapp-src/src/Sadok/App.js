@@ -31,8 +31,10 @@ export default function App({}) {
   const [ chapter, setChapter ] = useState(false);
   const [ chapterIndex, setChapterIndex ] = useState(-1);
   const [ chapterOffset, setChapterOffset ] = useState(0);
+  const [ chapterOffsetEnd, setChapterOffsetEnd ] = useState(-1);
   const [ playReader, setPlayReader ] = useState(false);
   const [ currentText, setCurrentText ] = useState("");
+  const [ currentTextForBlock, setCurrentTextForBlock ] = useState(null);
   const [ chapterLabel, setChapterLabel ] = useState(false);
   const [ debugMode, setDebugMode ] = useState(false);
   const [ openBrowse, setOpenBrowse ] = useState(false);
@@ -86,6 +88,46 @@ export default function App({}) {
     }
   };
 
+  const checkJumpTextRight = (currentText) => {
+    if (previousDisplayRef.current?.text === currentText.text && previousDisplayRef.current?.chapterOffset !== currentText.chapterOffset && !jumpTextRight && playReader) {
+      setJumpTextRight(true);
+    } else if (jumpTextRight) {
+      setJumpTextRight(false);
+    }
+    previousDisplayRef.current = currentText;
+  };
+
+  const updateChapterIndex = (currentText) => {
+    if (!chapter || currentText.chapterIndex !== chapterIndex) {
+      setChapterIndex(currentText.chapterIndex);
+      setChapter(book.bookContent[currentText.chapterIndex]);
+      book.bookContent.forEach((chap, index) => {
+        if (index <= currentText.chapterIndex && chap.label) {
+          setChapterLabel(chap.label);
+        }
+      });
+    }
+    setChapterOffset(currentText.chapterOffset);
+  };
+
+  const speedReaderTextLoop = (currentText) => {
+    let timeoutFactor = 1;
+    if (currentText.text?.length > 16 && config.speedReaderSlowLongWords) {
+      timeoutFactor = Math.floor(currentText.text.length/20);
+      if (timeoutFactor > 20) {
+        timeoutFactor = 20;
+      }
+    }
+    return setTimeout(() => {
+      if (book?.metadata?.tokens && bookProfile.offset < book.metadata.tokens) {
+        setBookProfile({...bookProfile, ...{offset: bookProfile.offset+1}});
+      } else {
+        setPlayReader(false);
+        endFullScreen();
+      }
+    }, timeoutFactor*(60000/config.speedReaderTextSpeed));
+  };
+
   useEffect(() => { // [] (starup)
     profile.initProfile()
     .then(() => {
@@ -123,54 +165,31 @@ export default function App({}) {
   },[book,config,playReader]);
 
   useEffect(() => { // [book,bookProfile,playReader] (show text and loop)
-    let currentText = false
+    const currentText = bookParser.getCurrentText(book.bookContent, bookProfile.offset), currentBlock = false;
+    if (currentText) {
+      checkJumpTextRight(currentText);
+      updateChapterIndex(currentText);
+    } else {
+      setCurrentText("");
+      setChapterIndex(0);
+      setChapter(false);
+    }
     if (bookProfile.readMode === READ_MODE.SPEED_READER) {
-      currentText = bookParser.getCurrentText(book.bookContent, bookProfile.offset);
-      //console.log(bookProfile.offset, currentText, playReader);
-      if (currentText) {
-        if (previousDisplayRef.current?.text === currentText.text && previousDisplayRef.current.chapterOffset !== currentText.chapterOffset && !jumpTextRight && playReader) {
-          setJumpTextRight(true);
-        } else if (jumpTextRight) {
-          setJumpTextRight(false);
-        }
-        previousDisplayRef.current = currentText;
-        if (!chapter || currentText.chapterIndex !== chapterIndex) {
-          setChapterIndex(currentText.chapterIndex);
-          setChapter(book.bookContent[currentText.chapterIndex]);
-          book.bookContent.forEach((chap, index) => {
-            if (index <= currentText.chapterIndex && chap.label) {
-              setChapterLabel(chap.label);
-            }
-          });
-        }
-        setChapterOffset(currentText.chapterOffset);
-        if (currentText.text) {
-          setCurrentText(currentText.text);
-        }
-      } else {
-        setCurrentText("");
-        setChapterIndex(0);
-        setChapter(false);
+      setChapterOffsetEnd(-1);
+      if (currentText.text) {
+        setCurrentText(currentText.text);
       }
-    } else if (bookProfile.readMode === READ_MODE.SPEED_READER) {
+    } else if (bookProfile.readMode === READ_MODE.SPEECH) {
+      if (currentText.node) {
+        currentBlock = getNextTextBlock(currentText.nodeOffset, currentText.node.text.length, currentText.node.text, currentText.node.coord);
+        setCurrentTextForBlock(currentText);
+        setCurrentText(currentBlock.text);
+        setChapterOffsetEnd(currentText.chapterOffset - currentBlock.firstOffset + currentBlock.lastOffset);
+      }
     }
     if (playReader) {
       if (bookProfile.readMode === READ_MODE.SPEED_READER) {
-        let timeoutFactor = 1;
-        if (currentText.text?.length > 16 && config.speedReaderSlowLongWords) {
-          timeoutFactor = Math.floor(currentText.text.length/20);
-          if (timeoutFactor > 20) {
-            timeoutFactor = 20;
-          }
-        }
-        const intervalId = setTimeout(() => {
-          if (book?.metadata?.tokens && bookProfile.offset < book.metadata.tokens) {
-            setBookProfile({...bookProfile, ...{offset: bookProfile.offset+1}});
-          } else {
-            setPlayReader(false);
-            endFullScreen();
-          }
-        }, timeoutFactor*(60000/config.speedReaderTextSpeed));
+        const intervalId = speedReaderTextLoop(currentText);
         return () => clearTimeout(intervalId);
       } else if (bookProfile.readMode === READ_MODE.SPEED_READER) {
       }
