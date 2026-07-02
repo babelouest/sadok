@@ -35,7 +35,7 @@
 #include <gnutls/gnutls.h>
 #include <gnutls/crypto.h>
 
-#define _SADOK_VERSION_ "1.0.0"
+#define _SADOK_VERSION_ "2.0.0"
 
 #define SADOK_DEFAULT_PORT                7235
 #define SADOK_DEFAULT_PREFIX              "api"
