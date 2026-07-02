@@ -78,6 +78,10 @@ class Profile {
   checkConfigValues(config) {
     let cleanConfig = {...config};
     do {
+      if (!config) {
+        console.error("invalid config");
+        break;
+      }
       if (config.darkMode && !Object.values(DARK_MODE).includes(config.darkMode)) {
         console.error("invalid darkMode");
         break;
