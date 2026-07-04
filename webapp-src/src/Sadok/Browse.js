@@ -109,20 +109,27 @@ export default function Browse({config, cbOpenBook, cbOpenBookByContent, cbClose
   const [ viewBook, setViewBook ] = useState(false);
   const [ viewBookInfo, setViewBookInfo ] = useState(false);
   const [ viewBookCoverData, setviewBookCoverData ] = useState(false);
+  const [ errorList, setErrorList ] = useState(false);
   const inputFile = useRef(null);
 
   useEffect(() => {
     apiManager.APIRequestExecute("list.json")
     .then(lst => {
-      profile.getAllBookProfile()
-      .then(bp => {
-        seBookProfiles(bp);
-      });
-      setRootList(lst);
-      setList(lst);
+      if (Array.isArray(lst)) {
+        profile.getAllBookProfile()
+        .then(bp => {
+          seBookProfiles(bp);
+        });
+        setRootList(lst);
+        setList(lst);
+        setErrorList(false);
+      } else {
+        setErrorList(true);
+      }
     })
     .catch(err => {
       console.error(err);
+      setErrorList(true);
     });
   },[]);
 
@@ -310,90 +317,111 @@ export default function Browse({config, cbOpenBook, cbOpenBookByContent, cbClose
         }
       });
     }
-    return (
-      <>
-        <div className="sticky-top">
+    if (errorList) {
+      return (
+        <>
           <div className="m-3">
             <button className="btn btn-secondary" type="button" title={i18next.t("close")} onClick={cbClose}>
               <img src="img/close_small_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg"/>
             </button>
           </div>
           <div className="m-3">
-            <nav aria-label="breadcrumb">
-              <ol className="breadcrumb">
-                <li className="breadcrumb-item"><a href="#" onClick={(e) => openRelPath(e, -1)}>{i18next.t("browse-root")}</a></li>
-                {
-                  breadcrumb.map((bc, i) => {
-                    if (i < breadcrumb.length-1) {
-                      return (
-                        <li className="breadcrumb-item" key={i}><a href="#" onClick={(e) => openRelPath(e, i)}>{bc}</a></li>
-                      );
-                    } else {
-                      return (
-                        <li className="breadcrumb-item" key={i}>{bc}</li>
-                      );
-                    }
-                  })
-                }
-              </ol>
-            </nav>
-          </div>
-          <div className="input-group mb-3">
-            <button className="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" disabled={completeList || filteredList}>{i18next.t("browse-show")}</button>
-            <ul className="dropdown-menu">
-              <li><a className={"dropdown-item"+(show===true?" active":"")} href="#" onClick={(e) => changeShow(e, false)}>{i18next.t("browse-show-all")}</a></li>
-              <li><a className={"dropdown-item"+(show==="files"?" active":"")} href="#" onClick={(e) => changeShow(e, "files")}>{i18next.t("browse-show-files")}</a></li>
-              <li><a className={"dropdown-item"+(show==="folders"?" active":"")} href="#" onClick={(e) => changeShow(e, "folders")}>{i18next.t("browse-show-folders")}</a></li>
-            </ul>
-            <input type="text" className="form-control" placeholder={i18next.t("browse-filter")} value={filter} onChange={changeFilter} disabled={ongoingList || completeList} />
-            <button className="btn btn-secondary" type="button" title={i18next.t("browse-ongoing")} onClick={toggleOngoing} disabled={completeList || filteredList} >
-              <img src="img/book_5_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
-            </button>
-            <button className="btn btn-secondary" type="button" title={i18next.t("browse-done")} onClick={toggleComplete} disabled={ongoingList || filteredList} >
-              <img src="img/check_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
-            </button>
             <button className="btn btn-secondary" type="button" title={i18next.t("browse-open-local-file")} onClick={() => inputFile.current.click()} >
               <img src="img/upload_file_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
             </button>
           </div>
-        </div>
-        <div className="overflow-auto table-responsive">
-          <table className="table table-striped">
-            <thead className="">
-              <tr>
-                <th scope="col">
-                  <a href="#" onClick={(e) => changeOrder(e, "title")}>
-                    {i18next.t("browse-filename")}
-                    <SortIcon column={orderColumn==="title"} asc={orderAsc} />
-                  </a>
-                </th>
-                <th scope="col">
-                  <a href="#" onClick={(e) => changeOrder(e, "size")}>
-                    {i18next.t("browse-size")}
-                    <SortIcon column={orderColumn==="size"} asc={orderAsc} />
-                  </a>
-                </th>
-                <th scope="col">
-                  <a href="#" onClick={(e) => changeOrder(e, "date")}>
-                    {i18next.t("browse-date")}
-                    <SortIcon column={orderColumn==="date"} asc={orderAsc} />
-                  </a>
-                </th>
-                <th scope="col">
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {listDirJsx}
-              {listFilesJsx}
-            </tbody>
-          </table>
-        </div>
-        <input type="file"
-               className="upload"
-               ref={inputFile}
-               onChange={openLocalFile} />
-      </>
-    );
+          <input type="file"
+                 className="upload"
+                 ref={inputFile}
+                 onChange={openLocalFile} />
+        </>
+      );
+    } else {
+      return (
+        <>
+          <div className="sticky-top">
+            <div className="m-3">
+              <button className="btn btn-secondary" type="button" title={i18next.t("close")} onClick={cbClose}>
+                <img src="img/close_small_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg"/>
+              </button>
+            </div>
+            <div className="m-3">
+              <nav aria-label="breadcrumb">
+                <ol className="breadcrumb">
+                  <li className="breadcrumb-item"><a href="#" onClick={(e) => openRelPath(e, -1)}>{i18next.t("browse-root")}</a></li>
+                  {
+                    breadcrumb.map((bc, i) => {
+                      if (i < breadcrumb.length-1) {
+                        return (
+                          <li className="breadcrumb-item" key={i}><a href="#" onClick={(e) => openRelPath(e, i)}>{bc}</a></li>
+                        );
+                      } else {
+                        return (
+                          <li className="breadcrumb-item" key={i}>{bc}</li>
+                        );
+                      }
+                    })
+                  }
+                </ol>
+              </nav>
+            </div>
+            <div className="input-group mb-3">
+              <button className="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" disabled={completeList || filteredList}>{i18next.t("browse-show")}</button>
+              <ul className="dropdown-menu">
+                <li><a className={"dropdown-item"+(show===true?" active":"")} href="#" onClick={(e) => changeShow(e, false)}>{i18next.t("browse-show-all")}</a></li>
+                <li><a className={"dropdown-item"+(show==="files"?" active":"")} href="#" onClick={(e) => changeShow(e, "files")}>{i18next.t("browse-show-files")}</a></li>
+                <li><a className={"dropdown-item"+(show==="folders"?" active":"")} href="#" onClick={(e) => changeShow(e, "folders")}>{i18next.t("browse-show-folders")}</a></li>
+              </ul>
+              <input type="text" className="form-control" placeholder={i18next.t("browse-filter")} value={filter} onChange={changeFilter} disabled={ongoingList || completeList} />
+              <button className="btn btn-secondary" type="button" title={i18next.t("browse-ongoing")} onClick={toggleOngoing} disabled={completeList || filteredList} >
+                <img src="img/book_5_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
+              </button>
+              <button className="btn btn-secondary" type="button" title={i18next.t("browse-done")} onClick={toggleComplete} disabled={ongoingList || filteredList} >
+                <img src="img/check_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
+              </button>
+              <button className="btn btn-secondary" type="button" title={i18next.t("browse-open-local-file")} onClick={() => inputFile.current.click()} >
+                <img src="img/upload_file_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
+              </button>
+            </div>
+          </div>
+          <div className="overflow-auto table-responsive">
+            <table className="table table-striped">
+              <thead className="">
+                <tr>
+                  <th scope="col">
+                    <a href="#" onClick={(e) => changeOrder(e, "title")}>
+                      {i18next.t("browse-filename")}
+                      <SortIcon column={orderColumn==="title"} asc={orderAsc} />
+                    </a>
+                  </th>
+                  <th scope="col">
+                    <a href="#" onClick={(e) => changeOrder(e, "size")}>
+                      {i18next.t("browse-size")}
+                      <SortIcon column={orderColumn==="size"} asc={orderAsc} />
+                    </a>
+                  </th>
+                  <th scope="col">
+                    <a href="#" onClick={(e) => changeOrder(e, "date")}>
+                      {i18next.t("browse-date")}
+                      <SortIcon column={orderColumn==="date"} asc={orderAsc} />
+                    </a>
+                  </th>
+                  <th scope="col">
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {listDirJsx}
+                {listFilesJsx}
+              </tbody>
+            </table>
+          </div>
+          <input type="file"
+                 className="upload"
+                 ref={inputFile}
+                 onChange={openLocalFile} />
+        </>
+      );
+    }
   }
 }
