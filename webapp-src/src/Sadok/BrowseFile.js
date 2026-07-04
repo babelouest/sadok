@@ -33,7 +33,15 @@ export default function BrowseFile({item, bookProfile, cbOpenBook, cbViewBook}) 
         bookProfileJsx = 
           <span className="badge text-bg-secondary rounded-pill">
             {i18next.t("percent", {val: Math.floor(bookProfile.offset*100/bookProfile.tokens)})}
-            <img className="elt-right" src="img/voice_selection_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
+            <img className="elt-right" src="img/select_to_speak_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
+          </span>
+      }
+    } else if (bookProfile.readMode === READ_MODE.SENTENCE) {
+      if (bookProfile.tokens) {
+        bookProfileJsx = 
+          <span className="badge text-bg-secondary rounded-pill">
+            {i18next.t("percent", {val: Math.floor(bookProfile.offset*100/bookProfile.tokens)})}
+            <img className="elt-right" src="img/format_paragraph_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
           </span>
       }
     }

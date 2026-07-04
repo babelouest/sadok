@@ -167,6 +167,8 @@ export default function App({}) {
           openBook({url: startConfig.currentBook, type: startConfig.currentBookType});
         }
       });
+    })
+    .catch(() => {
     });
   },[]);
 
@@ -239,11 +241,14 @@ export default function App({}) {
 
   const togglePlay = () => {
     if (!playReader) {
-      startFullScreen();
-      startWakeLock();
-      if (bookProfile.readMode === READ_MODE.SPEECH) {
-        speechRunningRef.current = true;
-        startSpeechThat();
+      if (book) {
+        startFullScreen();
+        startWakeLock();
+        if (bookProfile.readMode === READ_MODE.SPEECH) {
+          speechRunningRef.current = true;
+          startSpeechThat();
+        }
+        setPlayReader(true);
       }
     } else {
       endFullScreen();
@@ -254,8 +259,8 @@ export default function App({}) {
         speechSynth.stopText();
         updateOffset(bookProfile.offset);
       }
+      setPlayReader(false);
     }
-    setPlayReader(playReader => !playReader);
   };
 
   const updateConfig = (newConfig) => {

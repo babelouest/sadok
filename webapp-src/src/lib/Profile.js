@@ -64,14 +64,14 @@ class Profile {
   
   initProfile() {
     return apiManager.APIRequestExecute(API_URL)
-    .then(() => {
+    .then((r) => {
       this.useProfileApi = true;
       if (window.localStorage) {
         this.profileApiName = window.localStorage.getItem(LS_PROFILE_NAME)||false;
       }
     })
     .catch(() => {
-      // no profile
+      // no remote profile
     });
   }
 
@@ -359,7 +359,6 @@ class Profile {
       return Promise.resolve();
     }
   }
-
 }
 
 let profile = new Profile();
