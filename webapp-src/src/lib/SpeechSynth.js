@@ -1,5 +1,7 @@
-class SpeechSynth {
 
+import { LS_SPEECH_LANG } from './Constants';
+
+class SpeechSynth {
 	constructor() {
     this.hasSpeechSynth = false;
     this.voiceList = [];
@@ -62,11 +64,11 @@ class SpeechSynth {
     return found;
   }
 
-  getVoice() {
+  getVoice(preferredVoice = false) {
     let voice = false;
-    if (localStorage && localStorage.getItem("sadok-speechLang")) {
+    if (preferredVoice) {
       this.voiceList.forEach(curVoice => {
-        if (curVoice.name === localStorage.getItem("sadok-speechLang")) {
+        if (curVoice.name === preferredVoice) {
           voice = curVoice;
         }
       });
@@ -83,8 +85,8 @@ class SpeechSynth {
     return voice;
   }
 
-  speakText(textForSpeech, text, cb = false, pitch = 1, rate = 1, startOffset = false, endOffset = false) {
-    let voice = this.getVoice();
+  speakText(textForSpeech, text, cb = false, preferredVoice = false, pitch = 1, rate = 1, offset = false, tokensLength = false) {
+    let voice = this.getVoice(preferredVoice);
     if (voice) {
       const utterThis = new SpeechSynthesisUtterance();
       utterThis.voice = voice.utterVoice;
@@ -100,11 +102,11 @@ class SpeechSynth {
         utterThis.addEventListener('pause', cb);
         utterThis.addEventListener('resume', cb);
       }
-      if (startOffset) {
-        utterThis.startOffset = startOffset;
+      if (offset) {
+        utterThis.offset = offset;
       }
-      if (endOffset) {
-        utterThis.endOffset = endOffset;
+      if (tokensLength) {
+        utterThis.tokensLength = tokensLength;
       }
       speechSynthesis.speak(utterThis);
     } else {

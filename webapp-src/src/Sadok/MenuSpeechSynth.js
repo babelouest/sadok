@@ -3,8 +3,13 @@ import i18next from 'i18next';
 
 import speechSynth from '../lib/SpeechSynth';
 
+import { LS_SPEECH_LANG } from '../lib/Constants';
+
 export default function MenuSpeechSynth({config, currentMode, cbUpdateConfig}) {
   const toggleSpeechLang = (e) => {
+    if (window.localStorage) {
+      window.localStorage.setItem(LS_SPEECH_LANG, e.target.value);
+    }
     cbUpdateConfig({
       speechLang: e.target.value
     });
@@ -49,7 +54,7 @@ export default function MenuSpeechSynth({config, currentMode, cbUpdateConfig}) {
             <label htmlFor="speechLangLabel">
               {i18next.t("speech-synth-lang-label")}
             </label>
-            <select className="form-select" id="speechLangLabel" value={config.speechLang} onChange={toggleSpeechLang}>
+            <select className="form-select" id="speechLangLabel" value={window.localStorage?.getItem(LS_SPEECH_LANG)||config.speechLang} onChange={toggleSpeechLang}>
               {voiceListJsx}
             </select>
           </div>

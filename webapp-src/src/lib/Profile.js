@@ -106,7 +106,7 @@ class Profile {
         break;
       }
       cleanConfig.speedReaderSlowLongWords = !!config.speedReaderSlowLongWords;
-      cleanConfig.speechLang = !!config.speechLang;
+      cleanConfig.speechLang = config.speechLang;
       if (config.speechPitch !== undefined && (isNaN(config.speechPitch) || config.speechPitch < 0 || config.speechPitch > 2)) {
         console.error("invalid speechPitch");
         break;

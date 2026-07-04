@@ -31,6 +31,9 @@ export const getTextSize = {
 export const TextSizesAvailable = [TEXT_SIZE_VALS.XL, TEXT_SIZE_VALS.L, TEXT_SIZE_VALS.M, TEXT_SIZE_VALS.S, TEXT_SIZE_VALS.XS, TEXT_SIZE_VALS.XXS];
 export const SpeedReaderWordsPerMinuteAvailable = ["50","100","150","200","250","300","350","400","450","500","550","600","650","700","750","800"];
 export const OpacityAvailable = [0,25,50,75];
+export const separators = ['.', '?', '!', '…'];
+export const LS_SPEECH_LANG = "sadok-speech-lang";
+
 
 export const BOOK_PROFILE_USE_BOOK_CSS = {
   DEFAULT: "default",

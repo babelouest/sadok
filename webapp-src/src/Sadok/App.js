@@ -14,7 +14,8 @@ import i18next from 'i18next';
 
 import bookParser from '../lib/BookParser';
 import profile from '../lib/Profile';
-import { getTextSize, TEXT_SIZE_VALS, DARK_MODE, READ_MODE, CONFIG_DEFAULT, BOOK_PROFILE_DEFAULT } from '../lib/Constants';
+import speechSynth from '../lib/SpeechSynth';
+import { getTextSize, TEXT_SIZE_VALS, DARK_MODE, READ_MODE, CONFIG_DEFAULT, BOOK_PROFILE_DEFAULT, LS_SPEECH_LANG } from '../lib/Constants';
 
 import TextBackgroundContainer from './TextBackgroundContainer';
 import Menu from './Menu';
@@ -36,13 +37,14 @@ export default function App({}) {
   const [ currentText, setCurrentText ] = useState("");
   const [ currentTextForBlock, setCurrentTextForBlock ] = useState(null);
   const [ chapterLabel, setChapterLabel ] = useState(false);
-  const [ debugMode, setDebugMode ] = useState(false);
   const [ openBrowse, setOpenBrowse ] = useState(false);
   const [ jumpTextRight, setJumpTextRight ] = useState(false);
   const [ coverData, setCoverData ] = useState(false);
   const wakeLockRef = useRef(null);
   const previousDisplayRef = useRef(null);
   const sessionOffsetTimeoutRef = useRef(false);
+  const speakTextListRef = useRef([]);
+  const speechRunningRef = useRef(false);
 
   const bgWordScrollIfNotVisible = () => {
     let txtElm = document.getElementById("sadok-bg-word");
@@ -128,6 +130,22 @@ export default function App({}) {
     }, timeoutFactor*(60000/config.speedReaderTextSpeed));
   };
 
+  const startSpeechThat = () => {
+    const currentText = bookParser.getCurrentText(book.bookContent, bookProfile.offset);
+    const currentBlock = bookParser.getNextTextBlock(currentText.nodeOffset, currentText.node.text.length, currentText.node.text, currentText.node.coord);
+    if (currentBlock) {
+      speakTextListRef.current = [{offset: bookProfile.offset, tokensLength: currentBlock.lastOffset - currentBlock.firstOffset}];
+      speechSynth.speakText(currentBlock.textForSpeech,
+                            currentBlock.text,
+                            handleUtterEvent,
+                            (window.localStorage?.getItem(LS_SPEECH_LANG)||config.speechLang),
+                            config.speechPitch,
+                            config.speechRate,
+                            bookProfile.offset,
+                            currentBlock.lastOffset - currentBlock.firstOffset);
+    }
+  };
+
   useEffect(() => { // [] (starup)
     profile.initProfile()
     .then(() => {
@@ -143,7 +161,7 @@ export default function App({}) {
   },[]);
 
   useEffect(() => { // [bookProfile] (save profile)
-    if (config.currentBook && !playReader) {
+    if (config.currentBook && (!playReader || speechRunningRef.current)) {
       profile.setBookProfile(config.currentBook, bookProfile);
     }
   },[bookProfile,playReader]);
@@ -165,7 +183,8 @@ export default function App({}) {
   },[book,config,playReader]);
 
   useEffect(() => { // [book,bookProfile,playReader] (show text and loop)
-    const currentText = bookParser.getCurrentText(book.bookContent, bookProfile.offset), currentBlock = false;
+    const currentText = bookParser.getCurrentText(book.bookContent, bookProfile.offset);
+    let currentBlock = false;
     if (currentText) {
       checkJumpTextRight(currentText);
       updateChapterIndex(currentText);
@@ -181,7 +200,7 @@ export default function App({}) {
       }
     } else if (bookProfile.readMode === READ_MODE.SPEECH) {
       if (currentText.node) {
-        currentBlock = getNextTextBlock(currentText.nodeOffset, currentText.node.text.length, currentText.node.text, currentText.node.coord);
+        currentBlock = bookParser.getNextTextBlock(currentText.nodeOffset, currentText.node.text.length, currentText.node.text, currentText.node.coord);
         setCurrentTextForBlock(currentText);
         setCurrentText(currentBlock.text);
         setChapterOffsetEnd(currentText.chapterOffset - currentBlock.firstOffset + currentBlock.lastOffset);
@@ -191,7 +210,6 @@ export default function App({}) {
       if (bookProfile.readMode === READ_MODE.SPEED_READER) {
         const intervalId = speedReaderTextLoop(currentText);
         return () => clearTimeout(intervalId);
-      } else if (bookProfile.readMode === READ_MODE.SPEED_READER) {
       }
     }
   },[book,bookProfile,playReader]);
@@ -210,15 +228,22 @@ export default function App({}) {
   },[config]);
 
   const togglePlay = () => {
-    if (config.fullScreen) {
-      if (!playReader) {
-        startFullScreen();
-      } else {
-        endFullScreen();
+    if (!playReader) {
+      startFullScreen();
+      startWakeLock();
+      if (bookProfile.readMode === READ_MODE.SPEECH) {
+        speechRunningRef.current = true;
+        startSpeechThat();
       }
-    }
-    if (playReader) {
-      updateOffset(bookProfile.offset);
+    } else {
+      endFullScreen();
+      stopWakeLock();
+      if (bookProfile.readMode === READ_MODE.SPEECH) {
+        speakTextListRef.current = [];
+        speechRunningRef.current = false;
+        speechSynth.stopText();
+        updateOffset(bookProfile.offset);
+      }
     }
     setPlayReader(playReader => !playReader);
   };
@@ -245,23 +270,12 @@ export default function App({}) {
   };
 
   const startFullScreen = () => {
-    let elem = document.documentElement;
-    if (elem.requestFullscreen) {
-      elem.requestFullscreen();
-    } else if (elem.webkitRequestFullscreen) { /* Safari */
-      elem.webkitRequestFullscreen();
-    }
-    if ("wakeLockRef" in navigator) {
-      try {
-        if (wakeLockRef.current) {
-          wakeLockRef.current.release();
-          wakeLockRef.current = null;
-        }
-        navigator.wakeLockRef.request("screen").then((res) => {
-          wakeLockRef.current = res;
-        });
-      } catch (err) {
-        console.error("Error wakeLockRef", err);
+    if (config.fullScreen) {
+      let elem = document.documentElement;
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+      } else if (elem.webkitRequestFullscreen) { /* Safari */
+        elem.webkitRequestFullscreen();
       }
     }
   }
@@ -277,6 +291,25 @@ export default function App({}) {
       } catch (err) {
       }
     }
+  }
+
+  const startWakeLock = () => {
+    if ("wakeLockRef" in navigator) {
+      try {
+        if (wakeLockRef.current) {
+          wakeLockRef.current.release();
+          wakeLockRef.current = null;
+        }
+        navigator.wakeLockRef.request("screen").then((res) => {
+          wakeLockRef.current = res;
+        });
+      } catch (err) {
+        console.error("Error wakeLockRef", err);
+      }
+    }
+  };
+
+  const stopWakeLock = () => {
     if ("wakeLockRef" in navigator) {
       try {
         if (wakeLockRef.current) {
@@ -287,7 +320,7 @@ export default function App({}) {
         console.error("Error wakeLockRef unlock", err);
       }
     }
-  }
+  };
 
   const navigateNext = (far) => {
     if (config.readMode === READ_MODE.SPEED_READER) {
@@ -304,8 +337,28 @@ export default function App({}) {
           updateOffset(bookProfile.offset + 1);
         }
       }
-    } else {
-      // todo
+    } else if (bookProfile.readMode === READ_MODE.SPEECH) {
+      if (far) {
+        // jump next 10 blocks
+        let curBlockOffset = bookProfile.offset;
+        let curText = bookParser.getCurrentText(book.bookContent, curBlockOffset);
+        let curBlock = bookParser.getNextTextBlock(curText.nodeOffset, curText.node.text.length, curText.node.text, curText.node.coord);
+        for (let i=0; i<10; i++) {
+          if (curBlockOffset + (curBlock.lastOffset - curBlock.firstOffset) < book.metadata.tokens) {
+            curBlockOffset += (curBlock.lastOffset - curBlock.firstOffset) + 1;
+            curText = bookParser.getCurrentText(book.bookContent, curBlockOffset);
+            curBlock = bookParser.getNextTextBlock(curText.nodeOffset, curText.node.text.length, curText.node.text, curText.node.coord);
+          }
+        }
+        updateOffset(curBlockOffset);
+      } else {
+        // jump next block
+        const nextBlockOffset = bookProfile.offset + (chapterOffsetEnd - chapterOffset) + 1;
+        //console.log("nextBlockOffset", nextBlockOffset, chapterOffsetEnd, chapterOffset);
+        if (nextBlockOffset < book.metadata.tokens) {
+          updateOffset(nextBlockOffset);
+        }
+      }
     }
   };
 
@@ -324,8 +377,27 @@ export default function App({}) {
           updateOffset(bookProfile.offset - 1);
         }
       }
-    } else {
-      // todo
+    } else if (bookProfile.readMode === READ_MODE.SPEECH) {
+      if (far) {
+        // jump previous 10 blocks
+        let currentOffset = bookProfile.offset;
+        for (let i=0; i<10; i++) {
+          if (currentOffset >= 0) {
+            const previousText = bookParser.getCurrentText(book.bookContent, currentOffset);
+            const previousBlock = bookParser.getPreviousTextBlock(previousText.nodeOffset, previousText.node.text.length, previousText.node.text, previousText.node.coord);
+            currentOffset = currentOffset - 1 + (previousBlock.firstOffset - previousBlock.lastOffset);
+          }
+        }
+        updateOffset(currentOffset + 1);
+      } else {
+        // jump previous block
+        const previousText = bookParser.getCurrentText(book.bookContent, bookProfile.offset - 1);
+        const previousBlock = bookParser.getPreviousTextBlock(previousText.nodeOffset, previousText.node.text.length, previousText.node.text, previousText.node.coord);
+        const previousBlockOffset = bookProfile.offset - 1 + (previousBlock.firstOffset - previousBlock.lastOffset);
+        if (previousBlockOffset >= 0) {
+          updateOffset(previousBlockOffset);
+        }
+      }
     }
   };
 
@@ -385,19 +457,21 @@ export default function App({}) {
     }
   };
 
-  const updateOffset = (newOffset) => {
+  const updateOffset = (newOffset, saveSessionOffset = true) => {
     let extendedBookProfile = {...bookProfile, ...{offset: newOffset}};
     setBookProfile(extendedBookProfile);
     clearTimeout(sessionOffsetTimeoutRef.current);
-    sessionOffsetTimeoutRef.current = setTimeout(() => {
-      let newSessionOffset = [...extendedBookProfile.sessionOffset];
-      newSessionOffset.push(newOffset);
-      if (newSessionOffset.length > 10) {
-        newSessionOffset = newSessionOffset.slice(-10);
-      }
-      let newExtendedProfile = {...extendedBookProfile, ...{sessionOffset: newSessionOffset}};
-      setBookProfile(newExtendedProfile);
-    }, 1000);
+    if (saveSessionOffset) {
+      sessionOffsetTimeoutRef.current = setTimeout(() => {
+        let newSessionOffset = [...extendedBookProfile.sessionOffset];
+        newSessionOffset.push(newOffset);
+        if (newSessionOffset.length > 10) {
+          newSessionOffset = newSessionOffset.slice(-10);
+        }
+        let newExtendedProfile = {...extendedBookProfile, ...{sessionOffset: newSessionOffset}};
+        setBookProfile(newExtendedProfile);
+      }, 1000);
+    }
   };
 
   const cbCloseBrowse = () => {
@@ -456,6 +530,48 @@ export default function App({}) {
     setBookProfile({...bookProfile, ...{sessionOffset: [bookProfile.offset]}});
   };
 
+  const handleUtterEvent = (e) => {
+    if (speechRunningRef.current) {
+      if (e.type === "start") {
+        let speakTextList = [...speakTextListRef.current];
+        const lastText = speakTextList[speakTextList.length - 1];
+        if (lastText.offset + lastText.tokensLength < book.metadata.tokens) {
+          const nextOffset = lastText.offset + lastText.tokensLength + 1;
+          const currentText = bookParser.getCurrentText(book.bookContent, nextOffset);
+          if (currentText) {
+            const currentBlock = bookParser.getNextTextBlock(currentText.nodeOffset, currentText.node.text.length, currentText.node.text, currentText.node.coord);
+            if (currentBlock) {
+              speakTextList.push({offset: nextOffset, tokensLength: currentBlock.lastOffset - currentBlock.firstOffset});
+              speakTextListRef.current = speakTextList;
+              speechSynth.speakText(currentBlock.textForSpeech,
+                                    currentBlock.text,
+                                    handleUtterEvent,
+                                    (window.localStorage?.getItem(LS_SPEECH_LANG)||config.speechLang),
+                                    config.speechPitch,
+                                    config.speechRate,
+                                    nextOffset,
+                                    currentBlock.lastOffset - currentBlock.firstOffset);
+            }
+          }
+        } else {
+        }
+      } else if (e.type === "end") {
+        let speakTextList = [...speakTextListRef.current];
+        console.log([...speakTextList].length);
+        if (speakTextList.length > 1) {
+          updateOffset(speakTextList[speakTextList.length - 1].offset, false);
+          speakTextList.splice(0, 1); // should remove current utterance coord
+          speakTextListRef.current = speakTextList;
+        } else {
+          updateOffset(book.metadata.tokens, false);
+          endFullScreen();
+          stopWakeLock();
+          setPlayReader(false);
+        }
+      }
+    }
+  }
+
   if (openBrowse) {
     return (
       <Browse config={config} cbOpenBook={openBrowsedBook} cbOpenBookByContent={openBookByContent} cbClose={cbCloseBrowse} />
@@ -486,6 +602,7 @@ export default function App({}) {
                                  chapter={chapter}
                                  chapterIndex={chapterIndex}
                                  offset={chapterOffset}
+                                 offsetEnd={chapterOffsetEnd}
                                  textBackgroundOpacity={config.textBackgroundOpacity}
                                  showCoverBackground={config.coverBackground}
                                  book={book}

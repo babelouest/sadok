@@ -9,6 +9,7 @@ export default function TextBackgroundContainer({
   chapter,
   chapterIndex,
   offset,
+  offsetEnd,
   textBackgroundOpacity,
   showCoverBackground,
   book,
@@ -22,13 +23,14 @@ export default function TextBackgroundContainer({
     chapter.parsedNodes.forEach((node, index) => {
       if (!found && offset < node.tokens) {
         nodesJsx.push(
-          <NodeParser node={node} offset={offset} key={index} book={book} />
+          <NodeParser node={node} offset={offset} offsetEnd={offsetEnd} key={index} book={book} />
         );
         found = true;
       } else {
         offset -= node.tokens;
+        offsetEnd -= node.tokens;
         nodesJsx.push(
-          <NodeParser node={node} offset={-1} key={index} book={book} />
+          <NodeParser node={node} offset={-1} offsetEnd={-1} key={index} book={book} />
         );
       }
     });
