@@ -62,8 +62,8 @@
   z-index: -1;
 }
 .text-background-container-shrinked {
-  padding-left: 55px;
-  padding-right: 55px;
+  padding-left: 55px !important;
+  padding-right: 55px !important;
 }
 .slow-reader {
   height: 100vh;

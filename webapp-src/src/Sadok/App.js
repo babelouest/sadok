@@ -15,7 +15,7 @@ import i18next from 'i18next';
 import bookParser from '../lib/BookParser';
 import profile from '../lib/Profile';
 import speechSynth from '../lib/SpeechSynth';
-import { getTextSize, TEXT_SIZE_VALS, DARK_MODE, READ_MODE, CONFIG_DEFAULT, BOOK_PROFILE_DEFAULT, LS_SPEECH_LANG } from '../lib/Constants';
+import { textSize, TEXT_SIZE_VALS, DARK_MODE, READ_MODE, CONFIG_DEFAULT, BOOK_PROFILE_DEFAULT, LS_SPEECH_LANG } from '../lib/Constants';
 
 import TextBackgroundContainer from './TextBackgroundContainer';
 import Menu from './Menu';
@@ -146,6 +146,16 @@ export default function App({}) {
     }
   };
 
+  const getTextSize = () => {
+    let param = config.speedReaderTextSize;
+    if (config.readMode === READ_MODE.SPEECH) {
+      param = config.speechTextSize;
+    } else if (config.readMode === READ_MODE.SENTENCE) {
+      param = config.sentenceReaderTextSize;
+    }
+    return textSize[param];
+  };
+
   useEffect(() => { // [] (starup)
     profile.initProfile()
     .then(() => {
@@ -198,7 +208,7 @@ export default function App({}) {
       if (currentText.text) {
         setCurrentText(currentText.text);
       }
-    } else if (bookProfile.readMode === READ_MODE.SPEECH) {
+    } else if (bookProfile.readMode === READ_MODE.SPEECH || bookProfile.readMode === READ_MODE.SENTENCE) {
       if (currentText.node) {
         currentBlock = bookParser.getNextTextBlock(currentText.nodeOffset, currentText.node.text.length, currentText.node.text, currentText.node.coord);
         setCurrentTextForBlock(currentText);
@@ -323,7 +333,7 @@ export default function App({}) {
   };
 
   const navigateNext = (far) => {
-    if (config.readMode === READ_MODE.SPEED_READER) {
+    if (bookProfile.readMode === READ_MODE.SPEED_READER) {
       if (far) {
         // jump next 10
         if (bookProfile.offset < book.metadata.tokens - 10) {
@@ -337,7 +347,7 @@ export default function App({}) {
           updateOffset(bookProfile.offset + 1);
         }
       }
-    } else if (bookProfile.readMode === READ_MODE.SPEECH) {
+    } else if (bookProfile.readMode === READ_MODE.SPEECH || bookProfile.readMode === READ_MODE.SENTENCE) {
       if (far) {
         // jump next 10 blocks
         let curBlockOffset = bookProfile.offset;
@@ -363,7 +373,7 @@ export default function App({}) {
   };
 
   const navigatePrevious = (far) => {
-    if (config.readMode === READ_MODE.SPEED_READER) {
+    if (bookProfile.readMode === READ_MODE.SPEED_READER) {
       if (far) {
         // jump previous 10
         if (bookProfile.offset > 10) {
@@ -377,7 +387,7 @@ export default function App({}) {
           updateOffset(bookProfile.offset - 1);
         }
       }
-    } else if (bookProfile.readMode === READ_MODE.SPEECH) {
+    } else if (bookProfile.readMode === READ_MODE.SPEECH || bookProfile.readMode === READ_MODE.SENTENCE) {
       if (far) {
         // jump previous 10 blocks
         let currentOffset = bookProfile.offset;
@@ -481,8 +491,14 @@ export default function App({}) {
   const cbNavigateBeginChapter = () => {
     let newOffset = 0;
     book.bookContent.forEach((chap, i) => {
-      if (i === chapterIndex) {
-        updateOffset(newOffset);
+      if (chapterOffset === 0) {
+        if (i === chapterIndex-1) {
+          updateOffset(newOffset);
+        }
+      } else {
+        if (i === chapterIndex) {
+          updateOffset(newOffset);
+        }
       }
       newOffset += chap.tokens;
     });
@@ -599,6 +615,7 @@ export default function App({}) {
               cbRemoveProfile={cbRemoveProfile}
               cbSessionClear={cbSessionClear} />
         <TextBackgroundContainer config={config}
+                                 bookProfile={bookProfile}
                                  chapter={chapter}
                                  chapterIndex={chapterIndex}
                                  offset={chapterOffset}
@@ -609,13 +626,21 @@ export default function App({}) {
                                  coverData={coverData}
                                  playReader={playReader}
                                  cbTogglePlay={togglePlay} />
+        {bookProfile.readMode === READ_MODE.SENTENCE?
+        <button type="button" className="btn btn-secondary fixed-left-button elt-left" onClick={() => navigatePrevious(false)}>
+          <img src="img/chevron_backward_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
+        </button>:<></>}
         <div className="perfect-centering" onClick={togglePlay}>
-          <p className={"fw-bold "+getTextSize[config.speedReaderTextSize]}>
+          <p className={"fw-bold "+getTextSize()}>
             {jumpTextRight?<span>&nbsp;&nbsp;&nbsp;</span>:<></>}
             {currentText}
           </p>
           {!book.metadata.tokens?<h2>{i18next.t("no-book")}</h2>:<></>}
         </div>
+        {bookProfile.readMode === READ_MODE.SENTENCE?
+        <button type="button" className="btn btn-secondary fixed-right-button elt-right" onClick={() => navigateNext(false)}>
+          <img src="img/chevron_forward_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
+        </button>:<></>}
         <BottomInfo book={book}
                     chapterLabel={chapterLabel}
                     chapterIndex={chapterIndex}

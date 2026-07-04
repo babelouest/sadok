@@ -19,7 +19,7 @@ export const TEXT_SIZE_VALS = {
   XXS: "XXS"
 };
 
-export const getTextSize = {
+export const textSize = {
   "XL": "fs-1",
   "L": "fs-2",
   "M": "fs-3",

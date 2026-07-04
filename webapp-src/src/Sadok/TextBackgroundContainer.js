@@ -4,8 +4,11 @@ import NodeParser from './NodeParser';
 import Cover from './Cover';
 import TextBackgroundStyle from './TextBackgroundStyle';
 
+import { READ_MODE } from '../lib/Constants';
+
 export default function TextBackgroundContainer({
   config,
+  bookProfile,
   chapter,
   chapterIndex,
   offset,
@@ -38,7 +41,7 @@ export default function TextBackgroundContainer({
       <>
         <TextBackgroundStyle useBookCss={config?.useBookCss||false} styles={book.styles||[]} />
         <Cover coverData={coverData} opacity={textBackgroundOpacity} showCover={!playReader && showCoverBackground} />
-        <div id="sadok-text-background" className={"text-background-container padding-top-text text-background opacity-" + textBackgroundOpacity} onClick={cbTogglePlay}>
+        <div id="sadok-text-background" className={"text-background-container padding-top-text text-background opacity-" + textBackgroundOpacity + ((bookProfile.readMode === READ_MODE.SENTENCE)?" text-background-container-shrinked":"")} onClick={cbTogglePlay}>
           {nodesJsx}
         </div>
       </>
