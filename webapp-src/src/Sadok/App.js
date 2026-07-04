@@ -115,7 +115,7 @@ export default function App({}) {
   const speedReaderTextLoop = (currentText) => {
     let timeoutFactor = 1;
     if (currentText.text?.length > 16 && config.speedReaderSlowLongWords) {
-      timeoutFactor = Math.floor(currentText.text.length/20);
+      timeoutFactor = Math.floor(currentText.text.length/10)*2;
       if (timeoutFactor > 20) {
         timeoutFactor = 20;
       }
