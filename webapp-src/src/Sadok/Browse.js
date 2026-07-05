@@ -246,10 +246,10 @@ export default function Browse({config, cbOpenBook, cbOpenBookByContent, cbClose
     let fr = new FileReader();
     if (e.target.files[0].type.startsWith("application/pdf") || e.target.files[0].name.toLowerCase().endsWith(".pdf")) {
       // Load as pdf
-      /*fr.onload = (ev2) => {
+      fr.onload = (ev2) => {
         cbOpenBookByContent("file://" + e.target.files[0].name, "pdf", ev2.target.result);
       };
-      fr.readAsArrayBuffer(file);*/
+      fr.readAsArrayBuffer(file);
     } else if (e.target.files[0].type.startsWith("application/epub") || e.target.files[0].name.toLowerCase().endsWith(".epub")) {
       fr.onload = (ev2) => {
         // Load as ePub

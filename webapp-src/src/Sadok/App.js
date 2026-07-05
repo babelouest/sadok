@@ -429,6 +429,8 @@ export default function App({}) {
       prom = bookParser.parseEpub(blob);
     } else if (newBook.type === "pdf") {
       prom = bookParser.parsePDF(newBook.url);
+    } else if (newBook.type === "pdfInline") {
+      prom = bookParser.parsePDF(newBook);
     } else if (newBook.type === "txt") {
       prom = bookParser.parseTxt(newBook.url);
     } else if (newBook.type === "txtInline") {

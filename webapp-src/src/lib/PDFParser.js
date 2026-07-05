@@ -12,6 +12,15 @@ class SadokPDFParser {
 
   extractPdfText(pdfUrl) {
     let pdf = pdfjsLib.getDocument({ url: pdfUrl });
+    return this.parsePdfContent(pdf);
+  }
+
+  extractPdfData(data) {
+    let pdf = pdfjsLib.getDocument({ data: data });
+    return this.parsePdfContent(pdf);
+  };
+
+  parsePdfContent(pdf) {
     return pdf.promise.then((pdfDoc) => {
       let metadata = {type: "pdf", tokens: 0};
       let contentArray = []
@@ -61,7 +70,7 @@ class SadokPDFParser {
         });
       });
     });
-  }
+  };
 }
 
 let sadokPdfParser = new SadokPDFParser();

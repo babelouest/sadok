@@ -15,8 +15,12 @@ class BookParser {
     return epubParser.extractEpubText(epub)
   }
 
-  parsePDF(pdfUrl) {
-    return sadokPdfParser.extractPdfText(pdfUrl);
+  parsePDF(pdf) {
+    if (typeof pdf  === "string") {
+      return sadokPdfParser.extractPdfText(pdf);
+    } else {
+      return sadokPdfParser.extractPdfData(pdf.data);
+    }
   }
 
   parseTxt(txtUrl) {
