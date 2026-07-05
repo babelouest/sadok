@@ -4,7 +4,7 @@
  *
  * Profile management API in javascript
  *
- * Copyright 2024 Nicolas Mora <mail@babelouest.org>
+ * Copyright 2026 Nicolas Mora <mail@babelouest.org>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU GENERAL PUBLIC LICENSE
