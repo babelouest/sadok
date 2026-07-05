@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import i18next from 'i18next';
 
+import { READ_MODE } from '../lib/Constants';
+
 import Parameters from './Parameters';
 import Chapters from './Chapters';
 
@@ -26,6 +28,23 @@ export default function Menus({
 }) {
 
   if (!playReader) {
+    let modeIconJsx;
+    if (bookProfile.readMode === READ_MODE.SPEED_READER) {
+      modeIconJsx =
+        <button className="btn btn-secondary" type="button" title={i18next.t("read-mode")} disabled={true}>
+          <img className="elt-right" src="img/speed_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
+        </button>
+    } else if (bookProfile.readMode === READ_MODE.SPEECH) {
+      modeIconJsx =
+        <button className="btn btn-secondary" type="button" title={i18next.t("read-mode")} disabled={true}>
+          <img className="elt-right" src="img/select_to_speak_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
+        </button>
+    } else if (bookProfile.readMode === READ_MODE.SENTENCE) {
+      modeIconJsx =
+        <button className="btn btn-secondary" type="button" title={i18next.t("read-mode")} disabled={true}>
+          <img className="elt-right" src="img/format_paragraph_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
+        </button>
+    }
     return (
       <>
         <div className="position-fixed top-0 start-0 m-3">
@@ -39,9 +58,12 @@ export default function Menus({
           </div>
         </div>
         <div className="position-fixed top-0 end-0 m-3">
-          <button className="btn btn-secondary" type="button" data-bs-toggle="offcanvas" data-bs-target="#rightMenu" aria-controls="rightMenu" title={i18next.t("parameters")}>
-            <img src="img/settings_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg"/>
-          </button>
+          <div className="btn-group-vertical" role="group">
+            <button className="btn btn-secondary" type="button" data-bs-toggle="offcanvas" data-bs-target="#rightMenu" aria-controls="rightMenu" title={i18next.t("parameters")}>
+              <img src="img/settings_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg"/>
+            </button>
+            {modeIconJsx}
+          </div>
         </div>
         <Chapters book={book}
                   offset={offset}
