@@ -74,5 +74,6 @@
   "time-remaining-compact": "{{h}}:{{m}}:{{s}}",
   "time-remaining-long": " - {{h}}:{{m}}:{{s}} remaining",
   "word-length": "{{val, number()}} words",
-  "browse-open-local-file": "Open local file"
+  "browse-open-local-file": "Open local file",
+  "page-label": "Page {{index}}"
 }

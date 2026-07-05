@@ -428,6 +428,7 @@ export default function App({}) {
       const blob = new File([newBook.data], newBook.url, { type: 'application/epub+zip' });
       prom = bookParser.parseEpub(blob);
     } else if (newBook.type === "pdf") {
+      prom = bookParser.parsePDF(newBook.url);
     } else if (newBook.type === "txt") {
       prom = bookParser.parseTxt(newBook.url);
     } else if (newBook.type === "txtInline") {

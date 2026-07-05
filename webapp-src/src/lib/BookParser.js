@@ -1,12 +1,10 @@
 import i18next from 'i18next';
 
 import epubParser from '../lib/EpubParser';
+import sadokPdfParser from '../lib/PDFParser';
 import apiManager from './APIManager';
 
 import { separators } from '../lib/Constants';
-
-//import pdfjs from 'pdfjs-dist/legacy/build/pdf';
-//import pdfjsWorker from 'pdfjs-dist/legacy/build/pdf.worker';
 
 class BookParser {
 
@@ -17,8 +15,8 @@ class BookParser {
     return epubParser.extractEpubText(epub)
   }
 
-  parsePDF(pdfBook) {
-    //let pdf = pdfjsLib.getDocument(pdfUrl);
+  parsePDF(pdfUrl) {
+    return sadokPdfParser.extractPdfText(pdfUrl);
   }
 
   parseTxt(txtUrl) {
@@ -42,27 +40,7 @@ class BookParser {
   }
 
   parseTxtInline(url, data) {
-    let splitText = data.split("\n");
-    let nodes = [], tokensTotal = 0;
-    splitText.forEach(paragraph => {
-      let coords = parseTxtToCoord(paragraph);
-      tokensTotal += coords.length;
-      nodes.push({
-        classList: "",
-        id: "",
-        tag: "p",
-        tokens: coords.length,
-        parsedNodes: [{
-          classList: "",
-          id: "",
-          tag: "#text",
-          tokens: coords.length,
-          coord: coords,
-          text: paragraph,
-          parsedNodes: []
-        }]
-      });
-    });
+    const { nodes, tokensTotal } = convertTxtToDom(data);
     return Promise.resolve({
       book: false,
       metadata: {
@@ -385,3 +363,31 @@ export const parseTitleFromUrl = (url, metadata = false) => {
     return decodeURIComponent(title.substring(0, title.lastIndexOf('.')).replaceAll("_", " "));
   }
 }
+
+export const convertTxtToDom = (data) => {
+  let splitText = data.split("\n");
+  let nodes = [], tokensTotal = 0;
+  splitText.forEach(paragraph => {
+    let coords = parseTxtToCoord(paragraph);
+    tokensTotal += coords.length;
+    nodes.push({
+      classList: "",
+      id: "",
+      tag: "p",
+      tokens: coords.length,
+      parsedNodes: [{
+        classList: "",
+        id: "",
+        tag: "#text",
+        tokens: coords.length,
+        coord: coords,
+        text: paragraph,
+        parsedNodes: []
+      }]
+    });
+  });
+  return {
+    nodes: nodes,
+    tokensTotal: tokensTotal
+  };
+};
