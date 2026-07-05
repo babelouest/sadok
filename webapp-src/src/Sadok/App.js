@@ -441,7 +441,7 @@ export default function App({}) {
         setBook(bookParsed);
         profile.getBookProfile(newBook.url)
         .then(curBookProfile => {
-          let extendedBookProfile = {...BOOK_PROFILE_DEFAULT, ...curBookProfile};
+          let extendedBookProfile = {...{...BOOK_PROFILE_DEFAULT, ...{readMode: config.readMode}}, ...curBookProfile};
           if (extendedBookProfile.tokens !== bookParsed.metadata.tokens) {
             extendedBookProfile.tokens = bookParsed.metadata.tokens;
           }
@@ -451,6 +451,9 @@ export default function App({}) {
           setBookProfile(extendedBookProfile);
           if (JSON.stringify(extendedBookProfile) !== JSON.stringify(curBookProfile)) {
             profile.setBookProfile(newBook.url, extendedBookProfile);
+          }
+          if (config.readMode !== extendedBookProfile.readMode) {
+            updateConfig({readMode: extendedBookProfile.readMode});
           }
         });
         if (bookParsed.book?.resources?.cover) {
