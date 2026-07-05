@@ -17,6 +17,20 @@ Beware of the speech synthetisis, there is no emotion, no change of rythm, no ch
 
 Read a e-book one sentence at a time.
 
+## Document format supported
+
+### ePub
+
+Parses electronic books in ePub format using the library [foliate-js](https://github.com/johnfactotum/foliate-js), renders the html content and the images of the book.
+
+### PDF
+
+Parses the text content of PDF files using [PDF.js](https://mozilla.github.io/pdf.js/), renders only the text, not the style, nor the images.
+
+### Text
+
+Parses a text content
+
 Copyright 2026 Nicolas Mora <mail@babelouest.org>
 
 License: AGPL
