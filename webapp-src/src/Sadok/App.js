@@ -653,6 +653,7 @@ export default function App({}) {
           <img src="img/chevron_forward_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
         </button>:<></>}
         <BottomInfo book={book}
+                    bookProfile={bookProfile}
                     chapterLabel={chapterLabel}
                     chapterIndex={chapterIndex}
                     offset={bookProfile.offset}

@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import i18next from 'i18next';
 
+import { READ_MODE } from '../lib/Constants';
+
 import TimeRemaining from './TimeRemaining';
 import NavButtons from './NavButtons';
 
 export default function BottomInfo({
   book,
+  bookProfile,
   chapterLabel,
   chapterIndex,
   offset,
@@ -32,7 +35,9 @@ export default function BottomInfo({
         displayJsx.push(<React.Fragment key={2}>{offset+"/"+book.metadata.tokens}</React.Fragment>);
         displayJsx.push(<React.Fragment key={3}>{" ("+i18next.t("percent", {val: Math.floor(offset*100/book.metadata.tokens)})+")"}</React.Fragment>);
       }
-      displayJsx.push(<TimeRemaining key={4} offset={offset} textSpeed={textSpeed} tokens={book.metadata.tokens} />);
+      if (bookProfile.readMode === READ_MODE.SPEED_READER) {
+        displayJsx.push(<TimeRemaining key={4} offset={offset} textSpeed={textSpeed} tokens={book.metadata.tokens} />);
+      }
     }
     return (
       <div className="row fixed-bottom elt-top" id="sadok-bottom">
