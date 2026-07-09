@@ -452,9 +452,6 @@ export default function App({}) {
           if (JSON.stringify(extendedBookProfile) !== JSON.stringify(curBookProfile)) {
             profile.setBookProfile(newBook.url, extendedBookProfile);
           }
-          if (config.readMode !== extendedBookProfile.readMode) {
-            updateConfig({readMode: extendedBookProfile.readMode});
-          }
         });
         if (bookParsed.book?.resources?.cover) {
           bookParsed.book.loadBlob(bookParsed.book.resources.cover.href)
@@ -546,6 +543,7 @@ export default function App({}) {
     .then(() => {
       updateConfig({ currentBook: false, currentBookType: false });
       setBook({metadata: {}, bookContent: []});
+      setCoverData(false);
     });
   };
 
