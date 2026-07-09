@@ -14,6 +14,7 @@ export default function Parameters({
   book,
   offset,
   config,
+  bookProfile,
   cbUpdateConfig,
   cbUpdateBookProfile,
   cbInitConfig
@@ -58,7 +59,6 @@ export default function Parameters({
   };
 
   const setReadMode = (e) => {
-    cbUpdateConfig({readMode: e.target.value});
     cbUpdateBookProfile({readMode: e.target.value});
   };
 
@@ -80,7 +80,7 @@ export default function Parameters({
           <label className="input-group-text" htmlFor="read-mode">
             {i18next.t("read-mode")}
           </label>
-          <select className="form-select" id="read-mode" value={config.readMode} onChange={setReadMode}>
+          <select className="form-select" id="read-mode" value={bookProfile.readMode||config.readMode} onChange={setReadMode}>
             <option value={READ_MODE.SPEED_READER}>{i18next.t("read-mode-speed-reader")}</option>
             <option value={READ_MODE.SPEECH}>{i18next.t("read-mode-speech")}</option>
             <option value={READ_MODE.SENTENCE}>{i18next.t("read-mode-sentence-reader")}</option>

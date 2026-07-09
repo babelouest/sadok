@@ -82,6 +82,7 @@ export default function Menus({
                   cbSessionClear={cbSessionClear} />
         <Parameters book={book}
                     offset={offset}
+                    bookProfile={bookProfile}
                     config={config}
                     playReader={playReader}
                     cbNavigateNext={cbNavigateNext}
