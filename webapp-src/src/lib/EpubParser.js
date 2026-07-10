@@ -11,17 +11,14 @@ class EpubParser {
       depth: depth,
       label: false
     };
-    //console.log("getTocFromId", id, tocList);
     tocList.forEach(toc => {
-      if (!content.label && toc.href === id) {
-        //console.log("Found label", toc.label);
+      if (!content.label && toc.href.includes(id)) {
         content.label = toc.label;
       }
       if (!content.label && toc.subitems?.length) {
         content = this.getTocFromId(toc.subitems, id, (depth+1));
       }
     });
-    //console.log(content);
     return content;
   }
 
@@ -89,7 +86,6 @@ class EpubParser {
       book.sections.forEach((sec, index) => {
         proms.push(sec.createDocument()
         .then(doc => {
-          //console.log("sec", sec);
           let parsedNodes = this.navigateDom(doc.childNodes);
           let tokens = 0;
           parsedNodes.forEach(sn => {
@@ -99,7 +95,6 @@ class EpubParser {
           });
           tokensTotal += tokens;
           let toc = this.getTocFromId(book.toc, sec.id, 0);
-          //console.log(toc);
           if (!bookContent[index]) {
             bookContent[index] = {
               depth: toc.depth,
