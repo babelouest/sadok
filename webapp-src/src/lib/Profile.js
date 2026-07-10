@@ -20,33 +20,37 @@ const LS_PROFILE_NAME = LS_PREFIX + "profile";
 const LS_BOOK_PROFILE_PREFIX = LS_PREFIX + "book-";
 
 function stringToUUIDv5(name) {
-  // URL Namespace UUID as the base (ce188333-1c16-4d96-83b8-482e271b5225)
-  const namespaceBytes = new Uint8Array([
-    0xce, 0x18, 0x83, 0x33, 0x1c, 0x16, 0x4d, 0x96,
-    0x83, 0xb8, 0x48, 0x2e, 0x27, 0x1b, 0x52, 0x25
-  ]);
-  
-  const nameBytes = new TextEncoder().encode(name);
-  const buffer = new Uint8Array(namespaceBytes.length + nameBytes.length);
-  buffer.set(namespaceBytes);
-  buffer.set(nameBytes, namespaceBytes.length);
-  
-  // Hash the combined array using SHA-1
-  return crypto.subtle.digest('SHA-1', buffer)
-  .then(hashBuffer => {
-    const hashBytes = new Uint8Array(hashBuffer);
-    
-    // Set variant and version numbers for UUID v5
-    hashBytes[6] = (hashBytes[6] & 0x0f) | 0x50; // Version 5
-    hashBytes[8] = (hashBytes[8] & 0x3f) | 0x80; // Variant RFC4122
-    
-    // Convert byte array into standard 8-4-4-4-12 hex string
-    const hex = Array.from(hashBytes.slice(0, 16))
-      .map(b => b.toString(16).padStart(2, '0'))
-      .join('');
+  if (crypto.subtle) {
+    // URL Namespace UUID as the base (ce188333-1c16-4d96-83b8-482e271b5225)
+    const namespaceBytes = new Uint8Array([
+      0xce, 0x18, 0x83, 0x33, 0x1c, 0x16, 0x4d, 0x96,
+      0x83, 0xb8, 0x48, 0x2e, 0x27, 0x1b, 0x52, 0x25
+    ]);
+
+    const nameBytes = new TextEncoder().encode(name);
+    const buffer = new Uint8Array(namespaceBytes.length + nameBytes.length);
+    buffer.set(namespaceBytes);
+    buffer.set(nameBytes, namespaceBytes.length);
+
+    // Hash the combined array using SHA-1
+    return crypto.subtle.digest('SHA-1', buffer)
+    .then(hashBuffer => {
+      const hashBytes = new Uint8Array(hashBuffer);
+
+      // Set variant and version numbers for UUID v5
+      hashBytes[6] = (hashBytes[6] & 0x0f) | 0x50; // Version 5
+      hashBytes[8] = (hashBytes[8] & 0x3f) | 0x80; // Variant RFC4122
       
-    return hex.replace(/^(.{8})(.{4})(.{4})(.{4})(.{12})$/, "$1-$2-$3-$4-$5");
-  });
+      // Convert byte array into standard 8-4-4-4-12 hex string
+      const hex = Array.from(hashBytes.slice(0, 16))
+        .map(b => b.toString(16).padStart(2, '0'))
+        .join('');
+        
+      return hex.replace(/^(.{8})(.{4})(.{4})(.{4})(.{12})$/, "$1-$2-$3-$4-$5");
+    });
+  } else {
+    return Promise.resolve(encodeURIComponent(name));
+  }
 }
 
 class Profile {
