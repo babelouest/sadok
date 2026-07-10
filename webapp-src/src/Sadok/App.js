@@ -309,13 +309,13 @@ export default function App({}) {
   }
 
   const startWakeLock = () => {
-    if ("wakeLockRef" in navigator) {
+    if ("wakeLock" in navigator) {
       try {
         if (wakeLockRef.current) {
           wakeLockRef.current.release();
           wakeLockRef.current = null;
         }
-        navigator.wakeLockRef.request("screen").then((res) => {
+        navigator.wakeLock.request("screen").then((res) => {
           wakeLockRef.current = res;
         });
       } catch (err) {
@@ -325,14 +325,14 @@ export default function App({}) {
   };
 
   const stopWakeLock = () => {
-    if ("wakeLockRef" in navigator) {
+    if ("wakeLock" in navigator) {
       try {
         if (wakeLockRef.current) {
           wakeLockRef.current.release();
           wakeLockRef.current = null;
         }
       } catch (err) {
-        console.error("Error wakeLockRef unlock", err);
+        console.error("Error wakeLock unlock", err);
       }
     }
   };
