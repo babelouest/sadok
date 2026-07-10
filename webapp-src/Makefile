@@ -49,7 +49,7 @@ build-webapp: src/lib/Build.js
 
 install-webapp: dist/index.html dist/index.js dist/locales/en/translations.json dist/locales/fr/translations.json
 	@echo Install webapp files
-	@find $(WEBAPP_DEST) ! -name webapp ! -name .gitignore ! -name list.json ! -name config.json -delete
+	@find $(WEBAPP_DEST) ! -name webapp ! -name .gitignore ! -name list.json ! -name config.json | -name books -delete
 	@cp -R dist/css/ dist/favicon.ico dist/index.js dist/*.index.js dist/img/ dist/index.html dist/js/ dist/locales/ $(WEBAPP_DEST)
 
 sadok-webapp.tar.gz: dist/index.html dist/index.js dist/locales/en/translations.json dist/locales/fr/translations.json
