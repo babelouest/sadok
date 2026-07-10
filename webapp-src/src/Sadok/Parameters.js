@@ -60,6 +60,7 @@ export default function Parameters({
 
   const setReadMode = (e) => {
     cbUpdateBookProfile({readMode: e.target.value});
+    cbUpdateConfig({readMode: e.target.value});
   };
 
   return (
