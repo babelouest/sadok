@@ -32,11 +32,13 @@ const parseCSS = (cssString, insertSelector) => {
 const stringifyCSS = (css) => {
   let cssStr = "";
   css.forEach(c => {
-    cssStr += c.selector + "{\n";
-    Object.keys(c.style).forEach(key => {
-      cssStr += "  " + key + ": " + c.style[key] + ";\n";
-    });
-    cssStr += "}\n";
+    if (!c.selector.includes("body")) {
+      cssStr += c.selector + "{\n";
+      Object.keys(c.style).forEach(key => {
+        cssStr += "  " + key + ": " + c.style[key] + ";\n";
+      });
+      cssStr += "}\n";
+    }
   });
   return cssStr;
 };
@@ -45,7 +47,7 @@ export default function TextBackgroundStyle({useBookCss, styles}) {
   if (useBookCss) {
     return (
       <style>
-        {stringifyCSS(parseCSS(styles.join("\n")))}
+        {stringifyCSS(parseCSS(styles.join("\n"), ".sadok-text-background"))}
       </style>
     );
   }

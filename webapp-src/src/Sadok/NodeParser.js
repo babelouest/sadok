@@ -8,6 +8,8 @@ export default function NodeParser({node, offset, offsetEnd, book}) {
   switch (node.tag) {
     case "html":
     case "body":
+    case "header":
+    case "footer":
       return (
         <SubNode node={node} offset={offset} offsetEnd={offsetEnd} book={book} />
       )
@@ -19,6 +21,13 @@ export default function NodeParser({node, offset, offsetEnd, book}) {
         </p>
       )
       break;
+    case "main":
+      return (
+        <main className={node.classList}>
+          <SubNode node={node} offset={offset} offsetEnd={offsetEnd} book={book} />
+        </main>
+      )
+      break;
     case "div":
       return (
         <div className={node.classList}>
@@ -26,11 +35,95 @@ export default function NodeParser({node, offset, offsetEnd, book}) {
         </div>
       )
       break;
+    case "dd":
+      return (
+        <dd className={node.classList}>
+          <SubNode node={node} offset={offset} offsetEnd={offsetEnd} book={book} />
+        </dd>
+      )
+      break;
+    case "dl":
+      return (
+        <dl className={node.classList}>
+          <SubNode node={node} offset={offset} offsetEnd={offsetEnd} book={book} />
+        </dl>
+      )
+      break;
+    case "dt":
+      return (
+        <dt className={node.classList}>
+          <SubNode node={node} offset={offset} offsetEnd={offsetEnd} book={book} />
+        </dt>
+      )
+      break;
     case "span":
       return (
         <span className={node.classList}>
           <SubNode node={node} offset={offset} offsetEnd={offsetEnd} book={book} />
         </span>
+      )
+      break;
+    case "abbr":
+      return (
+        <abbr className={node.classList}>
+          <SubNode node={node} offset={offset} offsetEnd={offsetEnd} book={book} />
+        </abbr>
+      )
+      break;
+    case "bdi":
+      return (
+        <bdi className={node.classList}>
+          <SubNode node={node} offset={offset} offsetEnd={offsetEnd} book={book} />
+        </bdi>
+      )
+      break;
+    case "bdo":
+      return (
+        <bdo className={node.classList}>
+          <SubNode node={node} offset={offset} offsetEnd={offsetEnd} book={book} />
+        </bdo>
+      )
+      break;
+    case "cite":
+      return (
+        <cite className={node.classList}>
+          <SubNode node={node} offset={offset} offsetEnd={offsetEnd} book={book} />
+        </cite>
+      )
+      break;
+    case "code":
+      return (
+        <code className={node.classList}>
+          <SubNode node={node} offset={offset} offsetEnd={offsetEnd} book={book} />
+        </code>
+      )
+      break;
+    case "data":
+      return (
+        <data className={node.classList}>
+          <SubNode node={node} offset={offset} offsetEnd={offsetEnd} book={book} />
+        </data>
+      )
+      break;
+    case "dfn":
+      return (
+        <dfn className={node.classList}>
+          <SubNode node={node} offset={offset} offsetEnd={offsetEnd} book={book} />
+        </dfn>
+      )
+      break;
+    case "em":
+      return (
+        <em className={node.classList}>
+          <SubNode node={node} offset={offset} offsetEnd={offsetEnd} book={book} />
+        </em>
+      )
+      break;
+    case "menu":
+      return (
+        <menu className={node.classList}>
+          <SubNode node={node} offset={offset} offsetEnd={offsetEnd} book={book} />
+        </menu>
       )
       break;
     case "h1":
@@ -73,6 +166,13 @@ export default function NodeParser({node, offset, offsetEnd, book}) {
         <h6 className={node.classList}>
           <SubNode node={node} offset={offset} offsetEnd={offsetEnd} book={book} />
         </h6>
+      )
+      break;
+    case "hgroup":
+      return (
+        <hgroup className={node.classList}>
+          <SubNode node={node} offset={offset} offsetEnd={offsetEnd} book={book} />
+        </hgroup>
       )
       break;
     case "i":
@@ -147,11 +247,17 @@ export default function NodeParser({node, offset, offsetEnd, book}) {
       break;
     case "a":
       if (node.href) {
-        return (
-          <a href={node.href} title={node.title} name={node.name} id={node.id} className={[node.classList, "link-opacity-50-hover"].join(" ")}>
+        if (!node.href.startsWith(window.location.origin)) {
+          return (
+            <a href={node.href} title={node.title} name={node.name} id={node.id} className={[node.classList, "link-opacity-50-hover"].join(" ")}>
+              <SubNode node={node} offset={offset} offsetEnd={offsetEnd} book={book} />
+            </a>
+          )
+        } else {
+          return (
             <SubNode node={node} offset={offset} offsetEnd={offsetEnd} book={book} />
-          </a>
-        )
+          )
+        }
       } else {
         return (
           <SubNode node={node} offset={offset} offsetEnd={offsetEnd} book={book} />
@@ -275,6 +381,27 @@ export default function NodeParser({node, offset, offsetEnd, book}) {
         </nav>
       )
       break;
+    case "pre":
+      return (
+        <pre className={node.classList}>
+          <SubNode node={node} offset={offset} offsetEnd={offsetEnd} book={book} />
+        </pre>
+      )
+      break;
+    case "label":
+      return (
+        <label className={node.classList}>
+          <SubNode node={node} offset={offset} offsetEnd={offsetEnd} book={book} />
+        </label>
+      )
+      break;
+    case "legend":
+      return (
+        <legend className={node.classList}>
+          <SubNode node={node} offset={offset} offsetEnd={offsetEnd} book={book} />
+        </legend>
+      )
+      break;
     case "br":
       return (
         <br/>
@@ -307,6 +434,8 @@ export default function NodeParser({node, offset, offsetEnd, book}) {
     case "link":
       break;
     case "meta":
+      break;
+    case "style":
       break;
     default:
       console.error("tag not found", node.tag, node);

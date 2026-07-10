@@ -41,7 +41,7 @@ export default function TextBackgroundContainer({
       <>
         <TextBackgroundStyle useBookCss={config?.useBookCss||false} styles={book.styles||[]} />
         <Cover coverData={coverData} opacity={textBackgroundOpacity} showCover={!playReader && showCoverBackground} />
-        <div id="sadok-text-background" className={"text-background-container padding-top-text text-background opacity-" + textBackgroundOpacity + ((bookProfile.readMode === READ_MODE.SENTENCE)?" text-background-container-shrinked":"")} onClick={cbTogglePlay}>
+        <div id="sadok-text-background" className={"sadok-text-background text-background-container padding-top-text text-background opacity-" + textBackgroundOpacity + ((bookProfile.readMode === READ_MODE.SENTENCE)?" text-background-container-shrinked":"")} onClick={cbTogglePlay}>
           {nodesJsx}
         </div>
       </>
