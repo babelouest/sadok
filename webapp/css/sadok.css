@@ -1,0 +1,123 @@
+/*
+ * Sadok specific css file
+ * Copyright 2024-2025 Nicolas Mora <mail@babelouest.org>
+ */
+.elt-left {
+  margin-right: 5px;
+}
+.elt-right {
+  margin-left: 5px;
+}
+.elt-top {
+  margin-bottom: 5px;
+}
+.elt-bottom {
+  margin-top: 5px;
+}
+.perfect-centering {
+  position: fixed;
+  top: 50%;
+  left:50%;
+  transform: translate(-50%,-50%);
+}
+.description {
+  white-space: pre-wrap;
+}
+.bottom-center {
+  position: fixed;
+  left: 50%;
+  bottom: 5px;
+  transform: translate(-50%, -50%);
+  margin: 0 auto;
+}
+.speed-reader {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+}
+.speed-reader-padding {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+.horizontal-scroll {
+  overflow-x: auto;
+}
+.clickable {
+  cursor: pointer;
+}
+.text-background {
+  word-wrap: break-word;
+  text-align: justify;
+}
+.text-background-container {
+  overflow-y: auto;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  height: 100% !important;
+  width: 100% !important;
+  padding: 5px;
+  z-index: -1;
+}
+.text-background-container-shrinked {
+  padding-left: 55px !important;
+  padding-right: 55px !important;
+}
+.slow-reader {
+  height: 100vh;
+  padding-top: 50px;
+  padding-bottom: 10px;
+}
+.chapter-list {
+  overflow-y: auto;
+  min-height: 200px;
+}
+.fixed-left-button {
+  position: fixed;
+  left: 0;
+  top: 15%;
+  height: 70vh;
+  width: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.fixed-right-button {
+  position: fixed;
+  right: 0;
+  top: 15%;
+  height: 70vh;
+  width: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.cover {
+  z-index: -1;
+}
+.img-cover {
+  opacity: 0.5;
+}
+.padding-top-text {
+  padding-top: 120px;
+  padding-bottom: 130px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+.book-title {
+  word-wrap: break-word;
+}
+.book-title-row {
+  padding-left: 50px;
+  padding-right: 50px;
+}
+.browse-name {
+  overflow-wrap: break-word;
+}
+.upload {
+  display:none;
+}
