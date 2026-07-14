@@ -2,6 +2,8 @@
 
 Online e-book reader
 
+![screenshot](screenshot-sadok.png)
+
 ## Available modes
 
 ### Speed reading
