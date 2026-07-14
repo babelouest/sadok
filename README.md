@@ -4,7 +4,7 @@ Online e-book reader
 
 ![screenshot](screenshot-sadok.png)
 
-You can test the [online version](https://babelouest.github.io/sadok).
+You can test Sadok with the [online version](https://babelouest.github.io/sadok).
 
 ## Available modes
 
