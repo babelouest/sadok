@@ -19,6 +19,10 @@ Beware of the speech synthetisis, there is no emotion, no change of rythm, no ch
 
 Read a e-book one sentence at a time.
 
+## Save configuration, book read and position
+
+The position of the reading and your configuration is saved either in the local storage of your browser, or in your remote profile if you use a profile server, the profile server isn't safe, so it must be used in a controlled environment like an intranet or a VPN.
+
 ## Document format supported
 
 ### ePub
