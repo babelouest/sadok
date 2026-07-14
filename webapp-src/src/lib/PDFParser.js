@@ -56,7 +56,8 @@ class SadokPDFParser {
             depth: 0,
             label: i18next.t("page-label", {index: (index+1)}),
             parsedNodes: page.nodes,
-            tokens: page.tokensTotal
+            tokens: page.tokensTotal,
+            tocTokens: page.tokensTotal
           });
           metadata.tokens += page.tokensTotal;
         });

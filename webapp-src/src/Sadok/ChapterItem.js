@@ -3,7 +3,7 @@ import i18next from 'i18next';
 
 import TimeRemaining from './TimeRemaining';
 
-export default function ChapterItem({config, totalTokens, chapter, chapterOffset, offset, cbSetOffset}) {
+export default function ChapterItem({config, totalTokens, chapter, chapterOffset, offset, active, cbSetOffset}) {
   const selectChapter = (e, chapterOffset) => {
     e.preventDefault();
     if (cbSetOffset) {
@@ -17,7 +17,7 @@ export default function ChapterItem({config, totalTokens, chapter, chapterOffset
       &nbsp;(<TimeRemaining offset={chapterOffset} textSpeed={config.speedReaderTextSpeed} tokens={totalTokens} compact={true}/>)
     </>
   let percent = Math.round((chapterOffset/totalTokens)*100), className = "", currentId = "";
-  if (offset >= chapterOffset && offset < (chapterOffset + chapter.tokens)) {
+  if (active) {
     className = " active";
     currentId = "sadok-current-chapter";
   }

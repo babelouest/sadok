@@ -15,6 +15,7 @@ export default function ChapterList({book, config, offset, cbSetOffset}) {
                      chapter={chapter}
                      chapterOffset={chapterOffset}
                      offset={offset}
+                     active={offset >= chapterOffset && offset < (chapterOffset+chapter.tocTokens)}
                      cbSetOffset={cbSetOffset}
         />
       );

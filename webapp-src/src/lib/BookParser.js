@@ -61,7 +61,8 @@ class BookParser {
         depth: 0,
         label: false,
         parsedNodes: nodes,
-        tokens: tokensTotal
+        tokens: tokensTotal,
+        tocTokens: tokensTotal
       }]
     });
   }

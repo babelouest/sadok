@@ -111,6 +111,16 @@ class EpubParser {
       proms.push(...manProms);
       return Promise.all(proms)
       .then(() => {
+        if (bookContent.length) {
+          let tocTokens = 0;
+          for (let i = bookContent.length - 1; i >= 0; i--) {
+            tocTokens += bookContent[i].tokens;
+            if (bookContent[i].label) {
+              bookContent[i].tocTokens = tocTokens;
+              tocTokens = 0;
+            }
+          }
+        }
         return {
           book: book,
           metadata: {
