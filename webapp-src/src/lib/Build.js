@@ -1,2 +1,1 @@
-let build={"id":"202607141712"};
-export default build
+export const BUILD={"id":"20260716165725"};
