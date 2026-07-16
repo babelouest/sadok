@@ -57,6 +57,8 @@
   "book-complete-read": "Mark as read",
   "book-remove-profile": "Remove book profile",
   "parameters": "Paramters",
+  "browse-ongoing": "Ongoing reading",
+  "browse-done": "Done",
   "browse": "Choose an e-book",
   "browse-filename": "Name",
   "browse-size": "Size",
