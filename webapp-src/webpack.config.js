@@ -3,7 +3,6 @@ const webpack = require('webpack');
 
 module.exports = {
   entry: path.resolve(__dirname, './src/index.js'),
-  mode: 'production',
   module: {
     rules: [
       {
@@ -22,7 +21,7 @@ module.exports = {
   },
   plugins: [new webpack.HotModuleReplacementPlugin()],
   devServer: {
-    static: path.resolve(__dirname, './dist'),
+    static: path.resolve(__dirname, './public'),
     compress: true,
     port: 3000,
     host: 'localhost',
