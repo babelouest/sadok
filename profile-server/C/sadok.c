@@ -6,18 +6,17 @@
  *
  * Copyright 2026 Nicolas Mora <mail@babelouest.org>
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU GENERAL PUBLIC LICENSE
- * License as published by the Free Software Foundation;
- * version 3 of the License.
- *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, version 3 of the License.
+ * 
  * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU GENERAL PUBLIC LICENSE for more details.
- *
- * You should have received a copy of the GNU General Public
- * License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+ * for more details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License along
+ * with this program. If not, see <https://www.gnu.org/licenses/>. 
  *
  */
 
@@ -694,11 +693,11 @@ int build_config_from_file(struct config_elements * config) {
  * Print help message to output file specified
  */
 void print_help(FILE * output) {
-  fprintf(output, "\nSadok: lecture rapide\n");
+  fprintf(output, "\nSadok: e-book reader\n");
   fprintf(output, "\n");
   fprintf(output, "Version %s\n", _SADOK_VERSION_);
   fprintf(output, "\n");
-  fprintf(output, "Copyright 2024 Nicolas Mora <mail@babelouest.org>\n");
+  fprintf(output, "Copyright 2026 Nicolas Mora <mail@babelouest.org>\n");
   fprintf(output, "\n");
   fprintf(output, "This program is free software; you can redistribute it and/or\n");
   fprintf(output, "modify it under the terms of the GNU GENERAL PUBLIC LICENSE\n");
