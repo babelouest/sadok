@@ -57,6 +57,8 @@
   "book-complete-read": "Marquer comme lu",
   "book-remove-profile": "Supprimer le profil du livre",
   "parameters": "Paramètres",
+  "browse-ongoing": "Lectures en cours",
+  "browse-done": "Lectures terminées",
   "browse": "Sélectionner un livre électronique",
   "browse-filename": "Nom",
   "browse-size": "Taille",
