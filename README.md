@@ -12,12 +12,15 @@ You can test Sadok with the [online version](https://babelouest.github.io/sadok)
 
 ### Speed reading
 
-Read the e-book using a speed reading mode: one word at a time on the center of the screen, speed and other options can be configured in the `Parameters` Menu.
+Read the e-book using a speed reading mode: one word at a time on the center of the screen.
+
+Speed and other options can be configured in the `Parameters` Menu.
 
 ### Text-to-speech reading
 
 Read the book using the [speech synthetisis](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesis) API on the browser.
-Beware of the speech synthetisis, there is no emotion, no change of rythm, no change of tone. It's not as cool as a real audio book read by a human.
+Beware of the speech synthetisis, there is no emotion, no change of rythm, no change of tone. It's not as good as a real audio book read by a human.
+
 Voice settings and other options can be configured in the `Parameters` Menu.
 
 ### By-sentence reading
@@ -26,7 +29,7 @@ Read a e-book one sentence at a time.
 
 ## Save configuration, book read and position
 
-The position of the reading and your configuration is saved either in the local storage of your browser, or in your remote profile if you use a profile server, the profile server isn't safe, so it must be used in a controlled environment like an intranet or a VPN.
+The position of the reading and your configuration is saved either in the local storage on your browser, or on your remote profile if you use a profile server. **The profile server isn't safe, so it must be used in a controlled environment like an intranet or a VPN.**
 
 ## Document format supported
 
@@ -60,7 +63,7 @@ $ # make your modification in the public/ or the src/ directories
 $ npm run build # build the application
 ```
 
-The build js files will be located in the `sadok/webapp-src/dist/` directory.
+The built js files will be located in the `sadok/webapp-src/dist/` directory.
 
 To install your modify the web app, run the command `npm run install`, this will install the `sadok/webapp-src/public/*` files and the `sadok/webapp-src/dist/*` files and folders in the `sadok/doc/` directory.
 
@@ -104,6 +107,8 @@ The content of your local hosted library can be listed in the file `sadok/doc/li
 
 If you want to use a profile server to share your profiles between devices, your profile API must be available under the url `api/` url relative to the web app. Examples of profile servers are available in the [profile-server](profile-server) directory. Beware that a profile server has no security or authentication, they must not be available in untrusted networks.
 
-Copyright 2026 Nicolas Mora <mail@babelouest.org>
+## Copyright
+
+2026 Nicolas Mora <mail@babelouest.org>
 
 License: AGPL
