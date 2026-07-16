@@ -43,7 +43,7 @@ Parses the text content of PDF files using [PDF.js](https://mozilla.github.io/pd
 
 ### Text
 
-Parses a text content
+Parses a text file.
 
 ## Usage
 
