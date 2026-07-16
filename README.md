@@ -41,10 +41,6 @@ Parses the text content of PDF files using [PDF.js](https://mozilla.github.io/pd
 
 Parses a text content
 
-Copyright 2026 Nicolas Mora <mail@babelouest.org>
-
-License: AGPL
-
 ## Usage
 
 Open the application on your browser, see the [online version](https://babelouest.github.io/sadok) for example.
@@ -102,3 +98,11 @@ The content of your local hosted library can be listed in the file `sadok/doc/li
   }
 ]
 ```
+
+### Add a profile server
+
+If you want to use a profile server to share your profiles between devices, your profile API must be available under the url `api/` url relative to the web app. Examples of profile servers are available in the [profile-server](profile-server) directory. Beware that a profile server has no security or authentication, they must not be available in untrusted networks.
+
+Copyright 2026 Nicolas Mora <mail@babelouest.org>
+
+License: AGPL
