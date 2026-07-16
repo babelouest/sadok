@@ -51,17 +51,17 @@ export default function Menus({
     let modeIconJsx;
     if (bookProfile.readMode === READ_MODE.SPEED_READER) {
       modeIconJsx =
-        <button className="btn btn-secondary" type="button" title={i18next.t("read-mode")} disabled={true}>
+        <button className="btn btn-secondary" type="button" title={i18next.t("read-mode-speed-reader")} disabled={true}>
           <img className="elt-right" src="img/speed_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
         </button>
     } else if (bookProfile.readMode === READ_MODE.SPEECH) {
       modeIconJsx =
-        <button className="btn btn-secondary" type="button" title={i18next.t("read-mode")} disabled={true}>
+        <button className="btn btn-secondary" type="button" title={i18next.t("read-mode-speech")} disabled={true}>
           <img className="elt-right" src="img/select_to_speak_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
         </button>
     } else if (bookProfile.readMode === READ_MODE.SENTENCE) {
       modeIconJsx =
-        <button className="btn btn-secondary" type="button" title={i18next.t("read-mode")} disabled={true}>
+        <button className="btn btn-secondary" type="button" title={i18next.t("read-mode-sentence-reader")} disabled={true}>
           <img className="elt-right" src="img/format_paragraph_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
         </button>
     }

@@ -22,7 +22,7 @@ import React, { useState, useEffect } from 'react';
 import i18next from 'i18next';
 
 import { DARK_MODE, READ_MODE, OpacityAvailable } from '../lib/Constants';
-import build from '../lib/Build';
+import { BUILD } from '../lib/Build';
 import profile from '../lib/Profile';
 
 import MenuSpeedReader from './MenuSpeedReader';
@@ -40,10 +40,10 @@ export default function Parameters({
   cbInitConfig
 }) {
 
-  const setDarkMode = (e, mode) => {
-    cbUpdateConfig({darkMode: mode});
+  const setDarkMode = (e) => {
+    cbUpdateConfig({darkMode: e.target.value});
     const darkModeMql = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)');
-    if ((mode === "system" && darkModeMql && darkModeMql.matches) || mode === "enabled") {
+    if ((e.target.value === "system" && darkModeMql && darkModeMql.matches) || e.target.value === "enabled") {
       document.documentElement.setAttribute('data-bs-theme','dark');
     } else {
       document.documentElement.setAttribute('data-bs-theme','light');
@@ -87,7 +87,7 @@ export default function Parameters({
     <div className="offcanvas offcanvas-end" tabIndex="-1" id="rightMenu" aria-labelledby="menuLabel">
       <div className="offcanvas-header">
         <h5 className="offcanvas-title" id="menuLabel">
-          {i18next.t("title", {build: build.id})}
+          {i18next.t("title", {build: BUILD.id})}
         </h5>
         <img className="elt-right" src={profile.useProfileApi?"img/cloud_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg":"img/cloud_off_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg"} />
         <button type="button" className="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
@@ -116,37 +116,15 @@ export default function Parameters({
             <option value="fr">{i18next.t("lang-fr")}</option>
           </select>
         </div>
-        <div className="mb-3">
-          <span>{i18next.t("dark-mode")}</span>
-          <div className="form-check form-check-inline elt-right">
-            <input className="form-check-input"
-                   type="radio" name="darkMode"
-                   id="dark-mode-system"
-                   value={DARK_MODE.SYSTEM}
-                   checked={config.darkMode===DARK_MODE.SYSTEM||!config.darkMode}
-                   onChange={(e) => setDarkMode(e, "system")}/>
-            <label className="form-check-label" htmlFor="dark-mode-system">{i18next.t("dark-mode-system")}</label>
-          </div>
-          <div className="form-check form-check-inline">
-            <input className="form-check-input"
-                   type="radio"
-                   name="darkMode"
-                   id="dark-mode-enabled"
-                   value={DARK_MODE.ENABLED}
-                   checked={config.darkMode===DARK_MODE.ENABLED}
-                   onChange={(e) => setDarkMode(e, "enabled")}/>
-            <label className="form-check-label" htmlFor="dark-mode-enabled">{i18next.t("dark-mode-enabled")}</label>
-          </div>
-          <div className="form-check form-check-inline">
-            <input className="form-check-input"
-                   type="radio"
-                   name="darkMode"
-                   id="dark-mode-disabled"
-                   value={DARK_MODE.DISABLED}
-                   checked={config.darkMode===DARK_MODE.DISABLED}
-                   onChange={(e) => setDarkMode(e, "disabled")}/>
-            <label className="form-check-label" htmlFor="dark-mode-disabled">{i18next.t("dark-mode-disabled")}</label>
-          </div>
+        <div className="input-group mb-3">
+          <label className="input-group-text" htmlFor="dark-mode">
+            {i18next.t("dark-mode")}
+          </label>
+          <select className="form-select" id="dark-mode" value={config.darkMode} onChange={setDarkMode}>
+            <option value={DARK_MODE.SYSTEM}>{i18next.t("dark-mode-system")}</option>
+            <option value={DARK_MODE.ENABLED}>{i18next.t("dark-mode-enabled")}</option>
+            <option value={DARK_MODE.DISABLED}>{i18next.t("dark-mode-disabled")}</option>
+          </select>
         </div>
         <div className="mb-3">
           <div className="form-check form-switch">
