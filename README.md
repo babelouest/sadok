@@ -2,9 +2,9 @@
 
 Online e-book reader
 
-![screenshot](screenshot-sadok.png)
-
 ![animated demo](sadok-speed-read.gif)
+
+![screenshot](screenshot-sadok.png)
 
 You can test Sadok with the [online version](https://babelouest.github.io/sadok).
 
@@ -44,3 +44,61 @@ Parses a text content
 Copyright 2026 Nicolas Mora <mail@babelouest.org>
 
 License: AGPL
+
+## Usage
+
+Open the application on your browser, see the [online version](https://babelouest.github.io/sadok) for example.
+
+Open an e-book, select a reading mode. When ready click on the `start reading` button, click on the displayed text or on the background text, the speed reading mode will start. To stop the reading mode, click on the screen.
+
+## Build and install
+
+### React web application
+
+On the `sadok/webapp-src/` directory, install the dependencies and build the application using npm:
+
+```shell
+$ npm install   # install the dependencies
+$ # make your modification in the public/ or the src/ directories
+$ npm run build # build the application
+```
+
+The build js files will be located in the `sadok/webapp-src/dist/` directory.
+
+To install your modify the web app, run the command `npm run install`, this will install the `sadok/webapp-src/public/*` files and the `sadok/webapp-src/dist/*` files and folders in the `sadok/doc/` directory.
+
+### Add a catalog files for your e-books
+
+The content of your local hosted library can be listed in the file `sadok/doc/list.json`. The content of the file has the following format:
+
+```javascript
+[
+  {
+    "title": "Jules Verne - De la Terre à la Lune",          // Displayed title in the browse section
+    "type": "epub",                                          // file type (epub, pdf or txt)
+    "url": "books/Jules Verne - De la Terre à la Lune.epub", // url of the file, relative to the web app url, or absolute
+    "size": 220716,                                          // file size (optional)
+    "date": "2026-07-10T19:12:24.948Z"                       // file date (optional)
+  },
+  {
+    "title": "Miguel de Cervantes Saavedra - Don Quijote",
+    "type": "epub",
+    "url": "books/Miguel de Cervantes Saavedra - Don Quijote.epub",
+    "size": 919284,
+    "date": "2026-07-10T19:14:26.808Z"
+  },
+  {
+    "title": "Other", // To navigate in virtual subdirectories
+    "type": "dir",
+    "content": [
+      {
+        "title": "Lewis Carroll - Alice in Wonderland",
+        "type": "epub",
+        "url": "books/Lewis Carroll - Alice in Wonderland.epub",
+        "size": 189199,
+        "date": "2026-07-10T19:11:53.944Z"
+      }
+    ]
+  }
+]
+```
