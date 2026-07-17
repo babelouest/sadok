@@ -9,9 +9,9 @@
     "build-id": "node update-build-id.js > src/lib/Build.js",
     "build-code": "webpack --config ./webpack.config.js --mode development",
     "build": "npm run clean-dist ; npm run build-id && npm run build-code",
-    "clean-inst": "shx --silent rm ../doc/index.html ; shx --silent rm ../doc/*index.js ../doc/index.js.LICENSE.txt ; shx --silent rm ../doc/favicon.ico ; shx --silent rm ../doc/css/ ; shx --silent rm ../doc/img/ ; shx --silent rm ../doc/js/ ; shx --silent rm ../doc/locales/",
-    "copy-dist": "shx cp dist/* ../doc/",
-    "copy-public": "shx cp -r public/css/ public/img/ public/js/ public/locales/ ../doc/ && shx cp public/favicon.ico public/index.html ../doc/",
+    "clean-inst": "shx --silent rm ../docs/index.html ; shx --silent rm ../docs/*index.js ../docs/index.js.LICENSE.txt ; shx --silent rm ../docs/favicon.ico ; shx --silent rm ../docs/css/ ; shx --silent rm ../docs/img/ ; shx --silent rm ../docs/js/ ; shx --silent rm ../docs/locales/",
+    "copy-dist": "shx cp dist/* ../docs/",
+    "copy-public": "shx cp -r public/css/ public/img/ public/js/ public/locales/ ../docs/ && shx cp public/favicon.ico public/index.html ../docs/",
     "install": "npm run clean-inst ; npm run copy-dist && npm run copy-public",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
