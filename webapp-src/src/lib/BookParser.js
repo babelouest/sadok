@@ -372,6 +372,20 @@ export const isSeparator = (code) => {
   ].indexOf(code) > -1)
 }
 
+export const isEndingPunctuation = (code) => {
+  return ([
+    0x002c, // ,
+    0x002e, // .
+    0x0021, // !
+    0x003f, // ?
+    0x2026  // …
+  ].indexOf(code) > -1)
+}
+
+export const isWordEndingPunctuation = (text) => {
+  return (text?.length&&isEndingPunctuation(text.charCodeAt(text.length-1)))||false;
+}
+
 export const isNonBreakSpacePreviousNonChar = (code) => {
   return ([
     0x2013, // –

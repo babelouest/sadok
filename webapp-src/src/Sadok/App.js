@@ -23,6 +23,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import i18next from 'i18next';
 
 import bookParser from '../lib/BookParser';
+import { isWordEndingPunctuation } from '../lib/BookParser';
 import profile from '../lib/Profile';
 import speechSynth from '../lib/SpeechSynth';
 import { textSize, TEXT_SIZE_VALS, DARK_MODE, READ_MODE, CONFIG_DEFAULT, BOOK_PROFILE_DEFAULT, LS_SPEECH_LANG } from '../lib/Constants';
@@ -129,6 +130,9 @@ export default function App({}) {
       if (timeoutFactor > 20) {
         timeoutFactor = 20;
       }
+    }
+    if (config.speedReaderSlowEndingPunctuation && isWordEndingPunctuation(currentText.text)) {
+      timeoutFactor += 1;
     }
     return setTimeout(() => {
       if (book?.metadata?.tokens && bookProfile.offset < book.metadata.tokens) {

@@ -40,6 +40,7 @@
   "text-speed": "Text speed",
   "text-speed-option": "{{speed}} words per minute",
   "slow-long-words": "Slow on long words",
+  "slow-ending-punctuation": "Slow on punctuation",
   "speech-synth-title": "Audio reading",
   "speech-synth-lang-label": "Language",
   "speech-synth-lang": "{{name}} - {{lang}}",

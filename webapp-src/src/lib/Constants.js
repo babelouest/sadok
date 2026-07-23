@@ -71,6 +71,7 @@ export const CONFIG_DEFAULT = {
   speedReaderTextSize: TEXT_SIZE_VALS.XL,
   speedReaderTextSpeed: "300",
   speedReaderSlowLongWords: true,
+  speedReaderSlowEndingPunctuation: true,
   speechLang: false,
   speechPitch: 1,
   speechRate: 1,

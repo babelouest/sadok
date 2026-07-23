@@ -37,6 +37,10 @@ export default function MenuSpeedReader({config, currentMode, cbUpdateConfig}) {
     cbUpdateConfig({speedReaderSlowLongWords: !config.speedReaderSlowLongWords});
   };
 
+  const toggleSlowEndingPunctuation = () => {
+    cbUpdateConfig({speedReaderSlowEndingPunctuation: !config.speedReaderSlowEndingPunctuation});
+  };
+
   return (
     <div className="accordion-item">
       <h2 className="accordion-header">
@@ -80,6 +84,14 @@ export default function MenuSpeedReader({config, currentMode, cbUpdateConfig}) {
               <div className="form-check form-switch">
                 <input className="form-check-input" type="checkbox" role="switch" id="slowLongWords" checked={config.speedReaderSlowLongWords} onChange={toggleSlowLongWords}/>
                 <label className="form-check-label" htmlFor="slowLongWords">{i18next.t("slow-long-words")}</label>
+              </div>
+            </div>
+          </div>
+          <div className="mb-3">
+            <div>
+              <div className="form-check form-switch">
+                <input className="form-check-input" type="checkbox" role="switch" id="slowEndingPunctuation" checked={config.speedReaderSlowEndingPunctuation} onChange={toggleSlowEndingPunctuation}/>
+                <label className="form-check-label" htmlFor="slowEndingPunctuation">{i18next.t("slow-ending-punctuation")}</label>
               </div>
             </div>
           </div>
