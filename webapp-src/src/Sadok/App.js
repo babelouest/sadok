@@ -22,13 +22,13 @@ import React, { useState, useEffect, useRef } from 'react';
 
 import i18next from 'i18next';
 
-import bookParser from '../lib/BookParser';
-import { isWordEndingPunctuation } from '../lib/BookParser';
+import bookParser, { isWordEndingPunctuation } from '../lib/BookParser';
 import profile from '../lib/Profile';
 import speechSynth from '../lib/SpeechSynth';
 import { textSize, TEXT_SIZE_VALS, DARK_MODE, READ_MODE, CONFIG_DEFAULT, BOOK_PROFILE_DEFAULT, LS_SPEECH_LANG } from '../lib/Constants';
 
 import TextBackgroundContainer from './TextBackgroundContainer';
+import TextCenteredDisplayed from './TextCenteredDisplayed';
 import Menu from './Menu';
 import Chapters from './Chapters';
 import TopTitle from './TopTitle';
@@ -86,6 +86,10 @@ export default function App({}) {
   const keyUpEvent = (e) => {
     if (e.key === " " || e.code === "Space" || e.keyCode === 32) { // Start reading when space key is pressed
       togglePlay();
+    } else if (e.keyCode === 37) { // left arrow
+      navigatePrevious();
+    } else if (e.keyCode === 39) { // right arrow
+      navigateNext();
     }
   };
 
@@ -206,7 +210,7 @@ export default function App({}) {
       document.removeEventListener("visibilitychange", visibilitychangeEvent);
       document.removeEventListener("fullscreenchange", fullscreenchange);
     }
-  },[book,config,playReader]);
+  },[book,config,bookProfile,playReader]);
 
   useEffect(() => { // [book,bookProfile,playReader] (show text and loop)
     const currentText = bookParser.getCurrentText(book.bookContent, bookProfile.offset);
@@ -654,11 +658,11 @@ export default function App({}) {
           <img src="img/chevron_backward_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
         </button>:<></>}
         <div className="perfect-centering" onClick={togglePlay}>
-          <p className={"fw-bold "+getTextSize()}>
-            {jumpTextRight?<span>&nbsp;&nbsp;&nbsp;</span>:<></>}
-            {currentText}
-          </p>
-          {!book.metadata.tokens?<h2>{i18next.t("no-book")}</h2>:<></>}
+          <TextCenteredDisplayed text={currentText}
+                                 textSize={getTextSize()}
+                                 optimalRecognitionPoint={bookProfile.readMode===READ_MODE.SPEED_READER && config.speedReaderOptimalRecognitionPoint}
+                                 jumpTextRight={jumpTextRight}
+                                 noBook={!book.metadata.tokens} />
         </div>
         {bookProfile.readMode === READ_MODE.SENTENCE?
         <button type="button" className="btn btn-secondary fixed-right-button elt-right" onClick={() => navigateNext(false)}>

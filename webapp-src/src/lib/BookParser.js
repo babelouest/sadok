@@ -374,10 +374,28 @@ export const isSeparator = (code) => {
 
 export const isEndingPunctuation = (code) => {
   return ([
-    0x002c, // ,
+//    0x002c, // ,
     0x002e, // .
     0x0021, // !
     0x003f, // ?
+    0x2026  // …
+  ].indexOf(code) > -1)
+}
+
+export const isNonLetteredChar = (code) => {
+  return ([
+    0x002c, // ,
+    0x002e, // .
+    0x003a, // :
+    0x0021, // !
+    0x003f, // ?
+    0x0028, // (
+    0x0029, // )
+    0x005b, // [
+    0x005d, // ]
+    0x007b, // {
+    0x007d, // }
+    0x2014, // —
     0x2026  // …
   ].indexOf(code) > -1)
 }

@@ -38,17 +38,33 @@ export default function TimeRemaining({offset, textSpeed, tokens, compact}) {
       timeRemainingSec = "0" + timeRemainingSec;
     }
     if (compact) {
-      return (
-      <>
-        {i18next.t("time-remaining-compact", {h: timeRemainingHour, m: timeRemainingMin, s: timeRemainingSec})}
-      </>
-      )
+      if (timeRemainingHour > 0) {
+        return (
+          <>
+            {i18next.t("time-remaining-compact", {h: timeRemainingHour, m: timeRemainingMin, s: timeRemainingSec})}
+          </>
+        );
+      } else {
+        return (
+          <>
+            {i18next.t("time-remaining-compact-no-h", {m: timeRemainingMin, s: timeRemainingSec})}
+          </>
+        );
+      }
     } else {
-      return (
-      <>
-        {i18next.t("time-remaining-long", {h: timeRemainingHour, m: timeRemainingMin, s: timeRemainingSec})}
-      </>
-      )
+      if (timeRemainingHour > 0) {
+        return (
+          <>
+            {i18next.t("time-remaining-long", {h: timeRemainingHour, m: timeRemainingMin, s: timeRemainingSec})}
+          </>
+        )
+      } else {
+        return (
+          <>
+            {i18next.t("time-remaining-long-no-h", {m: timeRemainingMin, s: timeRemainingSec})}
+          </>
+        )
+      }
     }
   }
   return (

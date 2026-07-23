@@ -41,6 +41,10 @@ export default function MenuSpeedReader({config, currentMode, cbUpdateConfig}) {
     cbUpdateConfig({speedReaderSlowEndingPunctuation: !config.speedReaderSlowEndingPunctuation});
   };
 
+  const toggleOptimalRecognitionPoint = () => {
+    cbUpdateConfig({speedReaderOptimalRecognitionPoint: !config.speedReaderOptimalRecognitionPoint});
+  };
+
   return (
     <div className="accordion-item">
       <h2 className="accordion-header">
@@ -92,6 +96,14 @@ export default function MenuSpeedReader({config, currentMode, cbUpdateConfig}) {
               <div className="form-check form-switch">
                 <input className="form-check-input" type="checkbox" role="switch" id="slowEndingPunctuation" checked={config.speedReaderSlowEndingPunctuation} onChange={toggleSlowEndingPunctuation}/>
                 <label className="form-check-label" htmlFor="slowEndingPunctuation">{i18next.t("slow-ending-punctuation")}</label>
+              </div>
+            </div>
+          </div>
+          <div className="mb-3">
+            <div>
+              <div className="form-check form-switch">
+                <input className="form-check-input" type="checkbox" role="switch" id="optimalRecognitionPoint" checked={config.speedReaderOptimalRecognitionPoint} onChange={toggleOptimalRecognitionPoint}/>
+                <label className="form-check-label" htmlFor="optimalRecognitionPoint">{i18next.t("optimal-recognition-point")}</label>
               </div>
             </div>
           </div>
