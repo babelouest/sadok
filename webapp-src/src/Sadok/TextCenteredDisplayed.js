@@ -46,7 +46,6 @@ const splitTextToORP = (text) => {
         break;
       }
     }
-    console.log(text, firstChar, textLen, text.charCodeAt(0));
     if (textLen === 1) {
       out.point = text.substring(0,firstChar+1);
       out.post = text.substring(firstChar+1);

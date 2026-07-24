@@ -70,6 +70,8 @@
   "size-kb": "{{val}} Ko",
   "size-b": "{{val}} o",
   "close": "Close",
+  "search": "Search",
+  "search-ph": "Eg: James Joyce",
   "browse-filter": "Filter",
   "browse-show": "Show",
   "browse-show-all": "Files and folders",

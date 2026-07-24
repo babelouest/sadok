@@ -47,17 +47,28 @@ const getSubDir = (list, breadcrumb) => {
   return subDir;
 };
 
-const filterList = (list, filterPattern) => {
+const searchList = (list, filterPattern) => {
   let filteredList = [];
   list.forEach(elt => {
     if (elt.type === "dir") {
-      filteredList = filteredList.concat(filterList(elt.content, filterPattern));
+      filteredList = filteredList.concat(searchList(elt.content, filterPattern));
     } else {
       if (elt.title.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().includes(filterPattern)) {
         filteredList.push(elt);
       }
     }
   });
+  return filteredList;
+};
+
+const filterList = (list, filterPattern) => {
+  let filteredList = [];
+  list.forEach(elt => {
+    if (elt.title.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().includes(filterPattern)) {
+      filteredList.push(elt);
+    }
+  });
+  console.log(filteredList);
   return filteredList;
 };
 
@@ -130,6 +141,8 @@ export default function Browse({config, cbOpenBook, cbOpenBookByContent, cbClose
   const [ viewBookInfo, setViewBookInfo ] = useState(false);
   const [ viewBookCoverData, setviewBookCoverData ] = useState(false);
   const [ errorList, setErrorList ] = useState(false);
+  const [ showSearchInput, setShowSearchInput ] = useState(false);
+  const [ searchPattern, setSearchPattern ] = useState("");
   const inputFile = useRef(null);
 
   useEffect(() => {
@@ -161,6 +174,21 @@ export default function Browse({config, cbOpenBook, cbOpenBookByContent, cbClose
       setFilteredList(false);
     }
   },[filter]);
+
+  useEffect(() => {
+    let pattern = searchPattern.trim().normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
+    if (pattern) {
+      setFilteredList(searchList(list, pattern));
+    } else {
+      setFilteredList(false);
+    }
+  },[searchPattern]);
+
+  useEffect(() => {
+    if (!showSearchInput) {
+      setSearchPattern("");
+    }
+  },[showSearchInput]);
 
   const cbOpenDir = (dir) => {
     let bc = [...breadcrumb];
@@ -320,9 +348,15 @@ export default function Browse({config, cbOpenBook, cbOpenBookByContent, cbClose
       });
     } else if (filteredList) {
       sortList(filteredList, orderColumn, orderAsc).forEach((item, index) => {
-        listFilesJsx.push (
-          <BrowseFile key={index+item.url} item={item} bookProfile={findBookProfileByUri(bookProfiles, item.url)} cbOpenBook={cbOpenBook} cbViewBook={cbViewBook} />
-        );
+        if (item.type === "dir" && (show === true || show === "folders")) {
+          listDirJsx.push (
+            <BrowseDir key={index+item.title} item={item} cbOpenDir={cbOpenDir} />
+          );
+        } else if (item.type !== "dir" && (show === true || show === "files")) {
+          listFilesJsx.push (
+            <BrowseFile key={index+item.url} item={item} bookProfile={findBookProfileByUri(bookProfiles, item.url)} cbOpenBook={cbOpenBook} cbViewBook={cbViewBook} />
+          );
+        }
       });
     } else {
       sortList(list, orderColumn, orderAsc).forEach((item, index) => {
@@ -361,9 +395,19 @@ export default function Browse({config, cbOpenBook, cbOpenBookByContent, cbClose
         <>
           <div className="sticky-top">
             <div className="m-3">
-              <button className="btn btn-secondary" type="button" title={i18next.t("close")} onClick={cbClose}>
-                <img src="img/close_small_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg"/>
-              </button>
+              <div className="input-group" role="group">
+                <button className="btn btn-secondary" type="button" title={i18next.t("close")} onClick={cbClose}>
+                  <img src="img/close_small_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg"/>
+                </button>
+                <button className="btn btn-secondary" type="button" title={i18next.t("search")} onClick={() => setShowSearchInput(s => !s)}>
+                  <img src="img/search_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg"/>
+                </button>
+                {showSearchInput?<input type="text"
+                                        className="form-control"
+                                        value={searchPattern}
+                                        placeholder={i18next.t("search-ph")}
+                                        onChange={(e) => setSearchPattern(e.target.value)} />:<></>}
+              </div>
             </div>
             <div className="m-3">
               <nav aria-label="breadcrumb">

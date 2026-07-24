@@ -70,6 +70,8 @@
   "size-kb": "{{val}} Ko",
   "size-b": "{{val}} o",
   "close": "Fermer",
+  "search": "Rechercher",
+  "search-ph": "Ex: Émile Zola",
   "browse-filter": "Filtrer",
   "browse-show": "Montrer",
   "browse-show-all": "Fichiers et dossiers",
