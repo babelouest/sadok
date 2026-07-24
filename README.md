@@ -12,7 +12,7 @@ You can test Sadok with the [online version](https://babelouest.github.io/sadok)
 
 ### Speed reading
 
-Read the e-book using a speed reading mode: one word at a time on the center of the screen.
+Read the e-book using a speed reading mode: one word at a time on the center of the screen with Optimal Recognition Point technique.
 
 Speed and other options can be configured in the `Parameters` Menu.
 
