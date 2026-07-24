@@ -47,19 +47,19 @@
 .clickable {
   cursor: pointer;
 }
-.text-background {
-  word-wrap: break-word;
-  text-align: justify;
-}
 .text-background-container {
   overflow-y: auto;
   position: absolute;
-  top: 0px;
+  top: 10%;
   left: 0px;
-  height: 100% !important;
-  width: 100% !important;
+  height: 80%;
+  width: 100%;
   padding: 5px;
   z-index: -1;
+}
+.text-background {
+  word-wrap: break-word;
+  text-align: justify;
 }
 .text-background-container-shrinked {
   padding-left: 55px !important;
@@ -103,8 +103,8 @@
   opacity: 0.5;
 }
 .padding-top-text {
-  padding-top: 120px;
-  padding-bottom: 130px;
+  padding-top: 60px;
+  padding-bottom: 80px;
   padding-left: 5px;
   padding-right: 5px;
 }
@@ -120,4 +120,57 @@
 }
 .upload {
   display:none;
+}
+.orp-leftfocal-guide {
+  display: flex;
+  align-items: center;
+  width: 200px;
+  justify-content: center;
+}
+.orp-leftfocal-line {
+  flex: 1;
+  height: 1px;
+}
+.orp-leftfocal-marker {
+  width: 1px;
+  height: 35px;
+}
+[data-bs-theme="dark"]
+.orp-leftfocal-line {
+  background-color: white;
+}
+[data-bs-theme="dark"]
+.orp-leftfocal-marker {
+  background-color: white;
+}
+[data-bs-theme="light"]
+.orp-leftfocal-line {
+  background-color: black;
+}
+[data-bs-theme="light"]
+.orp-leftfocal-marker {
+  background-color: black;
+}
+.orp-container {
+  text-align: center;
+  margin-bottom: 1em;
+}
+.orp-wrap {
+  display: inline-block;
+  position: relative;
+}
+.orp-left,
+.orp-right {
+  position: absolute;
+  top: 0;
+  white-space: nowrap;
+}
+.orp-middle {
+  display: block;
+}
+.orp-left {
+  right: 100%;
+}
+.orp-right {
+  left: 100%;
 }
