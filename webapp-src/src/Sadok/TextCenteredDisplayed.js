@@ -67,6 +67,15 @@ const splitTextToORP = (text) => {
       out.post = text.substring(firstChar+5);
     }
   }
+  if (out.point.trim() === "") {
+    if (out.pre !== "") {
+      out.point = out.pre;
+      out.pre = "";
+    } else if (out.post !== "") {
+      out.point = out.post;
+      out.post = "";
+    }
+  }
   return out;
 };
 
