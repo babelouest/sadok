@@ -95,7 +95,7 @@ export default function TextCenteredDisplayed({
   } else if (optimalRecognitionPoint) {
     const { pre, point, post } = splitTextToORP(text);
     return (
-      <div>
+      <div className="background-blur">
         <div className="orp-leftfocal-guide">
           <div className="orp-leftfocal-line"></div>
           <div className="orp-leftfocal-marker"></div>
