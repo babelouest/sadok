@@ -124,7 +124,7 @@
 .orp-leftfocal-guide {
   display: flex;
   align-items: center;
-  width: 200px;
+  width: 400px;
   justify-content: center;
 }
 .orp-leftfocal-line {
@@ -173,4 +173,7 @@
 }
 .orp-right {
   left: 100%;
+}
+.background-blur {
+  backdrop-filter: blur(3px); 
 }
