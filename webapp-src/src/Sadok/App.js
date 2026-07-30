@@ -58,27 +58,23 @@ export default function App({}) {
   const speechRunningRef = useRef(false);
 
   const bgWordScrollIfNotVisible = () => {
-    let txtElm = document.getElementById("sadok-bg-word");
-    let bottomElm = document.getElementById("sadok-bottom");
-    let topElm = document.getElementById("sadok-title");
-    if (txtElm) {
-      let txtRct = txtElm.getBoundingClientRect();
-      let downLimit = Math.max(document.documentElement.clientHeight, window.innerHeight);
-      let upLimit = 5;
-      if (bottomElm) {
-        downLimit = bottomElm.getBoundingClientRect().y;
-      }
-      if (topElm) {
-        upLimit = topElm.getBoundingClientRect().y;
-      }
-      if (txtRct.y < upLimit) {
+    const txtElm = document.getElementById("sadok-bg-word");
+    const txtBackground = document.getElementById("sadok-text-background");
+    if (txtElm && txtBackground) {
+      const childRect = txtElm.getBoundingClientRect();
+      const parentRect = txtBackground.getBoundingClientRect();
+      if (childRect.top < parentRect.top) {
         txtElm.scrollIntoView({
           behavior: "instant",
         });
-      } else if (txtRct.y > downLimit) {
+        console.log("not visible top ");
+      } else if (childRect.bottom > parentRect.bottom) {
+        console.log("not visible bottom");
         txtElm.scrollIntoView({
           behavior: "smooth",
         });
+      } else {
+        console.log("visible");
       }
     }
   };

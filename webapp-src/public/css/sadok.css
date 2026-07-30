@@ -50,9 +50,9 @@
 .text-background-container {
   overflow-y: auto;
   position: absolute;
-  top: 10%;
+  top: 10vh;
   left: 0px;
-  height: 80%;
+  height: calc(88vh - 115px);
   width: 100%;
   padding: 5px;
   z-index: -1;

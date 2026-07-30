@@ -29,7 +29,7 @@ export default function TopTitle({book, cbTogglePlay}) {
     title.push(book?.metadata?.title);
   }
   return (
-    <div className="row elt-bottom book-title-row">
+    <div className="elt-bottom book-title-row">
       <div className="col text-center">
         <h1>
           <span onClick={cbTogglePlay} id="sadok-title" className="book-title">{title.join(" - ")}</span>
