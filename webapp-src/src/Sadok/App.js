@@ -67,14 +67,10 @@ export default function App({}) {
         txtElm.scrollIntoView({
           behavior: "instant",
         });
-        console.log("not visible top ");
       } else if (childRect.bottom > parentRect.bottom) {
-        console.log("not visible bottom");
         txtElm.scrollIntoView({
           behavior: "smooth",
         });
-      } else {
-        console.log("visible");
       }
     }
   };
