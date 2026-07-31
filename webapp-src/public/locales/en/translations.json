@@ -56,6 +56,7 @@
   "sentence-reader-title": "Sentence reading",
   "sentence-reader-text-size": "Text size",
   "percent": "{{val}}%",
+  "book-navigation": "Navigation",
   "chapters": "Chapters",
   "book-complete-read": "Mark as read",
   "book-remove-profile": "Remove book profile",

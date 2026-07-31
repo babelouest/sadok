@@ -42,11 +42,29 @@ export default function Chapters({
   cbRemoveProfile,
   cbSessionClear
 }) {
+  const bgWordScrollIfNotVisible = () => {
+    const currentChapterElt = document.getElementById("sadok-current-chapter");
+    const chapterListElt = document.getElementById("sadok-chapter-list");
+    if (currentChapterElt && chapterListElt) {
+      const childRect = currentChapterElt.getBoundingClientRect();
+      const parentRect = chapterListElt.getBoundingClientRect();
+      if (childRect.top < parentRect.top || childRect.bottom > parentRect.bottom) {
+        currentChapterElt.scrollIntoView({
+          behavior: "instant",
+        });
+      }
+    }
+  };
+
+  useEffect(() => {
+    bgWordScrollIfNotVisible();
+  },[book,chapterIndex,offset,bookProfile]);
+
   return (
     <div className="offcanvas offcanvas-start" tabIndex="-1" id="LeftMenu" aria-labelledby="menuLabel">
       <div className="offcanvas-header">
         <h5 className="offcanvas-title" id="menuLabel">
-          {i18next.t("chapters")}
+          {i18next.t("book-navigation")}
         </h5>
         <button type="button" className="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
       </div>
@@ -84,8 +102,11 @@ export default function Chapters({
         <div className="mb-3">
           <BookInfo book={book} config={config} />
         </div>
-        <div className="chapter-list elt-bottom">
-          <div className="mb-3">
+        <div className="mb-3">
+          <h2>
+            {i18next.t("chapters")}
+          </h2>
+          <div className="chapter-list elt-bottom" id="sadok-chapter-list">
             <ChapterList book={book} config={config} offset={offset} cbSetOffset={cbSetOffset} />
           </div>
         </div>

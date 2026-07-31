@@ -45,9 +45,7 @@ export default function ChapterList({book, config, offset, cbSetOffset}) {
 
   return (
     <div className="list-group">
-      <div className="chapter-list">
-        {chaptersJsx}
-      </div>
+      {chaptersJsx}
     </div>
   );
 }
