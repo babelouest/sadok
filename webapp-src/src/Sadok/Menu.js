@@ -33,6 +33,7 @@ export default function Menus({
   chapterIndex,
   config,
   playReader,
+  navToText,
   cbNavigateNext,
   cbNavigatePrevious,
   cbNavigateBeginChapter,
@@ -47,7 +48,7 @@ export default function Menus({
   cbSessionClear
 }) {
 
-  if (!playReader) {
+  if (!playReader && !navToText) {
     let modeIconJsx;
     if (bookProfile.readMode === READ_MODE.SPEED_READER) {
       modeIconJsx =

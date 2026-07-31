@@ -24,19 +24,45 @@ export default function TextDisplayed({
   text,
   textSize,
   coordStart,
-  coordEnd
+  coordEnd,
+  navToText,
+  startOffset,
+  cbSetOffset
 }) {
+  const selectText = (e) => {
+    if (navToText) {
+      cbSetOffset(startOffset);
+    }
+  };
+
   if (coordStart || coordEnd) {
+    let firstChat = "",
+        beforeCoord = text.substring(0, coordStart),
+        textHighlighted = text.substring(coordStart, coordEnd),
+        afterCoord = text.substring(coordEnd, text.length);
+    if (navToText) {
+      firstChat = <span className="bg-danger">{text.substring(0, 1)}</span>
+      textHighlighted = text.substring((coordStart==0?1:coordStart), coordEnd);
+    }
     return (
-      <>
-        {text.substring(0, coordStart)}
-        <span id="sadok-bg-word" className="bg-primary">{text.substring(coordStart, coordEnd)}</span>
-        {text.substring(coordEnd, text.length)}
-      </>
+      <span onClick={selectText}>
+        {firstChat}
+        {beforeCoord}
+        <span id="sadok-bg-word" className="bg-primary">{textHighlighted}</span>
+        {afterCoord}
+      </span>
     );
   } else {
+    let firstChat = "", textJsx = text;
+    if (navToText) {
+      firstChat = <span className="bg-danger">{text.substring(0, 1)}</span>
+      textJsx = text.substring(1, text.length);
+    }
     return (
-      <>{text}</>
+      <span onClick={selectText}>
+        {firstChat}
+        {textJsx}
+      </span>
     );
   }
 }

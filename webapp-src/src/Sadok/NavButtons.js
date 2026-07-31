@@ -26,7 +26,10 @@ export default function NavButtons({
   offset,
   chapterIndex,
   fromMenu,
+  navToText,
+  allowNavToText,
   cbTogglePlay,
+  cbToggleNavigateToText,
   cbNavigateNext,
   cbNavigatePrevious,
   cbNavigateBeginChapter,
@@ -34,6 +37,9 @@ export default function NavButtons({
 }) {
   return (
     <div className="btn-group">
+      <button className={"btn "+(navToText?"btn-primary":"btn-secondary")} type="button" onClick={() => cbToggleNavigateToText()} title={i18next.t("nav-to-text")} disabled={!book.metadata?.tokens || !allowNavToText}>
+        <img src="img/jump_to_element_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt={i18next.t("nav-to-text")} />
+      </button>
       <button className="btn btn-secondary" type="button" onClick={() => cbNavigateBeginChapter()} title={i18next.t("nav-begin-chapter")} disabled={!book.metadata?.tokens}>
         <img src="img/first_page_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt={i18next.t("nav-begin-chapter")} />
       </button>
@@ -44,10 +50,10 @@ export default function NavButtons({
         <img src="img/chevron_backward_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt={i18next.t("nav-previous")} />
       </button>
       {fromMenu?
-      <button className="btn btn-secondary" type="button" onClick={cbTogglePlay} title={i18next.t("nav-start-read")} data-bs-dismiss="offcanvas" >
+      <button className="btn btn-secondary" type="button" onClick={cbTogglePlay} title={i18next.t("nav-start-read")} data-bs-dismiss="offcanvas" disabled={navToText} >
         <img src="img/play_arrow_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt={i18next.t("nav-start-read")} />
       </button>:
-      <button className="btn btn-secondary" type="button" onClick={cbTogglePlay} title={i18next.t("nav-start-read")} disabled={!book.metadata?.tokens || offset >= book.metadata?.tokens} >
+      <button className="btn btn-secondary" type="button" onClick={cbTogglePlay} title={i18next.t("nav-start-read")} disabled={!book.metadata?.tokens || offset >= book.metadata?.tokens || navToText} >
         <img src="img/play_arrow_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt={i18next.t("nav-start-read")} />
       </button>}
       <button className="btn btn-secondary" type="button" onClick={() => cbNavigateNext(false)} title={i18next.t("nav-next")} disabled={offset >= book.metadata?.tokens} >

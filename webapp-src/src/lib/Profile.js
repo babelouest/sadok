@@ -339,7 +339,6 @@ class Profile {
   }
 
   deleteBookProfile(bookUri) {
-    console.log("plop", bookUri);
     if (this.useProfileApi && this.profileApiName) {
       return this.deleteBookProfileApi(bookUri);
     } else {

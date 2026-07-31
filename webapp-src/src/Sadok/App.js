@@ -43,6 +43,7 @@ export default function App({}) {
   const [ chapter, setChapter ] = useState(false);
   const [ chapterIndex, setChapterIndex ] = useState(-1);
   const [ chapterOffset, setChapterOffset ] = useState(0);
+  const [ chapterOffsetStart, setChapterOffsetStart ] = useState(0);
   const [ chapterOffsetEnd, setChapterOffsetEnd ] = useState(-1);
   const [ playReader, setPlayReader ] = useState(false);
   const [ currentText, setCurrentText ] = useState("");
@@ -51,6 +52,7 @@ export default function App({}) {
   const [ openBrowse, setOpenBrowse ] = useState(false);
   const [ jumpTextRight, setJumpTextRight ] = useState(false);
   const [ coverData, setCoverData ] = useState(false);
+  const [ navToText, setNavToText ] = useState(false);
   const wakeLockRef = useRef(null);
   const previousDisplayRef = useRef(null);
   const sessionOffsetTimeoutRef = useRef(false);
@@ -110,6 +112,11 @@ export default function App({}) {
     if (!chapter || currentText.chapterIndex !== chapterIndex) {
       setChapterIndex(currentText.chapterIndex);
       setChapter(book.bookContent[currentText.chapterIndex]);
+      let offsetStart = 0;
+      for (let i=0; i<currentText.chapterIndex; i++) {
+        offsetStart += book.bookContent[i].tokens;
+      }
+      setChapterOffsetStart(offsetStart);
       book.bookContent.forEach((chap, index) => {
         if (index <= currentText.chapterIndex && chap.label) {
           setChapterLabel(chap.label);
@@ -251,7 +258,7 @@ export default function App({}) {
 
   const togglePlay = () => {
     if (!playReader) {
-      if (book) {
+      if (book && !navToText) {
         startFullScreen();
         startWakeLock();
         if (bookProfile.readMode === READ_MODE.SPEECH) {
@@ -379,7 +386,6 @@ export default function App({}) {
       } else {
         // jump next block
         const nextBlockOffset = bookProfile.offset + (chapterOffsetEnd - chapterOffset) + 1;
-        //console.log("nextBlockOffset", nextBlockOffset, chapterOffsetEnd, chapterOffset);
         if (nextBlockOffset < book.metadata.tokens) {
           updateOffset(nextBlockOffset);
         }
@@ -592,7 +598,6 @@ export default function App({}) {
         }
       } else if (e.type === "end") {
         let speakTextList = [...speakTextListRef.current];
-        console.log([...speakTextList].length);
         if (speakTextList.length > 1) {
           updateOffset(speakTextList[speakTextList.length - 1].offset, false);
           speakTextList.splice(0, 1); // should remove current utterance coord
@@ -621,6 +626,7 @@ export default function App({}) {
               chapterIndex={chapterIndex}
               config={config}
               playReader={playReader}
+              navToText={navToText}
               cbSetOffset={updateOffset}
               cbNavigateNext={navigateNext}
               cbNavigatePrevious={navigatePrevious}
@@ -644,13 +650,17 @@ export default function App({}) {
                                  book={book}
                                  coverData={coverData}
                                  playReader={playReader}
-                                 cbTogglePlay={togglePlay} />
+                                 navToText={navToText}
+                                 startOffset={chapterOffsetStart}
+                                 cbTogglePlay={togglePlay}
+                                 cbSetOffset={updateOffset} />
         {bookProfile.readMode === READ_MODE.SENTENCE?
         <button type="button" className="btn btn-secondary fixed-left-button elt-left" onClick={() => navigatePrevious(false)}>
           <img src="img/chevron_backward_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
         </button>:<></>}
         <div className="perfect-centering" onClick={togglePlay}>
           <TextCenteredDisplayed text={currentText}
+                                 navToText={navToText}
                                  textSize={getTextSize()}
                                  optimalRecognitionPoint={bookProfile.readMode===READ_MODE.SPEED_READER && config.speedReaderOptimalRecognitionPoint}
                                  jumpTextRight={jumpTextRight}
@@ -667,6 +677,9 @@ export default function App({}) {
                     offset={bookProfile.offset}
                     textSpeed={config.speedReaderTextSpeed}
                     playReader={playReader}
+                    navToText={navToText}
+                    allowNavToText={config.textBackgroundOpacity>0}
+                    cbToggleNavigateToText={() => setNavToText(n => !n)}
                     cbTogglePlay={togglePlay}
                     cbNavigateNext={navigateNext}
                     cbNavigatePrevious={navigatePrevious}

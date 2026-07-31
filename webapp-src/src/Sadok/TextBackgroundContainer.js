@@ -38,30 +38,37 @@ export default function TextBackgroundContainer({
   book,
   coverData,
   playReader,
-  cbTogglePlay
+  navToText,
+  startOffset,
+  cbTogglePlay,
+  cbSetOffset
 }) {
   if (chapter && textBackgroundOpacity) {
     let found = false;
     let nodesJsx = [];
+    let nextOffset = startOffset;
     chapter.parsedNodes.forEach((node, index) => {
       if (!found && offset < node.tokens) {
         nodesJsx.push(
-          <NodeParser node={node} offset={offset} offsetEnd={offsetEnd} key={index} book={book} />
+          <NodeParser node={node} offset={offset} offsetEnd={offsetEnd} key={index} book={book} navToText={navToText} startOffset={nextOffset} cbSetOffset={cbSetOffset} />
         );
         found = true;
       } else {
         offset -= node.tokens;
         offsetEnd -= node.tokens;
         nodesJsx.push(
-          <NodeParser node={node} offset={-1} offsetEnd={-1} key={index} book={book} />
+          <NodeParser node={node} offset={-1} offsetEnd={-1} key={index} book={book} navToText={navToText} startOffset={nextOffset} cbSetOffset={cbSetOffset} />
         );
       }
+      nextOffset += node.tokens;
     });
     return (
       <>
         <TextBackgroundStyle useBookCss={config?.useBookCss||false} styles={book.styles||[]} />
-        <Cover coverData={coverData} opacity={textBackgroundOpacity} showCover={!playReader && showCoverBackground} />
-        <div id="sadok-text-background" className={"sadok-text-background text-background-container padding-top-text text-background opacity-" + textBackgroundOpacity + ((bookProfile.readMode === READ_MODE.SENTENCE)?" text-background-container-shrinked":"")} onClick={cbTogglePlay}>
+        <Cover coverData={coverData} opacity={textBackgroundOpacity} showCover={!playReader && showCoverBackground && !navToText} />
+        <div id="sadok-text-background"
+             className={"sadok-text-background text-background-container padding-top-text text-background opacity-" + textBackgroundOpacity + ((bookProfile.readMode === READ_MODE.SENTENCE)?" text-background-container-shrinked":"")}
+             onClick={cbTogglePlay}>
           {nodesJsx}
         </div>
       </>

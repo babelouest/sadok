@@ -34,6 +34,9 @@ export default function BottomInfo({
   offset,
   textSpeed,
   playReader,
+  navToText,
+  allowNavToText,
+  cbToggleNavigateToText,
   cbTogglePlay,
   cbNavigateNext,
   cbNavigatePrevious,
@@ -70,6 +73,9 @@ export default function BottomInfo({
                                      offset={offset}
                                      chapterIndex={chapterIndex}
                                      fromMenu={false}
+                                     navToText={navToText}
+                                     allowNavToText={allowNavToText}
+                                     cbToggleNavigateToText={cbToggleNavigateToText}
                                      cbTogglePlay={cbTogglePlay}
                                      cbNavigateNext={cbNavigateNext}
                                      cbNavigatePrevious={cbNavigatePrevious}

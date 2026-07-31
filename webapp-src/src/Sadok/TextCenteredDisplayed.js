@@ -81,6 +81,7 @@ const splitTextToORP = (text) => {
 
 export default function TextCenteredDisplayed({
   text,
+  navToText,
   textSize,
   optimalRecognitionPoint,
   jumpTextRight,
@@ -92,35 +93,37 @@ export default function TextCenteredDisplayed({
         {i18next.t("no-book")}
       </h2>
     );
-  } else if (optimalRecognitionPoint) {
-    const { pre, point, post } = splitTextToORP(text);
-    return (
-      <div className="background-blur">
-        <div className="orp-leftfocal-guide">
-          <div className="orp-leftfocal-line"></div>
-          <div className="orp-leftfocal-marker"></div>
-          <div className="orp-leftfocal-line"></div>
-        </div>
-        <div className="orp-container">
-          <div className={"orp-wrap fw-bold "+textSize}>
-            <span className="orp-left">{pre}</span>
-            <span className="text-primary orp-middle">{point}</span>
-            <span className="orp-right">{post}</span>
+  } else if (!navToText) {
+    if (optimalRecognitionPoint) {
+      const { pre, point, post } = splitTextToORP(text);
+      return (
+        <div className="background-blur">
+          <div className="orp-leftfocal-guide">
+            <div className="orp-leftfocal-line"></div>
+            <div className="orp-leftfocal-marker"></div>
+            <div className="orp-leftfocal-line"></div>
+          </div>
+          <div className="orp-container">
+            <div className={"orp-wrap fw-bold "+textSize}>
+              <span className="orp-left">{pre}</span>
+              <span className="text-primary orp-middle">{point}</span>
+              <span className="orp-right">{post}</span>
+            </div>
+          </div>
+          <div className="orp-leftfocal-guide">
+            <div className="orp-leftfocal-line"></div>
+            <div className="orp-leftfocal-marker"></div>
+            <div className="orp-leftfocal-line"></div>
           </div>
         </div>
-        <div className="orp-leftfocal-guide">
-          <div className="orp-leftfocal-line"></div>
-          <div className="orp-leftfocal-marker"></div>
-          <div className="orp-leftfocal-line"></div>
-        </div>
-      </div>
-    );
-  } else {
-    return (
-      <p className={"fw-bold "+textSize}>
-        {jumpTextRight?<span>&nbsp;&nbsp;&nbsp;</span>:<></>}
-        {text}
-      </p>
-    );
+      );
+    } else {
+      return (
+        <p className={"fw-bold "+textSize}>
+          {jumpTextRight?<span>&nbsp;&nbsp;&nbsp;</span>:<></>}
+          {text}
+        </p>
+      );
+    }
   }
 }

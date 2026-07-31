@@ -1,6 +1,7 @@
 {
   "title": "Sadok - #{{build}}",
   "no-book": "Veuillez sélectionner un livre dans la bibliothèque",
+  "nav-to-text": "Naviguer dans le texte",
   "nav-begin-chapter": "Début du chapitre",
   "nav-previous-10": "10 blocs en arrière",
   "nav-previous": "1 bloc en arrière",
