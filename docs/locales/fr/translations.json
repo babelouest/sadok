@@ -1,6 +1,7 @@
 {
   "title": "Sadok - #{{build}}",
   "no-book": "Veuillez sélectionner un livre dans la bibliothèque",
+  "nav-to-text": "Naviguer dans le texte",
   "nav-begin-chapter": "Début du chapitre",
   "nav-previous-10": "10 blocs en arrière",
   "nav-previous": "1 bloc en arrière",
@@ -55,7 +56,8 @@
   "sentence-reader-title": "Lecture par phrase",
   "sentence-reader-text-size": "Taille du texte",
   "percent": "{{val}}%",
-  "chapters": "Table des chapitres",
+  "book-navigation": "Navigation",
+  "chapters": "Chapitres",
   "book-complete-read": "Marquer comme lu",
   "book-remove-profile": "Supprimer le profil du livre",
   "parameters": "Paramètres",

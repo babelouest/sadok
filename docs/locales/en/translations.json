@@ -1,6 +1,7 @@
 {
   "title": "Sadok - #{{build}}",
   "no-book": "Please select a book in the library",
+  "nav-to-text": "Navigate in text",
   "nav-begin-chapter": "Begin chapter",
   "nav-previous-10": "10 blocs previous",
   "nav-previous": "1 bloc previous",
@@ -55,6 +56,7 @@
   "sentence-reader-title": "Sentence reading",
   "sentence-reader-text-size": "Text size",
   "percent": "{{val}}%",
+  "book-navigation": "Navigation",
   "chapters": "Chapters",
   "book-complete-read": "Mark as read",
   "book-remove-profile": "Remove book profile",
