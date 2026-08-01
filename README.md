@@ -74,17 +74,25 @@ The content of your local hosted library can be listed in the file `sadok/doc/li
 ```javascript
 [
   {
-    "title": "Jules Verne - De la Terre à la Lune",          // Displayed title in the browse section
-    "type": "epub",                                          // file type (epub, pdf or txt)
-    "url": "books/Jules Verne - De la Terre à la Lune.epub", // url of the file, relative to the web app url, or absolute
-    "size": 220716,                                          // file size (optional)
-    "date": "2026-07-10T19:12:24.948Z"                       // file date (optional)
+    "title": "De la Terre à la Lune",                         // Displayed title in the browse section
+    "author": "Jules Verne",                                  // author (optional)
+    "type": "epub",                                           // file type (epub, pdf or txt)
+    "url": "books/Jules Verne - De la Terre à la Lune.epub",  // url of the file, relative to the web app url, or absolute
+    "cover": "books/Jules Verne - De la Terre à la Lune.png", // url of the book cover, relative to the web app url, or absolute (optional)
+    "size": 220716,                                           // file size (optional)
+    "tokens": 56734,                                          // number of words (optional)
+    "year": 1865,                                             // book year (optional)
+    "date": "2026-07-10T19:12:24.948Z"                        // file date (optional)
   },
   {
-    "title": "Miguel de Cervantes Saavedra - Don Quijote",
+    "title": "Don Quijote",
+    "author": "Miguel de Cervantes Saavedra",
     "type": "epub",
     "url": "books/Miguel de Cervantes Saavedra - Don Quijote.epub",
+    "cover": "books/Miguel de Cervantes Saavedra - Don Quijote.png",
     "size": 919284,
+    "tokens": 386847,
+    "year": 1605,
     "date": "2026-07-10T19:14:26.808Z"
   },
   {
@@ -92,10 +100,14 @@ The content of your local hosted library can be listed in the file `sadok/doc/li
     "type": "dir",
     "content": [
       {
-        "title": "Lewis Carroll - Alice in Wonderland",
+        "title": "Alice in Wonderland",
+        "author": "Lewis Carroll",
         "type": "epub",
         "url": "books/Lewis Carroll - Alice in Wonderland.epub",
+        "cover": "books/Lewis Carroll - Alice in Wonderland.jpeg",
         "size": 189199,
+        "tokens": 30474,
+        "year": 1865,
         "date": "2026-07-10T19:11:53.944Z"
       }
     ]
