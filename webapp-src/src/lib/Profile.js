@@ -378,3 +378,13 @@ class Profile {
 let profile = new Profile();
 
 export default profile;
+
+export const findBookProfileByUri = (bookProfiles, uri) => {
+  let bp = false;
+  Object.keys(bookProfiles).forEach(key => {
+    if (bookProfiles[key].uri === uri) {
+      bp = {...bookProfiles[key]};
+    }
+  });
+  return bp;
+};

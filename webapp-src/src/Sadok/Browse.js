@@ -25,12 +25,12 @@ import profile from '../lib/Profile';
 import bookParser from '../lib/BookParser';
 
 import apiManager from '../lib/APIManager';
-import BrowseDir from './BrowseDir';
-import BrowseFile from './BrowseFile';
-import SortIcon from './SortIcon';
+import BrowseTab from './BrowseTab';
 import BookInfo from './BookInfo';
 import ChapterList from './ChapterList';
 import Cover from './Cover';
+import BrowseIcons from './BrowseIcons';
+import { findBookProfileByUri } from '../lib/Profile';
 
 const getSubDir = (list, breadcrumb) => {
   let subDir = [];
@@ -68,18 +68,7 @@ const filterList = (list, filterPattern) => {
       filteredList.push(elt);
     }
   });
-  console.log(filteredList);
   return filteredList;
-};
-
-const findBookProfileByUri = (bookProfiles, uri) => {
-  let bp = false;
-  Object.keys(bookProfiles).forEach(key => {
-    if (bookProfiles[key].uri === uri) {
-      bp = {...bookProfiles[key]};
-    }
-  });
-  return bp;
 };
 
 const getOngoingOrComplete = (list, bookProfiles, complete) => {
@@ -101,30 +90,6 @@ const getOngoingOrComplete = (list, bookProfiles, complete) => {
   return onGoing;
 };
 
-const sortList = (list, column, asc) => {
-  if (column === "title") {
-    if (asc) {
-      return [...list].sort((a, b) => (a.title.toLowerCase().localeCompare(b.title.toLowerCase())));
-    } else {
-      return [...list].sort((a, b) => (b.title.toLowerCase().localeCompare(a.title.toLowerCase())));
-    }
-  } else if (column === "size") {
-    if (asc) {
-      return [...list].sort((a, b) => a.size - b.size);
-    } else {
-      return [...list].sort((a, b) => b.size - b.size);
-    }
-  } else if (column === "date") {
-    if (asc) {
-      return [...list].sort((a, b) => (new Date(a.date)).getTime() - (new Date(b.date)).getTime());
-    } else {
-      return [...list].sort((a, b) => (new Date(b.date)).getTime() - (new Date(a.date)).getTime());
-    }
-  } else {
-    return list;
-  }
-};
-
 export default function Browse({config, cbOpenBook, cbOpenBookByContent, cbClose}) {
   const [ rootList, setRootList ] = useState([]);
   const [ list, setList ] = useState([]);
@@ -134,14 +99,13 @@ export default function Browse({config, cbOpenBook, cbOpenBookByContent, cbClose
   const [ filteredList, setFilteredList ] = useState(false);
   const [ breadcrumb, setBreadcrumb ] = useState([]);
   const [ filter, setFilter ] = useState("");
-  const [ orderColumn, setOrderColumn ] = useState("title");
-  const [ orderAsc, setOrderAsc ] = useState(true);
   const [ show, setShow ] = useState(true);
   const [ viewBook, setViewBook ] = useState(false);
   const [ viewBookInfo, setViewBookInfo ] = useState(false);
   const [ viewBookCoverData, setviewBookCoverData ] = useState(false);
   const [ errorList, setErrorList ] = useState(false);
   const [ showSearchInput, setShowSearchInput ] = useState(false);
+  const [ showIcons, setShowIcons ] = useState(true);
   const [ searchPattern, setSearchPattern ] = useState("");
   const inputFile = useRef(null);
 
@@ -333,44 +297,6 @@ export default function Browse({config, cbOpenBook, cbOpenBookByContent, cbClose
       </>
     );
   } else {
-    let listDirJsx = [], listFilesJsx = [];
-    if (completeList) {
-      sortList(completeList, orderColumn, orderAsc).forEach((item, index) => {
-        listFilesJsx.push (
-          <BrowseFile key={index+item.url} item={item} bookProfile={findBookProfileByUri(bookProfiles, item.url)} cbOpenBook={cbOpenBook} cbViewBook={cbViewBook} />
-        );
-      });
-    } else if (ongoingList) {
-      sortList(ongoingList, orderColumn, orderAsc).forEach((item, index) => {
-        listFilesJsx.push (
-          <BrowseFile key={index+item.url} item={item} bookProfile={findBookProfileByUri(bookProfiles, item.url)} cbOpenBook={cbOpenBook} cbViewBook={cbViewBook} />
-        );
-      });
-    } else if (filteredList) {
-      sortList(filteredList, orderColumn, orderAsc).forEach((item, index) => {
-        if (item.type === "dir" && (show === true || show === "folders")) {
-          listDirJsx.push (
-            <BrowseDir key={index+item.title} item={item} cbOpenDir={cbOpenDir} />
-          );
-        } else if (item.type !== "dir" && (show === true || show === "files")) {
-          listFilesJsx.push (
-            <BrowseFile key={index+item.url} item={item} bookProfile={findBookProfileByUri(bookProfiles, item.url)} cbOpenBook={cbOpenBook} cbViewBook={cbViewBook} />
-          );
-        }
-      });
-    } else {
-      sortList(list, orderColumn, orderAsc).forEach((item, index) => {
-        if (item.type === "dir" && (show === true || show === "folders")) {
-          listDirJsx.push (
-            <BrowseDir key={index+item.title} item={item} cbOpenDir={cbOpenDir} />
-          );
-        } else if (item.type !== "dir" && (show === true || show === "files")) {
-          listFilesJsx.push (
-            <BrowseFile key={index+item.url} item={item} bookProfile={findBookProfileByUri(bookProfiles, item.url)} cbOpenBook={cbOpenBook} cbViewBook={cbViewBook} />
-          );
-        }
-      });
-    }
     if (errorList) {
       return (
         <>
@@ -430,9 +356,12 @@ export default function Browse({config, cbOpenBook, cbOpenBookByContent, cbClose
               </nav>
             </div>
             <div className="input-group mb-3">
+              <button className="btn btn-secondary" type="button" title={i18next.t("browse-toggle")} onClick={() => setShowIcons(s => !s)} >
+                <img src={showIcons?"img/list_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg":"img/apps_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg"} />
+              </button>
               <button className="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" disabled={completeList || filteredList}>{i18next.t("browse-show")}</button>
               <ul className="dropdown-menu">
-                <li><a className={"dropdown-item"+(show===true?" active":"")} href="#" onClick={(e) => changeShow(e, false)}>{i18next.t("browse-show-all")}</a></li>
+                <li><a className={"dropdown-item"+(show===true?" active":"")} href="#" onClick={(e) => changeShow(e, true)}>{i18next.t("browse-show-all")}</a></li>
                 <li><a className={"dropdown-item"+(show==="files"?" active":"")} href="#" onClick={(e) => changeShow(e, "files")}>{i18next.t("browse-show-files")}</a></li>
                 <li><a className={"dropdown-item"+(show==="folders"?" active":"")} href="#" onClick={(e) => changeShow(e, "folders")}>{i18next.t("browse-show-folders")}</a></li>
               </ul>
@@ -448,38 +377,11 @@ export default function Browse({config, cbOpenBook, cbOpenBookByContent, cbClose
               </button>
             </div>
           </div>
-          <div className="overflow-auto table-responsive">
-            <table className="table table-striped">
-              <thead className="">
-                <tr>
-                  <th scope="col">
-                    <a href="#" onClick={(e) => changeOrder(e, "title")}>
-                      {i18next.t("browse-filename")}
-                      <SortIcon column={orderColumn==="title"} asc={orderAsc} />
-                    </a>
-                  </th>
-                  <th scope="col">
-                    <a href="#" onClick={(e) => changeOrder(e, "size")}>
-                      {i18next.t("browse-size")}
-                      <SortIcon column={orderColumn==="size"} asc={orderAsc} />
-                    </a>
-                  </th>
-                  <th scope="col">
-                    <a href="#" onClick={(e) => changeOrder(e, "date")}>
-                      {i18next.t("browse-date")}
-                      <SortIcon column={orderColumn==="date"} asc={orderAsc} />
-                    </a>
-                  </th>
-                  <th scope="col">
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {listDirJsx}
-                {listFilesJsx}
-              </tbody>
-            </table>
-          </div>
+          {showIcons?
+          <BrowseIcons list={completeList||ongoingList||filteredList||list} show={show} bookProfiles={bookProfiles} cbOpenDir={cbOpenDir} cbOpenBook={cbOpenBook} cbViewBook={cbViewBook} />
+          :
+          <BrowseTab list={completeList||ongoingList||filteredList||list} show={show} bookProfiles={bookProfiles} cbOpenDir={cbOpenDir} cbOpenBook={cbOpenBook} cbViewBook={cbViewBook} />
+          }
           <input type="file"
                  className="upload"
                  ref={inputFile}
