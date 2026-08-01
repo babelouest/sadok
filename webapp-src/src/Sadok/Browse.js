@@ -53,7 +53,7 @@ const searchList = (list, filterPattern) => {
     if (elt.type === "dir") {
       filteredList = filteredList.concat(searchList(elt.content, filterPattern));
     } else {
-      if (elt.title.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().includes(filterPattern)) {
+      if (elt.title?.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().includes(filterPattern)) {
         filteredList.push(elt);
       }
     }
@@ -64,7 +64,7 @@ const searchList = (list, filterPattern) => {
 const filterList = (list, filterPattern) => {
   let filteredList = [];
   list.forEach(elt => {
-    if (elt.title.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().includes(filterPattern)) {
+    if (elt.title?.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().includes(filterPattern)) {
       filteredList.push(elt);
     }
   });
