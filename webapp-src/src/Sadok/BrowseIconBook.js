@@ -28,7 +28,7 @@ export default function BrowseIconBook({book, cbOpenBook, cbViewBook}) {
     <div className="col-lg-2 col-md-4 col-sm-6 col-xs-12">
       <div className="card">
         <a href={"#"} onClick={() => cbOpenBook(book)}>
-          <img loading="lazy" src={book.cover||"img/book_2_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg"} className="card-img-top" style={{"height": 350}} alt={book.title}/>
+          <img loading="lazy" src={book.cover||"img/book_2_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg"} className="card-img-top" alt={book.title}/>
         </a>
         <BrowseIconBookMetadata book={book} cbViewBook={cbViewBook} />
       </div>
