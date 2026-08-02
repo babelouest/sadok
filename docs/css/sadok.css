@@ -178,3 +178,7 @@
 .background-blur {
   backdrop-filter: blur(3px); 
 }
+.browse-content {
+  overflow-y: auto;
+  height: 85vh;
+}
