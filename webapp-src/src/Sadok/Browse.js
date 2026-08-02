@@ -47,13 +47,15 @@ const getSubDir = (list, breadcrumb) => {
   return subDir;
 };
 
-const searchList = (list, filterPattern) => {
+const searchList = (list, searchPattern) => {
   let filteredList = [];
   list.forEach(elt => {
     if (elt.type === "dir") {
-      filteredList = filteredList.concat(searchList(elt.content, filterPattern));
+      filteredList = filteredList.concat(searchList(elt.content, searchPattern));
     } else {
-      if (elt.title?.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().includes(filterPattern)) {
+      if (elt.title?.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().includes(searchPattern) ||
+          elt.author?.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().includes(searchPattern) ||
+          elt.url?.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().includes(searchPattern)) {
         filteredList.push(elt);
       }
     }
@@ -228,6 +230,8 @@ export default function Browse({config, cbOpenBook, cbOpenBookByContent, cbClose
     } else if (bookItem.type === "txt") {
       prom = bookParser.parseTxt(bookItem.url)
     }
+    setViewBook(true);
+    setViewBookInfo(false);
     if (prom) {
       return prom.then(bookParsed => {
         if (bookParsed.book?.resources?.cover) {
@@ -244,7 +248,6 @@ export default function Browse({config, cbOpenBook, cbOpenBookByContent, cbClose
           setviewBookCoverData(false);
         }
         setViewBookInfo(bookParsed);
-        setViewBook(true);
       });
     }
   };
@@ -280,22 +283,37 @@ export default function Browse({config, cbOpenBook, cbOpenBookByContent, cbClose
   };
 
   if (viewBook) {
-    return (
-      <>
-        <Cover coverData={viewBookCoverData} opacity={"50"} showCover={true} />
-        <div className="m-3">
-          <button className="btn btn-secondary" type="button" title={i18next.t("close")} onClick={cbCloseViewBook}>
-            <img src="img/close_small_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg"/>
-          </button>
-        </div>
-        <div className="mb-3">
-          <BookInfo book={viewBookInfo} config={config} />
-        </div>
-        <div className="mb-3 opacity-75">
-          <ChapterList book={viewBookInfo} config={config} offset={-1} cbSetOffset={false} />
-        </div>
-      </>
-    );
+    if (viewBookInfo) {
+      return (
+        <>
+          <Cover coverData={viewBookCoverData} opacity={"50"} showCover={true} />
+          <div className="m-3">
+            <button className="btn btn-secondary" type="button" title={i18next.t("close")} onClick={cbCloseViewBook}>
+              <img src="img/close_small_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg"/>
+            </button>
+          </div>
+          <div className="mb-3">
+            <BookInfo book={viewBookInfo} config={config} />
+          </div>
+          <div className="mb-3 opacity-75">
+            <ChapterList book={viewBookInfo} config={config} offset={-1} cbSetOffset={false} />
+          </div>
+        </>
+      );
+    } else {
+      return (
+        <>
+          <div className="m-3">
+            <button className="btn btn-secondary" type="button" title={i18next.t("close")} onClick={cbCloseViewBook}>
+              <img src="img/close_small_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg"/>
+            </button>
+          </div>
+          <div className="perfect-centering">
+            <img src="img/hourglass_bottom_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
+          </div>
+        </>
+      );
+    }
   } else {
     if (errorList) {
       return (
@@ -332,6 +350,7 @@ export default function Browse({config, cbOpenBook, cbOpenBookByContent, cbClose
                                         className="form-control"
                                         value={searchPattern}
                                         placeholder={i18next.t("search-ph")}
+                                        disabled={filter}
                                         onChange={(e) => setSearchPattern(e.target.value)} />:<></>}
               </div>
             </div>
@@ -365,7 +384,12 @@ export default function Browse({config, cbOpenBook, cbOpenBookByContent, cbClose
                 <li><a className={"dropdown-item"+(show==="files"?" active":"")} href="#" onClick={(e) => changeShow(e, "files")}>{i18next.t("browse-show-files")}</a></li>
                 <li><a className={"dropdown-item"+(show==="folders"?" active":"")} href="#" onClick={(e) => changeShow(e, "folders")}>{i18next.t("browse-show-folders")}</a></li>
               </ul>
-              <input type="text" className="form-control" placeholder={i18next.t("browse-filter")} value={filter} onChange={changeFilter} disabled={ongoingList || completeList} />
+              <input type="text"
+                     className="form-control"
+                     placeholder={i18next.t("browse-filter")}
+                     value={filter}
+                     onChange={changeFilter}
+                     disabled={ongoingList || completeList || searchPattern} />
               <button className="btn btn-secondary" type="button" title={i18next.t("browse-ongoing")} onClick={toggleOngoing} disabled={completeList || filteredList} >
                 <img src="img/book_5_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
               </button>
