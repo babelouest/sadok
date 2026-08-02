@@ -24,7 +24,7 @@ import i18next from 'i18next';
 import SizeFormat from './SizeFormat';
 import DateFormat from './DateFormat';
 
-export default function BrowseIconBookMetadata({book, cbViewBook}) {
+export default function BrowseIconBookMetadata({book, cbOpenBookDir, cbViewBook}) {
   let yearJsx, authorJsx, sizeJsx, tokensJsx;
   if (book.year) {
     yearJsx = book.year;
@@ -51,6 +51,11 @@ export default function BrowseIconBookMetadata({book, cbViewBook}) {
       <p className="card-text">{book.title}</p>
       {yearJsx||authorJsx?<p className="card-text">{yearJsx}{authorJsx}</p>:<></>}
       {sizeJsx||tokensJsx?<p className="card-text">{sizeJsx}{tokensJsx}</p>:<></>}
+      {book.path!==undefined?<a href="#" onClick={() => cbOpenBookDir(book.path)} className="elt-left">
+        <span className="badge text-bg-secondary rounded-pill">
+          <img src="img/folder_open_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
+        </span>
+      </a>:<></>}
       <a href="#" onClick={() => cbViewBook(book)}>
         <span className="badge text-bg-secondary rounded-pill">
           <img src="img/visibility_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />

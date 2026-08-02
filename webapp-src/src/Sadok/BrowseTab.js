@@ -29,9 +29,15 @@ import { findBookProfileByUri } from '../lib/Profile';
 const sortList = (list, column, asc) => {
   if (column === "title") {
     if (asc) {
-      return [...list].sort((a, b) => (a.title.toLowerCase().localeCompare(b.title.toLowerCase())));
+      return [...list].sort((a, b) => (a.title?.toLowerCase().localeCompare(b.title?.toLowerCase())));
     } else {
-      return [...list].sort((a, b) => (b.title.toLowerCase().localeCompare(a.title.toLowerCase())));
+      return [...list].sort((a, b) => (b.title?.toLowerCase().localeCompare(a.title?.toLowerCase())));
+    }
+  } else if (column === "author") {
+    if (asc) {
+      return [...list].sort((a, b) => (a.author?.toLowerCase().localeCompare(b.author?.toLowerCase())));
+    } else {
+      return [...list].sort((a, b) => (b.author?.toLowerCase().localeCompare(a.author?.toLowerCase())));
     }
   } else if (column === "size") {
     if (asc) {
@@ -50,7 +56,7 @@ const sortList = (list, column, asc) => {
   }
 };
 
-export default function BrowseTab({list, show, bookProfiles, cbOpenBook, cbOpenDir, cbViewBook}) {
+export default function BrowseTab({list, show, bookProfiles, cbOpenBook, cbOpenDir, cbOpenBookDir, cbViewBook}) {
   const [ orderColumn, setOrderColumn ] = useState("title");
   const [ orderAsc, setOrderAsc ] = useState(true);
 
@@ -72,7 +78,7 @@ export default function BrowseTab({list, show, bookProfiles, cbOpenBook, cbOpenD
       );
     } else if (item.type !== "dir" && (show === true || show === "files")) {
       listFilesJsx.push (
-        <BrowseFile key={index+item.url} item={item} bookProfile={findBookProfileByUri(bookProfiles, item.url)} cbOpenBook={cbOpenBook} cbViewBook={cbViewBook} />
+        <BrowseFile key={index+item.url} item={item} bookProfile={findBookProfileByUri(bookProfiles, item.url)} cbOpenBook={cbOpenBook} cbOpenBookDir={cbOpenBookDir} cbViewBook={cbViewBook} />
       );
     }
   });
@@ -83,8 +89,14 @@ export default function BrowseTab({list, show, bookProfiles, cbOpenBook, cbOpenD
           <tr>
             <th scope="col">
               <a href="#" onClick={(e) => changeOrder(e, "title")}>
-                {i18next.t("browse-filename")}
+                {i18next.t("browse-title")}
                 <SortIcon column={orderColumn==="title"} asc={orderAsc} />
+              </a>
+            </th>
+            <th scope="col">
+              <a href="#" onClick={(e) => changeOrder(e, "author")}>
+                {i18next.t("browse-author")}
+                <SortIcon column={orderColumn==="author"} asc={orderAsc} />
               </a>
             </th>
             <th scope="col">

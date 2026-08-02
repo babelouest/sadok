@@ -71,14 +71,14 @@ export default function Chapters({
       <div className="offcanvas-body">
         <div className="input-group mb-3">
           <input type="number"
-          min="0"
-          max={book?.metadata?.tokens}
-          step="1"
-          className="form-control"
-          placeholder="0"
-          aria-describedby="basic-addon2"
-          value={offset}
-          onChange={(e) => cbSetOffset(parseInt(e.target.value))} />
+                 min="0"
+                 max={book?.metadata?.tokens}
+                 step="1"
+                 className="form-control"
+                 placeholder="0"
+                 aria-describedby="basic-addon2"
+                 value={offset}
+                 onChange={(e) => e.stopPropagation() && cbSetOffset(parseInt(e.target.value))} />
           <span className="input-group-text" id="basic-addon2">/ {book?.metadata?.tokens}</span>
           <button className="btn btn-secondary" type="button" onClick={() => cbSetOffset(book.metadata.tokens)} title={i18next.t("book-complete-read")} disabled={chapterIndex >= book.bookContent.length} >
             <img src="img/download_done_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt={i18next.t("nav-next-chapter")} />

@@ -26,11 +26,17 @@ import DateFormat from './DateFormat';
 
 import { READ_MODE } from '../lib/Constants';
 
-export default function BrowseFile({item, bookProfile, cbOpenBook, cbViewBook}) {
+export default function BrowseFile({item, bookProfile, cbOpenBook, cbOpenBookDir, cbViewBook}) {
   const viewBook = (e) => {
     e.preventDefault();
     e.stopPropagation();
     cbViewBook(item);
+  };
+
+  const openBookDir = (e, path) => {
+    e.preventDefault();
+    e.stopPropagation();
+    cbOpenBookDir(path);
   };
 
   let bookProfileJsx;
@@ -71,6 +77,9 @@ export default function BrowseFile({item, bookProfile, cbOpenBook, cbViewBook}) 
       <td className="text-break">
         {item.title}
       </td>
+      <td className="text-break">
+        {item.author}
+      </td>
       <td>
          <SizeFormat size={item.size} />
       </td>
@@ -78,6 +87,11 @@ export default function BrowseFile({item, bookProfile, cbOpenBook, cbViewBook}) 
         <DateFormat date={item.date} />
       </td>
       <td>
+        {item.path!==undefined?<a href="#" onClick={(e) => openBookDir(e, item.path)} className="elt-left">
+          <span className="badge text-bg-secondary rounded-pill">
+            <img src="img/folder_open_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
+          </span>
+        </a>:<></>}
         <a href="#" onClick={viewBook} className="elt-left">
           <span className="badge text-bg-secondary rounded-pill">
             <img src="img/visibility_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />

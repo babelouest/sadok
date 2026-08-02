@@ -47,16 +47,20 @@ const getSubDir = (list, breadcrumb) => {
   return subDir;
 };
 
-const searchList = (list, searchPattern) => {
+const searchList = (list, searchPattern, path) => {
   let filteredList = [];
   list.forEach(elt => {
     if (elt.type === "dir") {
-      filteredList = filteredList.concat(searchList(elt.content, searchPattern));
+      let subPath = [...path];
+      subPath.push(elt.title);
+      filteredList = filteredList.concat(searchList(elt.content, searchPattern, subPath));
     } else {
       if (elt.title?.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().includes(searchPattern) ||
           elt.author?.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().includes(searchPattern) ||
           elt.url?.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().includes(searchPattern)) {
-        filteredList.push(elt);
+        let newElt = {...elt};
+        newElt.path = path;
+        filteredList.push(newElt);
       }
     }
   });
@@ -111,7 +115,7 @@ export default function Browse({config, cbOpenBook, cbOpenBookByContent, cbClose
   const [ searchPattern, setSearchPattern ] = useState("");
   const inputFile = useRef(null);
 
-  useEffect(() => {
+  useEffect(() => { // []
     apiManager.APIRequestExecute("list.json")
     .then(lst => {
       if (Array.isArray(lst)) {
@@ -132,7 +136,7 @@ export default function Browse({config, cbOpenBook, cbOpenBookByContent, cbClose
     });
   },[]);
 
-  useEffect(() => {
+  useEffect(() => { // filter
     let pattern = filter.trim().normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
     if (pattern) {
       setFilteredList(filterList(list, pattern));
@@ -141,20 +145,37 @@ export default function Browse({config, cbOpenBook, cbOpenBookByContent, cbClose
     }
   },[filter]);
 
-  useEffect(() => {
+  useEffect(() => { // searchPattern
     let pattern = searchPattern.trim().normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
     if (pattern) {
-      setFilteredList(searchList(list, pattern));
+      setFilteredList(searchList(list, pattern, [...breadcrumb]));
     } else {
       setFilteredList(false);
     }
   },[searchPattern]);
 
-  useEffect(() => {
+  useEffect(() => { // showSearchInput
     if (!showSearchInput) {
       setSearchPattern("");
     }
   },[showSearchInput]);
+
+  const openBookDir = (path) => {
+    console.log(path);
+    let subList = [...list];
+    path?.forEach(p => {
+      subList.forEach(l => {
+        if (l.title === p && l.type === "dir") {
+          subList = [...l.content];
+        }
+      })
+    });
+    setBreadcrumb(path||[]);
+    setList(subList);
+    setFilteredList(false);
+    setFilter("");
+    setSearchPattern("");
+  };
 
   const cbOpenDir = (dir) => {
     let bc = [...breadcrumb];
@@ -162,13 +183,14 @@ export default function Browse({config, cbOpenBook, cbOpenBookByContent, cbClose
     setBreadcrumb(bc);
     let subList = [];
     list.forEach(l => {
-      if (l.title === dir) {
+      if (l.title === dir && l.type === "dir") {
         subList = [...l.content];
       }
     });
     setList(subList);
     setFilteredList(false);
     setFilter("");
+    setSearchPattern("");
   };
 
   const openRelPath = (e, indexPath) => {
@@ -182,9 +204,10 @@ export default function Browse({config, cbOpenBook, cbOpenBookByContent, cbClose
       newBreadcrumb.length = indexPath+1;
       setList(getSubDir(rootList, newBreadcrumb));
       setBreadcrumb(newBreadcrumb);
-      setFilteredList(false);
-      setFilter("");
     }
+    setFilteredList(false);
+    setFilter("");
+    setSearchPattern("");
   };
 
   const changeFilter = (e) => {
@@ -337,79 +360,91 @@ export default function Browse({config, cbOpenBook, cbOpenBookByContent, cbClose
     } else {
       return (
         <>
-          <div className="sticky-top">
-            <div className="m-3">
-              <div className="input-group" role="group">
-                <button className="btn btn-secondary" type="button" title={i18next.t("close")} onClick={cbClose}>
-                  <img src="img/close_small_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg"/>
-                </button>
-                <button className="btn btn-secondary" type="button" title={i18next.t("search")} onClick={() => setShowSearchInput(s => !s)}>
-                  <img src="img/search_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg"/>
-                </button>
-                {showSearchInput?<input type="text"
-                                        className="form-control"
-                                        value={searchPattern}
-                                        placeholder={i18next.t("search-ph")}
-                                        disabled={filter}
-                                        onChange={(e) => setSearchPattern(e.target.value)} />:<></>}
-              </div>
-            </div>
-            <div className="m-3">
-              <nav aria-label="breadcrumb">
-                <ol className="breadcrumb">
-                  <li className="breadcrumb-item"><a href="#" onClick={(e) => openRelPath(e, -1)}>{i18next.t("browse-root")}</a></li>
-                  {
-                    breadcrumb.map((bc, i) => {
-                      if (i < breadcrumb.length-1) {
-                        return (
-                          <li className="breadcrumb-item" key={i}><a href="#" onClick={(e) => openRelPath(e, i)}>{bc}</a></li>
-                        );
-                      } else {
-                        return (
-                          <li className="breadcrumb-item" key={i}>{bc}</li>
-                        );
-                      }
-                    })
-                  }
-                </ol>
-              </nav>
-            </div>
-            <div className="input-group mb-3">
-              <button className="btn btn-secondary" type="button" title={i18next.t("browse-toggle")} onClick={() => setShowIcons(s => !s)} >
-                <img src={showIcons?"img/list_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg":"img/apps_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg"} />
+          <div className="m-3">
+            <div className="input-group" role="group">
+              <button className="btn btn-secondary" type="button" title={i18next.t("close")} onClick={cbClose}>
+                <img src="img/close_small_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg"/>
               </button>
-              <button className="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" disabled={completeList || filteredList}>{i18next.t("browse-show")}</button>
-              <ul className="dropdown-menu">
-                <li><a className={"dropdown-item"+(show===true?" active":"")} href="#" onClick={(e) => changeShow(e, true)}>{i18next.t("browse-show-all")}</a></li>
-                <li><a className={"dropdown-item"+(show==="files"?" active":"")} href="#" onClick={(e) => changeShow(e, "files")}>{i18next.t("browse-show-files")}</a></li>
-                <li><a className={"dropdown-item"+(show==="folders"?" active":"")} href="#" onClick={(e) => changeShow(e, "folders")}>{i18next.t("browse-show-folders")}</a></li>
-              </ul>
-              <input type="text"
-                     className="form-control"
-                     placeholder={i18next.t("browse-filter")}
-                     value={filter}
-                     onChange={changeFilter}
-                     disabled={ongoingList || completeList || searchPattern} />
-              <button className="btn btn-secondary" type="button" title={i18next.t("browse-ongoing")} onClick={toggleOngoing} disabled={completeList || filteredList} >
-                <img src="img/book_5_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
+              <button className="btn btn-secondary" type="button" title={i18next.t("search")} onClick={() => setShowSearchInput(s => !s)}>
+                <img src="img/search_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg"/>
               </button>
-              <button className="btn btn-secondary" type="button" title={i18next.t("browse-done")} onClick={toggleComplete} disabled={ongoingList || filteredList} >
-                <img src="img/check_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
-              </button>
-              <button className="btn btn-secondary" type="button" title={i18next.t("browse-open-local-file")} onClick={() => inputFile.current.click()} >
-                <img src="img/upload_file_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
-              </button>
+              {showSearchInput?<input type="text"
+                                      className="form-control"
+                                      value={searchPattern}
+                                      placeholder={i18next.t("search-ph")}
+                                      disabled={filter}
+                                      onChange={(e) => setSearchPattern(e.target.value)} />:<></>}
             </div>
           </div>
-          {showIcons?
-          <BrowseIcons list={completeList||ongoingList||filteredList||list} show={show} bookProfiles={bookProfiles} cbOpenDir={cbOpenDir} cbOpenBook={cbOpenBook} cbViewBook={cbViewBook} />
-          :
-          <BrowseTab list={completeList||ongoingList||filteredList||list} show={show} bookProfiles={bookProfiles} cbOpenDir={cbOpenDir} cbOpenBook={cbOpenBook} cbViewBook={cbViewBook} />
-          }
-          <input type="file"
-                 className="upload"
-                 ref={inputFile}
-                 onChange={openLocalFile} />
+          <div className="m-3">
+            <nav aria-label="breadcrumb">
+              <ol className="breadcrumb">
+                <li className="breadcrumb-item"><a href="#" onClick={(e) => openRelPath(e, -1)}>{i18next.t("browse-root")}</a></li>
+                {
+                  breadcrumb.map((bc, i) => {
+                    if (i < breadcrumb.length-1) {
+                      return (
+                        <li className="breadcrumb-item" key={i}><a href="#" onClick={(e) => openRelPath(e, i)}>{bc}</a></li>
+                      );
+                    } else {
+                      return (
+                        <li className="breadcrumb-item" key={i}>{bc}</li>
+                      );
+                    }
+                  })
+                }
+              </ol>
+            </nav>
+          </div>
+          <div className="input-group mb-3">
+            <button className="btn btn-secondary" type="button" title={i18next.t("browse-toggle")} onClick={() => setShowIcons(s => !s)} >
+              <img src={showIcons?"img/list_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg":"img/apps_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg"} />
+            </button>
+            <button className="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" disabled={completeList || filteredList}>{i18next.t("browse-show")}</button>
+            <ul className="dropdown-menu">
+              <li><a className={"dropdown-item"+(show===true?" active":"")} href="#" onClick={(e) => changeShow(e, true)}>{i18next.t("browse-show-all")}</a></li>
+              <li><a className={"dropdown-item"+(show==="files"?" active":"")} href="#" onClick={(e) => changeShow(e, "files")}>{i18next.t("browse-show-files")}</a></li>
+              <li><a className={"dropdown-item"+(show==="folders"?" active":"")} href="#" onClick={(e) => changeShow(e, "folders")}>{i18next.t("browse-show-folders")}</a></li>
+            </ul>
+            <input type="text"
+                   className="form-control"
+                   placeholder={i18next.t("browse-filter")}
+                   value={filter}
+                   onChange={changeFilter}
+                   disabled={ongoingList || completeList || searchPattern} />
+            <button className="btn btn-secondary" type="button" title={i18next.t("browse-ongoing")} onClick={toggleOngoing} disabled={completeList || filteredList} >
+              <img src="img/book_5_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
+            </button>
+            <button className="btn btn-secondary" type="button" title={i18next.t("browse-done")} onClick={toggleComplete} disabled={ongoingList || filteredList} >
+              <img src="img/check_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
+            </button>
+            <button className="btn btn-secondary" type="button" title={i18next.t("browse-open-local-file")} onClick={() => inputFile.current.click()} >
+              <img src="img/upload_file_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
+            </button>
+          </div>
+          <div className="browse-content">
+            {showIcons?
+            <BrowseIcons list={completeList||ongoingList||filteredList||list}
+                         show={show}
+                         bookProfiles={bookProfiles}
+                         cbOpenDir={cbOpenDir}
+                         cbOpenBook={cbOpenBook}
+                         cbOpenBookDir={openBookDir}
+                         cbViewBook={cbViewBook} />
+            :
+            <BrowseTab list={completeList||ongoingList||filteredList||list}
+                       show={show}
+                       bookProfiles={bookProfiles}
+                       cbOpenDir={cbOpenDir}
+                       cbOpenBook={cbOpenBook}
+                       cbOpenBookDir={openBookDir}
+                       cbViewBook={cbViewBook} />
+            }
+            <input type="file"
+                   className="upload"
+                   ref={inputFile}
+                   onChange={openLocalFile} />
+          </div>
         </>
       );
     }

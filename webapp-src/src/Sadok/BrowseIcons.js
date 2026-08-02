@@ -23,21 +23,106 @@ import i18next from 'i18next';
 
 import BrowseIconBook from './BrowseIconBook';
 import BrowseIconDir from './BrowseIconDir';
+import SortIcon from './SortIcon';
 
-export default function BrowseIcons({list, show, bookProfiles, cbOpenBook, cbOpenDir, cbViewBook}) {
+const sortList = (list, column, asc) => {
+  if (column === "title") {
+    if (asc) {
+      return [...list].sort((a, b) => (a.title?.toLowerCase().localeCompare(b.title?.toLowerCase())));
+    } else {
+      return [...list].sort((a, b) => (b.title?.toLowerCase().localeCompare(a.title?.toLowerCase())));
+    }
+  } else if (column === "author") {
+    if (asc) {
+      return [...list].sort((a, b) => (a.author?.toLowerCase().localeCompare(b.author?.toLowerCase())));
+    } else {
+      return [...list].sort((a, b) => (b.author?.toLowerCase().localeCompare(a.author?.toLowerCase())));
+    }
+  } else if (column === "size") {
+    if (asc) {
+      return [...list].sort((a, b) => a.size - b.size);
+    } else {
+      return [...list].sort((a, b) => b.size - b.size);
+    }
+  } else if (column === "date") {
+    if (asc) {
+      return [...list].sort((a, b) => (new Date(a.date)).getTime() - (new Date(b.date)).getTime());
+    } else {
+      return [...list].sort((a, b) => (new Date(b.date)).getTime() - (new Date(a.date)).getTime());
+    }
+  } else {
+    return list;
+  }
+};
+
+export default function BrowseIcons({list, show, bookProfiles, cbOpenBook, cbOpenDir, cbOpenBookDir, cbViewBook}) {
+  const [ orderColumn, setOrderColumn ] = useState("title");
+  const [ orderAsc, setOrderAsc ] = useState(true);
+
+  const changeOrder = (e, order) => {
+    e.preventDefault();
+    if (order === orderColumn) {
+      setOrderAsc(!orderAsc);
+    } else {
+      setOrderColumn(order);
+      setOrderAsc(true);
+    }
+  };
+
+  let listDirJsx = [], listFilesJsx = [];
+  sortList(list, orderColumn, orderAsc).forEach((item, index) => {
+    if (item.type === "dir" && (show === true || show === "folders")) {
+      listDirJsx.push (
+        <BrowseIconDir key={index+item.title} dir={item} cbOpenDir={cbOpenDir} />
+      );
+    } else if (item.type !== "dir" && (show === true || show === "files")) {
+      listFilesJsx.push (
+        <BrowseIconBook key={index+item.url} book={item} cbOpenBook={cbOpenBook} cbOpenBookDir={cbOpenBookDir} cbViewBook={cbViewBook} />
+      );
+    }
+  });
   return (
-    <div className="row">
-      {list.map((elt, index) => {
-        if (elt.type !== "dir" && (show === true || show === "files")) {
-          return (
-            <BrowseIconBook key={"book"+elt.url} book={elt} cbOpenBook={cbOpenBook} cbViewBook={cbViewBook} />
-          );
-        } else if (show === true || show === "folders") {
-          return (
-            <BrowseIconDir key={"dir"+elt.title} dir={elt} cbOpenDir={cbOpenDir} />
-          );
-        }
-      })}
-    </div>
+    <>
+      <div className="overflow-auto table-responsive">
+        <table className="table">
+          <thead className="">
+            <tr>
+              <th scope="col">
+                <a href="#" onClick={(e) => changeOrder(e, "title")}>
+                  {i18next.t("browse-title")}
+                  <SortIcon column={orderColumn==="title"} asc={orderAsc} />
+                </a>
+              </th>
+              <th scope="col">
+                <a href="#" onClick={(e) => changeOrder(e, "author")}>
+                  {i18next.t("browse-author")}
+                  <SortIcon column={orderColumn==="author"} asc={orderAsc} />
+                </a>
+              </th>
+              <th scope="col">
+                <a href="#" onClick={(e) => changeOrder(e, "size")}>
+                  {i18next.t("browse-size")}
+                  <SortIcon column={orderColumn==="size"} asc={orderAsc} />
+                </a>
+              </th>
+              <th scope="col">
+                <a href="#" onClick={(e) => changeOrder(e, "date")}>
+                  {i18next.t("browse-date")}
+                  <SortIcon column={orderColumn==="date"} asc={orderAsc} />
+                </a>
+              </th>
+              <th scope="col">
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+      </div>
+      <div className="row">
+        {listDirJsx}
+        {listFilesJsx}
+      </div>
+    </>
   );
 }
