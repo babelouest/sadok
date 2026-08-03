@@ -119,9 +119,11 @@ export default function BrowseIcons({list, show, bookProfiles, cbOpenBook, cbOpe
           </tbody>
         </table>
       </div>
-      <div className="row">
-        {listDirJsx}
-        {listFilesJsx}
+      <div className="browse-content">
+        <div className="row">
+          {listDirJsx}
+          {listFilesJsx}
+        </div>
       </div>
     </>
   );

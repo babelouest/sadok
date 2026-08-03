@@ -372,7 +372,7 @@ export default function Browse({config, cbOpenBook, cbOpenBookByContent, cbClose
                                       className="form-control"
                                       value={searchPattern}
                                       placeholder={i18next.t("search-ph")}
-                                      disabled={filter}
+                                      disabled={ongoingList || completeList || filter}
                                       onChange={(e) => setSearchPattern(e.target.value)} />:<></>}
             </div>
           </div>
@@ -422,29 +422,27 @@ export default function Browse({config, cbOpenBook, cbOpenBookByContent, cbClose
               <img src="img/upload_file_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
             </button>
           </div>
-          <div className="browse-content">
-            {showIcons?
-            <BrowseIcons list={completeList||ongoingList||filteredList||list}
-                         show={show}
-                         bookProfiles={bookProfiles}
-                         cbOpenDir={cbOpenDir}
-                         cbOpenBook={cbOpenBook}
-                         cbOpenBookDir={openBookDir}
-                         cbViewBook={cbViewBook} />
-            :
-            <BrowseTab list={completeList||ongoingList||filteredList||list}
+          {showIcons?
+          <BrowseIcons list={completeList||ongoingList||filteredList||list}
                        show={show}
                        bookProfiles={bookProfiles}
                        cbOpenDir={cbOpenDir}
                        cbOpenBook={cbOpenBook}
                        cbOpenBookDir={openBookDir}
                        cbViewBook={cbViewBook} />
-            }
-            <input type="file"
-                   className="upload"
-                   ref={inputFile}
-                   onChange={openLocalFile} />
-          </div>
+          :
+          <BrowseTab list={completeList||ongoingList||filteredList||list}
+                     show={show}
+                     bookProfiles={bookProfiles}
+                     cbOpenDir={cbOpenDir}
+                     cbOpenBook={cbOpenBook}
+                     cbOpenBookDir={openBookDir}
+                     cbViewBook={cbViewBook} />
+          }
+          <input type="file"
+                 className="upload"
+                 ref={inputFile}
+                 onChange={openLocalFile} />
         </>
       );
     }

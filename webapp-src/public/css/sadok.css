@@ -180,5 +180,15 @@
 }
 .browse-content {
   overflow-y: auto;
-  height: 85vh;
+  height: 80vh;
+}
+.table-scroll-container {
+  max-height: 80vh; /* Adjust height to your liking */
+  overflow-y: auto;  /* Enables vertical scrolling */
+}
+
+.table-scroll-container thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2; /* Keeps header above scrolling body rows */
 }

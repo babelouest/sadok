@@ -83,9 +83,10 @@ export default function BrowseTab({list, show, bookProfiles, cbOpenBook, cbOpenD
     }
   });
   return (
-    <div className="overflow-auto table-responsive">
+    <div className="browse-content">
+    <div className="overflow-auto table-responsive table-scroll-container">
       <table className="table table-striped">
-        <thead className="">
+        <thead>
           <tr>
             <th scope="col">
               <a href="#" onClick={(e) => changeOrder(e, "title")}>
@@ -120,6 +121,7 @@ export default function BrowseTab({list, show, bookProfiles, cbOpenBook, cbOpenD
           {listFilesJsx}
         </tbody>
       </table>
+    </div>
     </div>
   );
 }
