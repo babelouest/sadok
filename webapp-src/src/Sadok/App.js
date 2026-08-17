@@ -662,6 +662,7 @@ export default function App({}) {
           <TextCenteredDisplayed text={currentText}
                                  navToText={navToText}
                                  textSize={getTextSize()}
+                                 readMode={bookProfile.readMode}
                                  optimalRecognitionPoint={bookProfile.readMode===READ_MODE.SPEED_READER && config.speedReaderOptimalRecognitionPoint}
                                  jumpTextRight={jumpTextRight}
                                  noBook={!book.metadata.tokens} />

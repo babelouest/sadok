@@ -105,6 +105,7 @@ export default function Parameters({
             <option value={READ_MODE.SPEED_READER}>{i18next.t("read-mode-speed-reader")}</option>
             <option value={READ_MODE.SPEECH}>{i18next.t("read-mode-speech")}</option>
             <option value={READ_MODE.SENTENCE}>{i18next.t("read-mode-sentence-reader")}</option>
+            <option value={READ_MODE.SCROLL}>{i18next.t("read-mode-scroll-reader")}</option>
           </select>
         </div>
         <div className="input-group mb-3">

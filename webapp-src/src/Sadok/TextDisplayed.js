@@ -20,6 +20,8 @@
 
 import React, { useState, useEffect } from 'react';
 
+import { READ_MODE } from '../lib/Constants';
+
 export default function TextDisplayed({
   text,
   textSize,
@@ -27,6 +29,7 @@ export default function TextDisplayed({
   coordEnd,
   navToText,
   startOffset,
+  bookProfile,
   cbSetOffset
 }) {
   const selectText = (e) => {

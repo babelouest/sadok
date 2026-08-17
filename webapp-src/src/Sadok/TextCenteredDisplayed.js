@@ -22,6 +22,7 @@ import React, { useState, useEffect } from 'react';
 import i18next from 'i18next';
 
 import { isNonLetteredChar } from '../lib/BookParser';
+import { READ_MODE } from '../lib/Constants';
 
 const splitTextToORP = (text) => {
   let out = {
@@ -83,6 +84,7 @@ export default function TextCenteredDisplayed({
   text,
   navToText,
   textSize,
+  readMode,
   optimalRecognitionPoint,
   jumpTextRight,
   noBook
@@ -93,7 +95,7 @@ export default function TextCenteredDisplayed({
         {i18next.t("no-book")}
       </h2>
     );
-  } else if (!navToText) {
+  } else if (!navToText && readMode !== READ_MODE.SCROLL) {
     if (optimalRecognitionPoint) {
       const { pre, point, post } = splitTextToORP(text);
       return (

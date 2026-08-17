@@ -48,20 +48,20 @@ export default function TextBackgroundContainer({
     let nodesJsx = [];
     let nextOffset = startOffset;
     let opacity = textBackgroundOpacity;
-    if (navToText) {
+    if (navToText || bookProfile.readMode === READ_MODE.SCROLL) {
       opacity = 100;
     }
     chapter.parsedNodes.forEach((node, index) => {
       if (!found && offset < node.tokens) {
         nodesJsx.push(
-          <NodeParser node={node} offset={offset} offsetEnd={offsetEnd} key={index} book={book} navToText={navToText} startOffset={nextOffset} cbSetOffset={cbSetOffset} />
+          <NodeParser node={node} offset={offset} offsetEnd={offsetEnd} key={index} book={book} bookProfile={bookProfile} navToText={navToText} startOffset={nextOffset} cbSetOffset={cbSetOffset} />
         );
         found = true;
       } else {
         offset -= node.tokens;
         offsetEnd -= node.tokens;
         nodesJsx.push(
-          <NodeParser node={node} offset={-1} offsetEnd={-1} key={index} book={book} navToText={navToText} startOffset={nextOffset} cbSetOffset={cbSetOffset} />
+          <NodeParser node={node} offset={-1} offsetEnd={-1} key={index} book={book} bookProfile={bookProfile} navToText={navToText} startOffset={nextOffset} cbSetOffset={cbSetOffset} />
         );
       }
       nextOffset += node.tokens;

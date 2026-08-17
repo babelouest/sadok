@@ -22,11 +22,19 @@ import React, { useState, useEffect } from 'react';
 
 import NodeParser from './NodeParser';
 
-export default function SubNode({node, offset, offsetEnd, navToText, startOffset, cbSetOffset, book}) {
+export default function SubNode({node, offset, offsetEnd, navToText, startOffset, cbSetOffset, book, bookProfile}) {
   let nodesJsx = [], nextOffset = startOffset;
   node.parsedNodes?.forEach((subNode, index) => {
     nodesJsx.push(
-      <NodeParser key={index} node={subNode} offset={offset} offsetEnd={offsetEnd} navToText={navToText} startOffset={nextOffset} cbSetOffset={cbSetOffset} book={book} />
+      <NodeParser key={index}
+                  node={subNode}
+                  offset={offset}
+                  offsetEnd={offsetEnd}
+                  navToText={navToText}
+                  startOffset={nextOffset}
+                  cbSetOffset={cbSetOffset}
+                  book={book}
+                  bookProfile={bookProfile} />
     );
     if ((offset !== -1) && offset < subNode.tokens) {
       offset = -1;

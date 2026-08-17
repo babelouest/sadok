@@ -27,7 +27,8 @@ export const DARK_MODE = {
 export const READ_MODE = {
   SPEED_READER: "speed-reader",
   SPEECH: "speech",
-  SENTENCE: "sentence-reader"
+  SENTENCE: "sentence-reader",
+  SCROLL: "scroll-reader"
 };
 
 export const TEXT_SIZE_VALS = {
