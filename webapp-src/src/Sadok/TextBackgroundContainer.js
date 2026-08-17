@@ -43,10 +43,14 @@ export default function TextBackgroundContainer({
   cbTogglePlay,
   cbSetOffset
 }) {
-  if (chapter && textBackgroundOpacity) {
+  if (chapter && (textBackgroundOpacity||navToText)) {
     let found = false;
     let nodesJsx = [];
     let nextOffset = startOffset;
+    let opacity = textBackgroundOpacity;
+    if (navToText) {
+      opacity = 100;
+    }
     chapter.parsedNodes.forEach((node, index) => {
       if (!found && offset < node.tokens) {
         nodesJsx.push(
@@ -67,7 +71,7 @@ export default function TextBackgroundContainer({
         <TextBackgroundStyle useBookCss={config?.useBookCss||false} styles={book.styles||[]} />
         <Cover coverData={coverData} opacity={textBackgroundOpacity} showCover={!playReader && showCoverBackground && !navToText} />
         <div id="sadok-text-background"
-             className={"sadok-text-background text-background-container padding-top-text text-background opacity-" + textBackgroundOpacity + ((bookProfile.readMode === READ_MODE.SENTENCE)?" text-background-container-shrinked":"")}
+             className={"sadok-text-background text-background-container padding-top-text text-background opacity-" + opacity + ((bookProfile.readMode === READ_MODE.SENTENCE)?" text-background-container-shrinked":"")}
              onClick={cbTogglePlay}>
           {nodesJsx}
         </div>
