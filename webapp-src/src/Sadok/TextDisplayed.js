@@ -40,9 +40,13 @@ export default function TextDisplayed({
         beforeCoord = text.substring(0, coordStart),
         textHighlighted = text.substring(coordStart, coordEnd),
         afterCoord = text.substring(coordEnd, text.length);
-    if (navToText && coordStart > 0) {
+    if (navToText) {
       firstChat = <span className="bg-danger">{text.substring(0, 1)}</span>
-      textHighlighted = text.substring((coordStart==0?1:coordStart), coordEnd);
+      if (coordStart === 0) {
+        textHighlighted = text.substring(1, coordEnd);
+      } else {
+        beforeCoord = text.substring(1, coordStart)
+      }
     }
     return (
       <span onClick={selectText}>
