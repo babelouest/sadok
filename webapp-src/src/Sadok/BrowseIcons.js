@@ -24,6 +24,7 @@ import i18next from 'i18next';
 import BrowseIconBook from './BrowseIconBook';
 import BrowseIconDir from './BrowseIconDir';
 import SortIcon from './SortIcon';
+import { findBookProfileByUri } from '../lib/Profile';
 
 const sortList = (list, column, asc) => {
   if (column === "title") {
@@ -77,7 +78,7 @@ export default function BrowseIcons({list, show, bookProfiles, cbOpenBook, cbOpe
       );
     } else if (item.type !== "dir" && (show === true || show === "files")) {
       listFilesJsx.push (
-        <BrowseIconBook key={index+item.url} book={item} cbOpenBook={cbOpenBook} cbOpenBookDir={cbOpenBookDir} cbViewBook={cbViewBook} />
+        <BrowseIconBook key={index+item.url} book={item} bookProfile={findBookProfileByUri(bookProfiles, item.url)} cbOpenBook={cbOpenBook} cbOpenBookDir={cbOpenBookDir} cbViewBook={cbViewBook} />
       );
     }
   });
