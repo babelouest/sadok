@@ -27,6 +27,10 @@ Voice settings and other options can be configured in the `Parameters` Menu.
 
 Read a e-book one sentence at a time.
 
+### Classic reading
+
+Read a e-book using a simple epub browser. Not that much, because that's not what it was designed for in the first place.
+
 ## Save configuration, book read and position
 
 The position of the reading and your configuration is saved either in the local storage on your browser, or on your remote profile if you use a profile server. **The profile server isn't safe, so it must be used in a controlled environment like an intranet or a VPN.**
