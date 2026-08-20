@@ -20,7 +20,7 @@
 
 import React, { useState, useEffect } from 'react';
 
-export default function ImageDisplayed({node, book}) {
+export default function ImageDisplayed({node, book, startOffset}) {
   const [ imgData, setImgData ] = useState(false);
   
   useEffect(() => {
@@ -47,11 +47,11 @@ export default function ImageDisplayed({node, book}) {
 
   if (!imgData) {
     return (
-      <img alt={node.alt} className={node.classList}/>
+      <img alt={node.alt} className={[node.classList,"sadok-offset-anchor"].join(" ")} data-offset={startOffset} />
     );
   } else {
     return (
-      <img alt={node.alt} className={node.classList} src={imgData} />
+      <img alt={node.alt} className={[node.classList,"sadok-offset-anchor"].join(" ")} src={imgData} data-offset={startOffset} />
     );
   }
 }

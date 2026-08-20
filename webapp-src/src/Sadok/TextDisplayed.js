@@ -52,7 +52,7 @@ export default function TextDisplayed({
       }
     }
     return (
-      <span onClick={selectText}>
+      <span onClick={selectText} className="sadok-offset-anchor" data-offset={startOffset}>
         {firstChat}
         {beforeCoord}
         <span id="sadok-bg-word" className="bg-primary">{textHighlighted}</span>
@@ -66,7 +66,7 @@ export default function TextDisplayed({
       textJsx = text.substring(1, text.length);
     }
     return (
-      <span onClick={selectText}>
+      <span onClick={selectText} className="sadok-offset-anchor" data-offset={startOffset}>
         {firstChat}
         {textJsx}
       </span>

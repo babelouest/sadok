@@ -286,7 +286,7 @@ export default function NodeParser({node, offset, offsetEnd, navToText, startOff
       break;
     case "img":
       return (
-        <ImageDisplayed node={node} book={book} bookProfile={bookProfile} />
+        <ImageDisplayed node={node} book={book} bookProfile={bookProfile} startOffset={startOffset} />
       )
       break;
     case "section":

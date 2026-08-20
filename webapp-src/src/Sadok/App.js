@@ -1,21 +1,21 @@
 /**
- * 
+ *
  * Sadok e-book reader
- * 
+ *
  * Copyright 2026 Nicolas Mora <mail@babelouest.org>
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, version 3 of the License.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
  * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
  * for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License along
- * with this program. If not, see <https://www.gnu.org/licenses/>. 
- * 
+ * with this program. If not, see <https://www.gnu.org/licenses/>.
+ *
  */
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -58,6 +58,7 @@ export default function App({}) {
   const sessionOffsetTimeoutRef = useRef(false);
   const speakTextListRef = useRef([]);
   const speechRunningRef = useRef(false);
+  const isThrottledRef = useRef(false);
 
   const bgWordScrollIfNotVisible = () => {
     const txtElm = document.getElementById("sadok-bg-word");
@@ -97,6 +98,32 @@ export default function App({}) {
     if (!document.fullscreenElement && playReader) {
       setPlayReader(false);
     }
+  };
+
+  const scrollEventHandler = () => {
+    if (isThrottledRef.current) return;
+
+    isThrottledRef.current = true;
+    setTimeout(() => {
+      const parentRect = document.getElementById("sadok-text-background")?.getBoundingClientRect();
+
+      const anchors = document.getElementsByClassName("sadok-offset-anchor");
+      let newOffset = NaN;
+      for (let i=0; i<anchors.length; i++) {
+        const anch = anchors[i];
+        const anchRect = anch.getBoundingClientRect();
+        if (anchRect.top >= parentRect.top && anchRect.bottom <= parentRect.bottom) {
+          newOffset = +anch.getAttribute("data-offset");
+          break;
+        }
+      }
+      if (!isNaN(newOffset)) {
+        updateOffset(newOffset);
+      }
+      
+      // 2. Allow the next execution
+      isThrottledRef.current = false;
+    }, 1000); // Fires at most once every 100ms
   };
 
   const checkJumpTextRight = (currentText) => {
@@ -190,7 +217,7 @@ export default function App({}) {
   },[]);
 
   useEffect(() => { // [bookProfile] (save profile)
-    if (config.currentBook && (!playReader || speechRunningRef.current)) {
+    if (config.currentBook && (!playReader || speechRunningRef.current || READ_MODE.SCROLL === bookProfile.readMode)) {
       profile.setBookProfile(config.currentBook, bookProfile);
     }
   },[bookProfile,playReader]);
@@ -203,11 +230,19 @@ export default function App({}) {
 
     // Listen to fullscreen change event
     document.addEventListener("fullscreenchange", fullscreenchange);
-    
+
+    // Listen to scroll event
+    if (READ_MODE.SCROLL === bookProfile.readMode) {
+      document.getElementById("sadok-text-background")?.addEventListener("scroll", scrollEventHandler);
+    }
+
     return () => {
       document.body.removeEventListener("keyup", keyUpEvent);
       document.removeEventListener("visibilitychange", visibilitychangeEvent);
       document.removeEventListener("fullscreenchange", fullscreenchange);
+      if (READ_MODE.SCROLL === bookProfile.readMode) {
+        document.getElementById("sadok-text-background")?.removeEventListener("scroll", scrollEventHandler);
+      }
     }
   },[book,config,bookProfile,playReader]);
 
@@ -242,6 +277,23 @@ export default function App({}) {
       }
     }
   },[book,bookProfile,playReader]);
+
+  useEffect(() => { // [book] (croll when book is loaded)
+    setTimeout(() => {
+      // Listen to scroll event
+      if (READ_MODE.SCROLL === bookProfile.readMode) {
+        document.getElementById("sadok-text-background")?.addEventListener("scroll", scrollEventHandler);
+      }
+
+      bgWordScrollIfNotVisible();
+
+      return () => {
+        if (READ_MODE.SCROLL === bookProfile.readMode) {
+          document.getElementById("sadok-text-background")?.removeEventListener("scroll", scrollEventHandler);
+        }
+      }
+    }, 1000);
+  },[book]);
 
   useEffect(() => { // [currentText] (scroll to current word)
     bgWordScrollIfNotVisible();
@@ -518,10 +570,20 @@ export default function App({}) {
       if (chapterOffset === 0) {
         if (i === chapterIndex-1) {
           updateOffset(newOffset);
+          if (bookProfile.readMode === READ_MODE.SCROLL) {
+            setTimeout(() => {
+              bgWordScrollIfNotVisible();
+            }, 1000);
+          }
         }
       } else {
         if (i === chapterIndex) {
           updateOffset(newOffset);
+          if (bookProfile.readMode === READ_MODE.SCROLL) {
+            setTimeout(() => {
+              bgWordScrollIfNotVisible();
+            }, 1000);
+          }
         }
       }
       newOffset += chap.tokens;
@@ -533,6 +595,11 @@ export default function App({}) {
     book.bookContent.forEach((chap, i) => {
       if (i === (chapterIndex+1)) {
         updateOffset(newOffset);
+        if (bookProfile.readMode === READ_MODE.SCROLL) {
+          setTimeout(() => {
+            bgWordScrollIfNotVisible();
+          }, 1000);
+        }
       }
       newOffset += chap.tokens;
     });

@@ -21,6 +21,8 @@
 import React, { useState, useEffect } from 'react';
 import i18next from 'i18next';
 
+import { READ_MODE } from '../lib/Constants';
+
 export default function NavButtons({
   book,
   offset,
@@ -28,6 +30,7 @@ export default function NavButtons({
   fromMenu,
   navToText,
   allowNavToText,
+  readMode,
   cbTogglePlay,
   cbToggleNavigateToText,
   cbNavigateNext,

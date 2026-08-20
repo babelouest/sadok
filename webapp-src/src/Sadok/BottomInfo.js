@@ -25,6 +25,7 @@ import { READ_MODE } from '../lib/Constants';
 
 import TimeRemaining from './TimeRemaining';
 import NavButtons from './NavButtons';
+import NavScrollButtons from './NavScrollButtons';
 
 export default function BottomInfo({
   book,
@@ -52,7 +53,7 @@ export default function BottomInfo({
       if (chapterLabel) {
         displayJsx.push(<React.Fragment key={1}>{" - "}</React.Fragment>);
       }
-      if (playReader) {
+      if (playReader && bookProfile.readMode !== READ_MODE.SCROLL) {
         displayJsx.push(<React.Fragment key={3}>{i18next.t("percent", {val: Math.floor(offset*100/book.metadata.tokens)})}</React.Fragment>);
       } else {
         displayJsx.push(<React.Fragment key={2}>{offset+"/"+book.metadata.tokens}</React.Fragment>);
@@ -62,6 +63,27 @@ export default function BottomInfo({
         displayJsx.push(<TimeRemaining key={4} offset={offset} textSpeed={textSpeed} tokens={book.metadata.tokens} />);
       }
     }
+    let navButtonsJsx;
+    if (!playReader && bookProfile.readMode !== READ_MODE.SCROLL) {
+      navButtonsJsx = <NavButtons book={book}
+                                  offset={offset}
+                                  chapterIndex={chapterIndex}
+                                  fromMenu={false}
+                                  navToText={navToText}
+                                  allowNavToText={allowNavToText}
+                                  readMode={bookProfile.readMode}
+                                  cbToggleNavigateToText={cbToggleNavigateToText}
+                                  cbTogglePlay={cbTogglePlay}
+                                  cbNavigateNext={cbNavigateNext}
+                                  cbNavigatePrevious={cbNavigatePrevious}
+                                  cbNavigateBeginChapter={cbNavigateBeginChapter}
+                                  cbNavigateNextChapter={cbNavigateNextChapter} />
+    } else if (bookProfile.readMode === READ_MODE.SCROLL) {
+      navButtonsJsx = <NavScrollButtons book={book}
+                                        chapterIndex={chapterIndex}
+                                        cbNavigateBeginChapter={cbNavigateBeginChapter}
+                                        cbNavigateNextChapter={cbNavigateNextChapter} />
+    }
     return (
       <div className="row fixed-bottom elt-top" id="sadok-bottom">
         <div className="text-center">
@@ -69,18 +91,7 @@ export default function BottomInfo({
             {displayJsx}
           </div>:<></>}
           <div>
-            {!playReader?<NavButtons book={book}
-                                     offset={offset}
-                                     chapterIndex={chapterIndex}
-                                     fromMenu={false}
-                                     navToText={navToText}
-                                     allowNavToText={allowNavToText}
-                                     cbToggleNavigateToText={cbToggleNavigateToText}
-                                     cbTogglePlay={cbTogglePlay}
-                                     cbNavigateNext={cbNavigateNext}
-                                     cbNavigatePrevious={cbNavigatePrevious}
-                                     cbNavigateBeginChapter={cbNavigateBeginChapter}
-                                     cbNavigateNextChapter={cbNavigateNextChapter} />:<></>}
+            {navButtonsJsx}
           </div>
         </div>
       </div>
