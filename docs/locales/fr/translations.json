@@ -53,6 +53,7 @@
   "read-mode-speed-reader": "Lecture rapide",
   "read-mode-speech": "Lecture audio",
   "read-mode-sentence-reader": "Lecture par phrase",
+  "read-mode-scroll-reader": "Lecture classique",
   "sentence-reader-title": "Lecture par phrase",
   "sentence-reader-text-size": "Taille du texte",
   "percent": "{{val}}%",
