@@ -26,52 +26,10 @@ import BrowseIconDir from './BrowseIconDir';
 import SortIcon from './SortIcon';
 import { findBookProfileByUri } from '../lib/Profile';
 
-const sortList = (list, column, asc) => {
-  if (column === "title") {
-    if (asc) {
-      return [...list].sort((a, b) => (a.title?.toLowerCase().localeCompare(b.title?.toLowerCase())));
-    } else {
-      return [...list].sort((a, b) => (b.title?.toLowerCase().localeCompare(a.title?.toLowerCase())));
-    }
-  } else if (column === "author") {
-    if (asc) {
-      return [...list].sort((a, b) => (a.author?.toLowerCase().localeCompare(b.author?.toLowerCase())));
-    } else {
-      return [...list].sort((a, b) => (b.author?.toLowerCase().localeCompare(a.author?.toLowerCase())));
-    }
-  } else if (column === "size") {
-    if (asc) {
-      return [...list].sort((a, b) => a.size - b.size);
-    } else {
-      return [...list].sort((a, b) => b.size - b.size);
-    }
-  } else if (column === "date") {
-    if (asc) {
-      return [...list].sort((a, b) => (new Date(a.date)).getTime() - (new Date(b.date)).getTime());
-    } else {
-      return [...list].sort((a, b) => (new Date(b.date)).getTime() - (new Date(a.date)).getTime());
-    }
-  } else {
-    return list;
-  }
-};
-
-export default function BrowseIcons({list, show, bookProfiles, cbOpenBook, cbOpenDir, cbOpenBookDir, cbViewBook}) {
-  const [ orderColumn, setOrderColumn ] = useState("title");
-  const [ orderAsc, setOrderAsc ] = useState(true);
-
-  const changeOrder = (e, order) => {
-    e.preventDefault();
-    if (order === orderColumn) {
-      setOrderAsc(!orderAsc);
-    } else {
-      setOrderColumn(order);
-      setOrderAsc(true);
-    }
-  };
+export default function BrowseIcons({list, show, bookProfiles, order, cbOpenBook, cbOpenDir, cbOpenBookDir, cbViewBook, cbChangeOrder}) {
 
   let listDirJsx = [], listFilesJsx = [];
-  sortList(list, orderColumn, orderAsc).forEach((item, index) => {
+  list.forEach((item, index) => {
     if (item.type === "dir" && (show === true || show === "folders")) {
       listDirJsx.push (
         <BrowseIconDir key={index+item.title} dir={item} cbOpenDir={cbOpenDir} />
@@ -89,27 +47,27 @@ export default function BrowseIcons({list, show, bookProfiles, cbOpenBook, cbOpe
           <thead className="">
             <tr>
               <th scope="col">
-                <a href="#" onClick={(e) => changeOrder(e, "title")}>
+                <a href="#" onClick={(e) => cbChangeOrder(e, "title")}>
                   {i18next.t("browse-title")}
-                  <SortIcon column={orderColumn==="title"} asc={orderAsc} />
+                  <SortIcon column={order.orderColumn==="title"} asc={order.orderAsc} />
                 </a>
               </th>
               <th scope="col">
-                <a href="#" onClick={(e) => changeOrder(e, "author")}>
+                <a href="#" onClick={(e) => cbChangeOrder(e, "author")}>
                   {i18next.t("browse-author")}
-                  <SortIcon column={orderColumn==="author"} asc={orderAsc} />
+                  <SortIcon column={order.orderColumn==="author"} asc={order.orderAsc} />
                 </a>
               </th>
               <th scope="col">
-                <a href="#" onClick={(e) => changeOrder(e, "size")}>
+                <a href="#" onClick={(e) => cbChangeOrder(e, "size")}>
                   {i18next.t("browse-size")}
-                  <SortIcon column={orderColumn==="size"} asc={orderAsc} />
+                  <SortIcon column={order.orderColumn==="size"} asc={order.orderAsc} />
                 </a>
               </th>
               <th scope="col">
-                <a href="#" onClick={(e) => changeOrder(e, "date")}>
+                <a href="#" onClick={(e) => cbChangeOrder(e, "date")}>
                   {i18next.t("browse-date")}
-                  <SortIcon column={orderColumn==="date"} asc={orderAsc} />
+                  <SortIcon column={order.orderColumn==="date"} asc={order.orderAsc} />
                 </a>
               </th>
               <th scope="col">

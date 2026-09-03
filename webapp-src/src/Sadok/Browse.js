@@ -96,6 +96,36 @@ const getOngoingOrComplete = (list, bookProfiles, complete) => {
   return onGoing;
 };
 
+const sortList = (list, column, asc) => {
+  if (column === "title") {
+    if (asc) {
+      return [...list].sort((a, b) => (a.title?.toLowerCase().localeCompare(b.title?.toLowerCase())));
+    } else {
+      return [...list].sort((a, b) => (b.title?.toLowerCase().localeCompare(a.title?.toLowerCase())));
+    }
+  } else if (column === "author") {
+    if (asc) {
+      return [...list].sort((a, b) => (a.author?.toLowerCase().localeCompare(b.author?.toLowerCase())));
+    } else {
+      return [...list].sort((a, b) => (b.author?.toLowerCase().localeCompare(a.author?.toLowerCase())));
+    }
+  } else if (column === "size") {
+    if (asc) {
+      return [...list].sort((a, b) => a.size - b.size);
+    } else {
+      return [...list].sort((a, b) => b.size - b.size);
+    }
+  } else if (column === "date") {
+    if (asc) {
+      return [...list].sort((a, b) => (new Date(a.date)).getTime() - (new Date(b.date)).getTime());
+    } else {
+      return [...list].sort((a, b) => (new Date(b.date)).getTime() - (new Date(a.date)).getTime());
+    }
+  } else {
+    return list;
+  }
+};
+
 export default function Browse({config, cbOpenBook, cbOpenBookByContent, cbClose}) {
   const [ rootList, setRootList ] = useState([]);
   const [ list, setList ] = useState([]);
@@ -113,6 +143,8 @@ export default function Browse({config, cbOpenBook, cbOpenBookByContent, cbClose
   const [ showSearchInput, setShowSearchInput ] = useState(false);
   const [ showIcons, setShowIcons ] = useState(true);
   const [ searchPattern, setSearchPattern ] = useState("");
+  const [ orderColumn, setOrderColumn ] = useState("title");
+  const [ orderAsc, setOrderAsc ] = useState(true);
   const inputFile = useRef(null);
 
   useEffect(() => { // []
@@ -235,21 +267,12 @@ export default function Browse({config, cbOpenBook, cbOpenBookByContent, cbClose
     setShow(val);
   };
 
-  const changeOrder = (e, order) => {
-    e.preventDefault();
-    if (order === orderColumn) {
-      setOrderAsc(!orderAsc);
-    } else {
-      setOrderColumn(order);
-      setOrderAsc(true);
-    }
-  };
-
   const cbViewBook = (bookItem) => {
     let prom = false;
     if (bookItem.type === "epub") {
       prom = bookParser.parseEpub(bookItem.url);
     } else if (bookItem.type === "pdf") {
+      prom = bookParser.parsePDF(bookItem.url);
     } else if (bookItem.type === "txt") {
       prom = bookParser.parseTxt(bookItem.url)
     }
@@ -302,6 +325,16 @@ export default function Browse({config, cbOpenBook, cbOpenBookByContent, cbClose
         }
       };
       fr.readAsText(file);
+    }
+  };
+
+  const changeOrder = (e, order) => {
+    e.preventDefault();
+    if (order === orderColumn) {
+      setOrderAsc(!orderAsc);
+    } else {
+      setOrderColumn(order);
+      setOrderAsc(true);
     }
   };
 
@@ -423,21 +456,25 @@ export default function Browse({config, cbOpenBook, cbOpenBookByContent, cbClose
             </button>
           </div>
           {showIcons?
-          <BrowseIcons list={completeList||ongoingList||filteredList||list}
+          <BrowseIcons list={sortList(completeList||ongoingList||filteredList||list, orderColumn, orderAsc)}
                        show={show}
                        bookProfiles={bookProfiles}
+                       order={{orderColumn: orderColumn, orderAsc: orderAsc}}
                        cbOpenDir={cbOpenDir}
                        cbOpenBook={cbOpenBook}
                        cbOpenBookDir={openBookDir}
-                       cbViewBook={cbViewBook} />
+                       cbViewBook={cbViewBook}
+                       cbChangeOrder={changeOrder} />
           :
-          <BrowseTab list={completeList||ongoingList||filteredList||list}
+          <BrowseTab list={sortList(completeList||ongoingList||filteredList||list, orderColumn, orderAsc)}
                      show={show}
                      bookProfiles={bookProfiles}
+                     order={{orderColumn: orderColumn, orderAsc: orderAsc}}
                      cbOpenDir={cbOpenDir}
                      cbOpenBook={cbOpenBook}
                      cbOpenBookDir={openBookDir}
-                     cbViewBook={cbViewBook} />
+                     cbViewBook={cbViewBook}
+                     cbChangeOrder={changeOrder} />
           }
           <input type="file"
                  className="upload"

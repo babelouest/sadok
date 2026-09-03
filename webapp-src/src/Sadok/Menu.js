@@ -65,6 +65,11 @@ export default function Menus({
         <button className="btn btn-secondary" type="button" title={i18next.t("read-mode-sentence-reader")} disabled={true}>
           <img className="elt-right" src="img/format_paragraph_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
         </button>
+    } else if (bookProfile.readMode === READ_MODE.SCROLL) {
+      modeIconJsx =
+        <button className="btn btn-secondary" type="button" title={i18next.t("read-mode-sentence-reader")} disabled={true}>
+          <img className="elt-right" src="img/book_5_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
+        </button>
     }
     return (
       <>

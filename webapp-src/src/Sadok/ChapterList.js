@@ -22,7 +22,7 @@ import React, { useState, useEffect } from 'react';
 
 import ChapterItem from './ChapterItem';
 
-export default function ChapterList({book, config, offset, cbSetOffset}) {
+export default function ChapterList({book, bookProfile, config, offset, cbSetOffset}) {
 
   let chaptersJsx = [];
   let chapterOffset = 0;
@@ -30,6 +30,7 @@ export default function ChapterList({book, config, offset, cbSetOffset}) {
     if (chapter.label) {
       chaptersJsx.push(
         <ChapterItem key={index}
+                     bookProfile={bookProfile}
                      config={config}
                      totalTokens={book.metadata.tokens}
                      chapter={chapter}

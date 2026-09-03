@@ -107,7 +107,7 @@ export default function Chapters({
             {i18next.t("chapters")}
           </h2>
           <div className="chapter-list elt-bottom" id="sadok-chapter-list">
-            <ChapterList book={book} config={config} offset={offset} cbSetOffset={cbSetOffset} />
+            <ChapterList book={book} bookProfile={bookProfile} config={config} offset={offset} cbSetOffset={cbSetOffset} />
           </div>
         </div>
       </div>

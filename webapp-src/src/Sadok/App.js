@@ -743,6 +743,8 @@ export default function App({}) {
                     chapterLabel={chapterLabel}
                     chapterIndex={chapterIndex}
                     offset={bookProfile.offset}
+                    chapterOffset={chapterOffset}
+                    chapterTokens={chapter?.tokens||0}
                     textSpeed={config.speedReaderTextSpeed}
                     playReader={playReader}
                     navToText={navToText}

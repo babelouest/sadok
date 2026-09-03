@@ -32,6 +32,8 @@ export default function BottomInfo({
   bookProfile,
   chapterLabel,
   chapterIndex,
+  chapterOffset,
+  chapterTokens,
   offset,
   textSpeed,
   playReader,
@@ -47,21 +49,17 @@ export default function BottomInfo({
   if (book) {
     let displayJsx = [];
     if (chapterLabel) {
-      displayJsx.push(<React.Fragment key={0}>{chapterLabel}</React.Fragment>);
+      displayJsx.push(<><div key={0}>{chapterLabel}</div><hr/></>);
     }
-    if (book.metadata?.tokens) {
-      if (chapterLabel) {
-        displayJsx.push(<React.Fragment key={1}>{" - "}</React.Fragment>);
-      }
-      if (playReader && bookProfile.readMode !== READ_MODE.SCROLL) {
-        displayJsx.push(<React.Fragment key={3}>{i18next.t("percent", {val: Math.floor(offset*100/book.metadata.tokens)})}</React.Fragment>);
-      } else {
-        displayJsx.push(<React.Fragment key={2}>{offset+"/"+book.metadata.tokens}</React.Fragment>);
-        displayJsx.push(<React.Fragment key={3}>{" ("+i18next.t("percent", {val: Math.floor(offset*100/book.metadata.tokens)})+")"}</React.Fragment>);
-      }
-      if (bookProfile.readMode === READ_MODE.SPEED_READER) {
-        displayJsx.push(<TimeRemaining key={4} offset={offset} textSpeed={textSpeed} tokens={book.metadata.tokens} />);
-      }
+    if (playReader) {
+      displayJsx.push(<div key={2}>{i18next.t("chapter")} {i18next.t("percent", {val: Math.floor(chapterOffset*100/chapterTokens)})}</div>);
+      displayJsx.push(<div key={3}>{i18next.t("book")} {i18next.t("percent", {val: Math.floor(offset*100/book.metadata?.tokens)})}</div>);
+    } else {
+      displayJsx.push(<div key={2}>{i18next.t("chapter")} {chapterOffset+"/"+chapterTokens} {" ("+i18next.t("percent", {val: Math.floor(chapterOffset*100/chapterTokens)})+")"}</div>);
+      displayJsx.push(<div key={3}>{i18next.t("book")} {offset+"/"+book.metadata?.tokens} {" ("+i18next.t("percent", {val: Math.floor(offset*100/book.metadata?.tokens)})+")"}</div>);
+    }
+    if (bookProfile.readMode === READ_MODE.SPEED_READER) {
+      displayJsx.push(<><hr/><TimeRemaining key={4} offset={offset} textSpeed={textSpeed} tokens={book.metadata?.tokens} /></>);
     }
     let navButtonsJsx;
     if (!playReader && bookProfile.readMode !== READ_MODE.SCROLL) {
@@ -87,7 +85,7 @@ export default function BottomInfo({
     return (
       <div className="row fixed-bottom elt-top" id="sadok-bottom">
         <div className="text-center">
-          {book?.metadata?.tokens?<div className="opacity-75 alert alert-dark d-inline-block">
+          {book.metadata?.tokens?<div className="opacity-75 alert alert-dark d-inline-block">
             {displayJsx}
           </div>:<></>}
           <div>
