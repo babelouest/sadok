@@ -49,17 +49,15 @@ export default function BottomInfo({
   if (book) {
     let displayJsx = [];
     if (chapterLabel) {
-      displayJsx.push(<><div key={0}>{chapterLabel}</div><hr/></>);
+      displayJsx.push(<div key={0}>{chapterLabel}</div>);
     }
     if (playReader) {
-      displayJsx.push(<div key={2}>{i18next.t("chapter")} {i18next.t("percent", {val: Math.floor(chapterOffset*100/chapterTokens)})}</div>);
-      displayJsx.push(<div key={3}>{i18next.t("book")} {i18next.t("percent", {val: Math.floor(offset*100/book.metadata?.tokens)})}</div>);
+      displayJsx.push(<div key={2}>{i18next.t("chapter")} {i18next.t("percent", {val: Math.floor(chapterOffset*100/chapterTokens)})} - {i18next.t("book")} {i18next.t("percent", {val: Math.floor(offset*100/book.metadata?.tokens)})}</div>);
     } else {
-      displayJsx.push(<div key={2}>{i18next.t("chapter")} {chapterOffset+"/"+chapterTokens} {" ("+i18next.t("percent", {val: Math.floor(chapterOffset*100/chapterTokens)})+")"}</div>);
-      displayJsx.push(<div key={3}>{i18next.t("book")} {offset+"/"+book.metadata?.tokens} {" ("+i18next.t("percent", {val: Math.floor(offset*100/book.metadata?.tokens)})+")"}</div>);
+      displayJsx.push(<div key={2}>{i18next.t("chapter")} {chapterOffset+"/"+chapterTokens} {" ("+i18next.t("percent", {val: Math.floor(chapterOffset*100/chapterTokens)})+")"} - {i18next.t("book")} {offset+"/"+book.metadata?.tokens} {" ("+i18next.t("percent", {val: Math.floor(offset*100/book.metadata?.tokens)})+")"}</div>);
     }
     if (bookProfile.readMode === READ_MODE.SPEED_READER) {
-      displayJsx.push(<><hr/><TimeRemaining key={4} offset={offset} textSpeed={textSpeed} tokens={book.metadata?.tokens} /></>);
+      displayJsx.push(<TimeRemaining key={4} offset={offset} textSpeed={textSpeed} tokens={book.metadata?.tokens} />);
     }
     let navButtonsJsx;
     if (!playReader && bookProfile.readMode !== READ_MODE.SCROLL) {
