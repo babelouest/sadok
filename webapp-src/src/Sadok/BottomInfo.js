@@ -82,7 +82,7 @@ export default function BottomInfo({
     }
     return (
       <div className="row fixed-bottom elt-top" id="sadok-bottom">
-        <div className="text-center">
+        <div className="text-center" onClick={cbTogglePlay}>
           {book.metadata?.tokens?<div className="opacity-75 alert alert-dark d-inline-block">
             {displayJsx}
           </div>:<></>}
