@@ -57,6 +57,7 @@ export default function TextDisplayed({
         {beforeCoord}
         <span id="sadok-bg-word" className="bg-primary">{textHighlighted}</span>
         {afterCoord}
+        &nbsp;
       </span>
     );
   } else {
@@ -69,6 +70,7 @@ export default function TextDisplayed({
       <span onClick={selectText} className="sadok-offset-anchor" data-offset={startOffset}>
         {firstChat}
         {textJsx}
+        &nbsp;
       </span>
     );
   }
