@@ -186,7 +186,6 @@
   max-height: 80vh; /* Adjust height to your liking */
   overflow-y: auto;  /* Enables vertical scrolling */
 }
-
 .table-scroll-container thead th {
   position: sticky;
   top: 0;
