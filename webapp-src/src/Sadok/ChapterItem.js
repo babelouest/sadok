@@ -34,7 +34,7 @@ export default function ChapterItem({bookProfile, config, totalTokens, chapter, 
   };
 
   let remainingJsx;
-  if (bookProfile.readMode === READ_MODE.SPEED_READER) {
+  if ((bookProfile?bookProfile.readMode:config.readMode) === READ_MODE.SPEED_READER) {
    remainingJsx =
     <>
       <TimeRemaining offset={0} textSpeed={config.speedReaderTextSpeed} tokens={chapterOffset+chapter.tokens} compact={true}/>
