@@ -564,7 +564,10 @@ export default function App({}) {
     setOpenBrowse(false);
   };
 
-  const cbNavigateBeginChapter = () => {
+  const cbNavigateBeginChapter = (e) => {
+    if (e) {
+      e.stopPropagation();
+    }
     let newOffset = 0;
     book.bookContent.forEach((chap, i) => {
       if (chapterOffset === 0) {
@@ -590,7 +593,10 @@ export default function App({}) {
     });
   };
 
-  const cbNavigateNextChapter = () => {
+  const cbNavigateNextChapter = (e) => {
+    if (e) {
+      e.stopPropagation();
+    }
     let newOffset = 0;
     book.bookContent.forEach((chap, i) => {
       if (i === (chapterIndex+1)) {
