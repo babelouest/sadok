@@ -22,7 +22,7 @@ import React, { useState, useEffect } from 'react';
 
 import NodeParser from './NodeParser';
 
-export default function SubNode({node, offset, offsetEnd, navToText, startOffset, cbSetOffset, book, bookProfile}) {
+export default function SubNode({node, offset, offsetEnd, navToText, startOffset, cbSetOffset, classicReaderTextSize, book, bookProfile}) {
   let nodesJsx = [], nextOffset = startOffset;
   node.parsedNodes?.forEach((subNode, index) => {
     nodesJsx.push(
@@ -33,6 +33,7 @@ export default function SubNode({node, offset, offsetEnd, navToText, startOffset
                   navToText={navToText}
                   startOffset={nextOffset}
                   cbSetOffset={cbSetOffset}
+                  classicReaderTextSize={classicReaderTextSize}
                   book={book}
                   bookProfile={bookProfile} />
     );

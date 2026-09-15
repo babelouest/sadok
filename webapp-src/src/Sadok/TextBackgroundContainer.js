@@ -35,6 +35,7 @@ export default function TextBackgroundContainer({
   offsetEnd,
   textBackgroundOpacity,
   showCoverBackground,
+  classicReaderTextSize,
   book,
   coverData,
   playReader,
@@ -54,14 +55,14 @@ export default function TextBackgroundContainer({
     chapter.parsedNodes.forEach((node, index) => {
       if (!found && offset < node.tokens) {
         nodesJsx.push(
-          <NodeParser node={node} offset={offset} offsetEnd={offsetEnd} key={index} book={book} bookProfile={bookProfile} navToText={navToText} startOffset={nextOffset} cbSetOffset={cbSetOffset} />
+          <NodeParser node={node} offset={offset} offsetEnd={offsetEnd} key={index} book={book} bookProfile={bookProfile} navToText={navToText} startOffset={nextOffset} cbSetOffset={cbSetOffset} classicReaderTextSize={classicReaderTextSize} />
         );
         found = true;
       } else {
         offset -= node.tokens;
         offsetEnd -= node.tokens;
         nodesJsx.push(
-          <NodeParser node={node} offset={-1} offsetEnd={-1} key={index} book={book} bookProfile={bookProfile} navToText={navToText} startOffset={nextOffset} cbSetOffset={cbSetOffset} />
+          <NodeParser node={node} offset={-1} offsetEnd={-1} key={index} book={book} bookProfile={bookProfile} navToText={navToText} startOffset={nextOffset} cbSetOffset={cbSetOffset} classicReaderTextSize={classicReaderTextSize} />
         );
       }
       nextOffset += node.tokens;

@@ -719,6 +719,7 @@ export default function App({}) {
                                  offset={chapterOffset}
                                  offsetEnd={chapterOffsetEnd}
                                  textBackgroundOpacity={config.textBackgroundOpacity}
+                                 classicReaderTextSize={(bookProfile.readMode===READ_MODE.SCROLL)?config.classicReaderTextSize:"100"}
                                  showCoverBackground={config.coverBackground}
                                  book={book}
                                  coverData={coverData}

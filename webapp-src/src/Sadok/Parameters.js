@@ -28,6 +28,7 @@ import profile from '../lib/Profile';
 import MenuSpeedReader from './MenuSpeedReader';
 import MenuSpeechSynth from './MenuSpeechSynth';
 import MenuSentenceReader from './MenuSentenceReader';
+import MenuClassicReader from './MenuClassicReader';
 import ParametersProfile from './ParametersProfile';
 
 export default function Parameters({
@@ -162,6 +163,7 @@ export default function Parameters({
           <MenuSpeedReader config={config} currentMode={config.readMode===READ_MODE.SPEED_READER} cbUpdateConfig={cbUpdateConfig} />
           <MenuSpeechSynth config={config} currentMode={config.readMode===READ_MODE.SPEECH} cbUpdateConfig={cbUpdateConfig} />
           <MenuSentenceReader config={config} currentMode={config.readMode===READ_MODE.SENTENCE} cbUpdateConfig={cbUpdateConfig} />
+          <MenuClassicReader config={config} currentMode={config.readMode===READ_MODE.SENTENCE} cbUpdateConfig={cbUpdateConfig} />
         </div>
       </div>
     </div>

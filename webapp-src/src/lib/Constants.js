@@ -54,6 +54,7 @@ export const SpeedReaderWordsPerMinuteAvailable = ["50","100","150","200","250",
 export const OpacityAvailable = [0,25,50,75];
 export const separators = ['.', '?', '!', '…'];
 export const LS_SPEECH_LANG = "sadok-speech-lang";
+export const LS_TEXT_SIZE = "sadok-text-size";
 
 
 export const BOOK_PROFILE_USE_BOOK_CSS = {
@@ -79,6 +80,7 @@ export const CONFIG_DEFAULT = {
   speechRate: 1,
   speechTextSize: TEXT_SIZE_VALS.M,
   sentenceReaderTextSize: TEXT_SIZE_VALS.M,
+  classicReaderTextSize: "100",
   currentBook: false
 };
 

@@ -24,12 +24,11 @@ import { READ_MODE } from '../lib/Constants';
 
 export default function TextDisplayed({
   text,
-  textSize,
+  classicReaderTextSize,
   coordStart,
   coordEnd,
   navToText,
   startOffset,
-  bookProfile,
   cbSetOffset
 }) {
   const selectText = (e) => {
@@ -52,7 +51,7 @@ export default function TextDisplayed({
       }
     }
     return (
-      <span onClick={selectText} className="sadok-offset-anchor" data-offset={startOffset}>
+      <span onClick={selectText} className="sadok-offset-anchor" data-offset={startOffset} style={{ fontSize: (classicReaderTextSize/100.0)+"rem" }}>
         {firstChat}
         {beforeCoord}
         <span id="sadok-bg-word" className="bg-primary">{textHighlighted}</span>
@@ -67,7 +66,7 @@ export default function TextDisplayed({
       textJsx = text.substring(1, text.length);
     }
     return (
-      <span onClick={selectText} className="sadok-offset-anchor" data-offset={startOffset}>
+      <span onClick={selectText} className="sadok-offset-anchor" data-offset={startOffset} style={{ fontSize: (classicReaderTextSize/100.0)+"rem" }}>
         {firstChat}
         {textJsx}
         &nbsp;

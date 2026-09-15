@@ -56,6 +56,8 @@
   "read-mode-scroll-reader": "Lecture classique",
   "sentence-reader-title": "Lecture par phrase",
   "sentence-reader-text-size": "Taille du texte",
+  "classic-reader-title": "Lecture classique",
+  "classic-reader-text-size": "Taille du texte",
   "percent": "{{val}}%",
   "book-navigation": "Navigation",
   "chapters": "Chapitres",
