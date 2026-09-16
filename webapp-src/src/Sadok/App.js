@@ -60,13 +60,13 @@ export default function App({}) {
   const speechRunningRef = useRef(false);
   const isThrottledRef = useRef(false);
 
-  const bgWordScrollIfNotVisible = () => {
+  const bgWordScrollIfNotVisible = (smooth = true) => {
     const txtElm = document.getElementById("sadok-bg-word");
     const txtBackground = document.getElementById("sadok-text-background");
     if (txtElm && txtBackground) {
       const childRect = txtElm.getBoundingClientRect();
       const parentRect = txtBackground.getBoundingClientRect();
-      if (childRect.top < parentRect.top) {
+      if (!smooth || childRect.top < parentRect.top) {
         txtElm.scrollIntoView({
           behavior: "instant",
         });
@@ -278,7 +278,7 @@ export default function App({}) {
     }
   },[book,bookProfile,playReader]);
 
-  useEffect(() => { // [book] (croll when book is loaded)
+  useEffect(() => { // [book] (scroll when book is loaded)
     setTimeout(() => {
       // Listen to scroll event
       if (READ_MODE.SCROLL === bookProfile.readMode) {
@@ -562,6 +562,9 @@ export default function App({}) {
 
   const cbCloseBrowse = () => {
     setOpenBrowse(false);
+    setTimeout(() => {
+      bgWordScrollIfNotVisible(false);
+    }, 500);
   };
 
   const cbNavigateBeginChapter = (e) => {
@@ -575,8 +578,8 @@ export default function App({}) {
           updateOffset(newOffset);
           if (bookProfile.readMode === READ_MODE.SCROLL) {
             setTimeout(() => {
-              bgWordScrollIfNotVisible();
-            }, 1000);
+              bgWordScrollIfNotVisible(false);
+            }, 500);
           }
         }
       } else {
@@ -584,8 +587,8 @@ export default function App({}) {
           updateOffset(newOffset);
           if (bookProfile.readMode === READ_MODE.SCROLL) {
             setTimeout(() => {
-              bgWordScrollIfNotVisible();
-            }, 1000);
+              bgWordScrollIfNotVisible(false);
+            }, 500);
           }
         }
       }
@@ -603,8 +606,8 @@ export default function App({}) {
         updateOffset(newOffset);
         if (bookProfile.readMode === READ_MODE.SCROLL) {
           setTimeout(() => {
-            bgWordScrollIfNotVisible();
-          }, 1000);
+            bgWordScrollIfNotVisible(false);
+          }, 500);
         }
       }
       newOffset += chap.tokens;
