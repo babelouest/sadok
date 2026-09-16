@@ -91,5 +91,6 @@
   "time-remaining-long-no-h": "{{m}}m {{s}}s remaining",
   "word-length": "{{val, number()}} words",
   "browse-open-local-file": "Open local file",
-  "page-label": "Page {{index}}"
+  "page-label": "Page {{index}}",
+  "open": "Open"
 }

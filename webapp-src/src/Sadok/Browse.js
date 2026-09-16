@@ -145,6 +145,7 @@ export default function Browse({config, cbOpenBook, cbOpenBookByContent, cbClose
   const [ searchPattern, setSearchPattern ] = useState("");
   const [ orderColumn, setOrderColumn ] = useState("title");
   const [ orderAsc, setOrderAsc ] = useState(true);
+  const [ curBookItem, setCurBookItem ] = useState(true);
   const inputFile = useRef(null);
 
   useEffect(() => { // []
@@ -280,6 +281,7 @@ export default function Browse({config, cbOpenBook, cbOpenBookByContent, cbClose
     setViewBookInfo(false);
     if (prom) {
       return prom.then(bookParsed => {
+        setCurBookItem(bookItem);
         if (bookParsed.book?.resources?.cover) {
           bookParsed.book.loadBlob(bookParsed.book.resources.cover.href)
           .then(res => {
@@ -300,6 +302,7 @@ export default function Browse({config, cbOpenBook, cbOpenBookByContent, cbClose
 
   const cbCloseViewBook = () => {
     setViewBook(false);
+    setCurBookItem(false);
   };
 
   const openLocalFile = (e) => {
@@ -350,6 +353,11 @@ export default function Browse({config, cbOpenBook, cbOpenBookByContent, cbClose
           </div>
           <div className="mb-3">
             <BookInfo book={viewBookInfo} config={config} />
+          </div>
+          <div className="mb-3 text-center">
+            <button type="button" className="btn btn-secondary" title={i18next.t("open")} onClick={() => cbOpenBook(curBookItem)}>
+              {i18next.t("open")}
+            </button>
           </div>
           <div className="mb-3 opacity-75">
             <ChapterList book={viewBookInfo} config={config} offset={-1} cbSetOffset={false} />
