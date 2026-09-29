@@ -560,6 +560,13 @@ export default function App({}) {
     }
   };
 
+  const navigateToOffset = (newOffset, saveSessionOffset = true) => {
+    updateOffset(newOffset);
+    setTimeout(() => {
+      bgWordScrollIfNotVisible(false);
+    }, 500);
+  };
+
   const cbCloseBrowse = () => {
     setOpenBrowse(false);
     setTimeout(() => {
@@ -703,7 +710,7 @@ export default function App({}) {
               config={config}
               playReader={playReader}
               navToText={navToText}
-              cbSetOffset={updateOffset}
+              cbSetOffset={navigateToOffset}
               cbNavigateNext={navigateNext}
               cbNavigatePrevious={navigatePrevious}
               cbNavigateBeginChapter={cbNavigateBeginChapter}
