@@ -23,7 +23,7 @@ import i18next from 'i18next';
 
 export default function BrowseIconDir({dir, cbOpenDir}) {
   return (
-    <div className="col-lg-2 col-md-4 col-sm-6 col-xs-12">
+    <div className="col-lg-2 col-md-4 col-sm-6 col-xs-12" id={"sadok-browse-id-"+encodeURIComponent(dir.title)}>
       <div className="card">
         <a href={"#"} onClick={() => cbOpenDir(dir.title)}>
           <img src="img/folder_open_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" className="card-img-top" style={{"height": 350}} alt={dir.title}/>

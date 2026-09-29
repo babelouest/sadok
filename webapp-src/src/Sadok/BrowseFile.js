@@ -39,7 +39,7 @@ export default function BrowseFile({item, bookProfile, cbOpenBook, cbOpenBookDir
   };
 
   return (
-    <tr onClick={() => cbOpenBook(item)} className="clickable">
+    <tr onClick={() => cbOpenBook(item)} className="clickable" id={"sadok-browse-id-"+encodeURIComponent(item.url)}>
       <td className="text-break">
         {item.title}
       </td>

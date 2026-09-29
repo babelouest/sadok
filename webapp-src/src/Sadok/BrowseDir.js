@@ -22,15 +22,9 @@ import React, { useState, useEffect } from 'react';
 
 export default function BrowseDir({item, cbOpenDir}) {
   return (
-    <tr onClick={() => cbOpenDir(item.title)} className="clickable">
-      <td className="text-break">
+    <tr onClick={() => cbOpenDir(item.title)} className="clickable" id={"sadok-browse-id-"+encodeURIComponent(item.title)}>
+      <td className="text-break" colSpan="4">
         {item.title}
-      </td>
-      <td>
-      </td>
-      <td>
-      </td>
-      <td>
       </td>
       <td>
         <span className="badge text-bg-secondary rounded-pill">

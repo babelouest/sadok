@@ -36,7 +36,12 @@ export default function BrowseIcons({list, show, bookProfiles, order, cbOpenBook
       );
     } else if (item.type !== "dir" && (show === true || show === "files")) {
       listFilesJsx.push (
-        <BrowseIconBook key={index+item.url} book={item} bookProfile={findBookProfileByUri(bookProfiles, item.url)} cbOpenBook={cbOpenBook} cbOpenBookDir={cbOpenBookDir} cbViewBook={cbViewBook} />
+        <BrowseIconBook key={index+item.url}
+                        book={item}
+                        bookProfile={findBookProfileByUri(bookProfiles, item.url)}
+                        cbOpenBook={cbOpenBook}
+                        cbOpenBookDir={cbOpenBookDir}
+                        cbViewBook={cbViewBook} />
       );
     }
   });

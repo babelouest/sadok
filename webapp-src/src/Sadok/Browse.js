@@ -237,6 +237,15 @@ export default function Browse({config, cbOpenBook, cbOpenBookByContent, cbClose
       newBreadcrumb.length = indexPath+1;
       setList(getSubDir(rootList, newBreadcrumb));
       setBreadcrumb(newBreadcrumb);
+      let id = "sadok-browse-id-"+encodeURIComponent(origPath);
+      setTimeout(() => {
+        const elt = document.getElementById(id);
+        if (elt) {
+          elt.scrollIntoView({
+            behavior: "instant",
+          });
+        }
+      }, 500);
     }
     setFilteredList(false);
     setFilter("");
@@ -301,6 +310,15 @@ export default function Browse({config, cbOpenBook, cbOpenBookByContent, cbClose
   };
 
   const cbCloseViewBook = () => {
+    let id = "sadok-browse-id-"+encodeURIComponent(curBookItem.url);
+    setTimeout(() => {
+      const elt = document.getElementById(id);
+      if (elt) {
+        elt.scrollIntoView({
+          behavior: "instant",
+        });
+      }
+    }, 500);
     setViewBook(false);
     setCurBookItem(false);
   };
