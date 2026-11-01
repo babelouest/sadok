@@ -138,7 +138,7 @@ class BookParser {
             };
           } else {
             searchedWord = false;
-            console.log("error", offset, node);
+            console.error("error", offset, node);
           }
         }
       } else {
@@ -170,7 +170,7 @@ class BookParser {
               tokens: 0,
               offset: offset
             };
-            console.log("error", offset, node);
+            console.error("error", offset, node);
           }
         }
       } else {
