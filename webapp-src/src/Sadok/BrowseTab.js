@@ -26,7 +26,7 @@ import BrowseFile from './BrowseFile';
 import SortIcon from './SortIcon';
 import { findBookProfileByUri } from '../lib/Profile';
 
-export default function BrowseTab({list, show, bookProfiles, order, cbOpenBook, cbOpenDir, cbOpenBookDir, cbViewBook, cbChangeOrder}) {
+export default function BrowseTab({list, show, bookProfiles, order, orderDisabled, cbOpenBook, cbOpenDir, cbOpenBookDir, cbViewBook, cbChangeOrder}) {
 
   let listDirJsx = [], listFilesJsx = [];
   list.forEach((item, index) => {
@@ -51,25 +51,25 @@ export default function BrowseTab({list, show, bookProfiles, order, cbOpenBook, 
         <thead>
           <tr>
             <th scope="col">
-              <a href="#" onClick={(e) => cbChangeOrder(e, "title")}>
+              <a href={orderDisabled?"":"#"} onClick={(e) => cbChangeOrder(e, "title")}>
                 {i18next.t("browse-title")}
                 <SortIcon column={order.orderColumn==="title"} asc={order.orderAsc} />
               </a>
             </th>
             <th scope="col">
-              <a href="#" onClick={(e) => cbChangeOrder(e, "author")}>
+              <a href={orderDisabled?"":"#"} onClick={(e) => cbChangeOrder(e, "author")}>
                 {i18next.t("browse-author")}
                 <SortIcon column={order.orderColumn==="author"} asc={order.orderAsc} />
               </a>
             </th>
             <th scope="col">
-              <a href="#" onClick={(e) => cbChangeOrder(e, "size")}>
+              <a href={orderDisabled?"":"#"} onClick={(e) => cbChangeOrder(e, "size")}>
                 {i18next.t("browse-size")}
                 <SortIcon column={order.orderColumn==="size"} asc={order.orderAsc} />
               </a>
             </th>
             <th scope="col">
-              <a href="#" onClick={(e) => cbChangeOrder(e, "date")}>
+              <a href={orderDisabled?"":"#"} onClick={(e) => cbChangeOrder(e, "date")}>
                 {i18next.t("browse-date")}
                 <SortIcon column={order.orderColumn==="date"} asc={order.orderAsc} />
               </a>

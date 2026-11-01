@@ -44,6 +44,9 @@ export default function BookInfo({book, config}) {
       <div className="mb-3 text-center fs-6 fst-italic">
         {i18next.t("word-length", {val: book?.metadata.tokens||0})} - <TimeRemaining offset={0} textSpeed={(+config.speedReaderTextSpeed)} tokens={book?.metadata.tokens||1} compact={true} />
       </div>
+      <div className="mb-3 text-center fw-bold">
+        <code>{book?.url||""}</code>
+      </div>
     </>
   );
 }

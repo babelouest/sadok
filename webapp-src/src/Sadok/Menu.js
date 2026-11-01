@@ -91,7 +91,7 @@ export default function Menus({
             {modeIconJsx}
           </div>
         </div>
-        <Chapters book={book}
+        <Chapters book={{...book, url: bookProfile.uri}}
                   offset={offset}
                   bookProfile={bookProfile}
                   config={config}
