@@ -38,7 +38,7 @@
     "shx": "^0.4.0",
     "webpack": "^5.108.4",
     "webpack-cli": "^7.2.1",
-    "webpack-dev-server": "^6.0.0"
+    "webpack-dev-server": "^6.1.0"
   },
   "dependencies": {
     "foliate-js": "^1.0.1",
