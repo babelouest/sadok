@@ -1,7 +1,7 @@
 # Sadok profile management
 
-Example profile manager in C or javascript.
+Example profile manager in javascript.
 
 ## WARNING!
 
-These profile managers are designed for personal use only, in a secure environment, because there is no authentication implemented, and no verification on what is sent from the client.
+This profile managers is designed for personal use only, in a secure environment, because there is no authentication implemented, and no verification on what is sent from the client.
